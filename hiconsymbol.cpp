@@ -1,9 +1,10 @@
 ﻿#include "H5IconGui/hiconsymbol.h"
 #include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hicontemplate.h"
 #include "hiconapi.h"
 #include <QVariant>
-HIconSymbol::HIconSymbol(QObject* parent):QObject(parent)
+HIconSymbol::HIconSymbol(HIconTemplate* t):pIconTemplate(t)
 {
     usSymbolType = DEVICE_TYPE_ICONSYMBOL;
     nMaxPattern = 0;
@@ -422,9 +423,12 @@ HIconShowPattern* HIconSymbol::getCurrentPatternPtr()
 
 void HIconSymbol::resize(double w,double h)
 {
+    QSizeF pt = pIconTemplate->getDefaultSize();
+    double w1 = pt.width()*10/w;
+    double h1 = pt.height()*10/h;
     for(int i = 0; i < pShowPatternVector.count();i++)
     {
         HIconShowPattern* pattern = (HIconShowPattern*)(pShowPatternVector[i]);
-        pattern->resize(w,h);
+        pattern->resize(w1,h1);
     }
 }

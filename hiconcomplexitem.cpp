@@ -221,13 +221,14 @@ void HIconComplexItem::resizeItem(const QPolygonF& polygonF)
 void HIconComplexItem::refreshBaseObj()
 {
     //注意所有的对象都要刷新一下
-   /* pIconObj->topLeft = mapToScene(rect().topLeft());
-    pIconObj->rectWidth = rect().width();
-    pIconObj->rectHeight = rect().height();
+    pIconComplxObj->setTopLeft(mapToScene(rect().topLeft()));
+    pIconComplxObj->setRectWidth(rect().width());
+    pIconComplxObj->setRectHeight(rect().height());
     QPointF p = mapToScene(rect().center());
-    pIconObj->setOX(p.x());
-    pIconObj->setOY(p.y());
-    pIconObj->setModify(true);*/
+    pIconComplxObj->setOX(p.x());
+    pIconComplxObj->setOY(p.y());
+    pIconComplxObj->resize(rect().width(),rect().height());
+    pIconComplxObj->setModify(true);
 }
 
 void HIconComplexItem::setItemCursor(int location)
