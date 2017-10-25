@@ -36,36 +36,7 @@ bool HIconEllipseItem::contains(const QPointF &point) const
 
 void HIconEllipseItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QRectF mainRectF = rect();
-    QRectF drawRectF = mainRectF;
-
-
-    //
-
-    if(isSelected())
-    {
-        painter->save();
-        QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 14.00;
-        QRectF rect1,rect2,rect3,rect4;
-        rect1.setSize(QSizeF(halfpw,halfpw));
-        rect1.moveCenter(rect().topLeft());
-        rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(rect().topRight());
-        rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(rect().bottomLeft());
-        rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(rect().bottomRight());
-
-        painter->drawRect(rect1);
-        painter->drawRect(rect2);
-        painter->drawRect(rect3);
-        painter->drawRect(rect4);
-
-        painter->restore();
-    }
+    pEllipseObj->paint(painter);
 }
 
 QPainterPath HIconEllipseItem::shape() const
