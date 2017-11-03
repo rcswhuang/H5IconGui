@@ -2666,17 +2666,26 @@ void HTextObj::resize(double w,double h)
 HIconComplexObj::HIconComplexObj()
 {
     //去掉本身所有的边框颜色设置，这些都是不需要的
+    bFrameSee = false;
 }
 
 HIconComplexObj::HIconComplexObj(HIconTemplate* it)
     :pIconTemplate(it)
 {
-
+    //注意这个picontemplate已经从模板库拷贝过来的，否则会把模板库的图元作为操作对象
+    if(pIconTemplate && pIconTemplate->getSymbol())
+    {
+        pIconSymbol = new HIconSymbol(pIconTemplate);
+    }
+    pDynamicObj = new HDynamicObj;
 }
 
 HIconComplexObj::~HIconComplexObj()
 {
-
+    if(pDynamicObj)
+        delete pDynamicObj;
+    if(pIconSymbol)
+        delete pIconSymbol;
 }
 
 //二进制读写
@@ -2684,6 +2693,18 @@ void HIconComplexObj::readData(QDataStream* data)
 {
     if(!data) return;
     HBaseObj::readData(data);
+    QString s;
+    *data>>s;
+    catalogName = s;
+    int n;
+    *data>>n;
+    catalogType = n;
+    *data>>s;
+    uuid = s;
+    *data>>s;
+    symbolName = s;
+    *data>>n;
+    symbolType = n;
     qreal qr;
     *data>>qr;
     topLeft.setX(qr);
@@ -2701,6 +2722,11 @@ void HIconComplexObj::writeData(QDataStream* data)
 {
     if(!data) return;
     HBaseObj::writeData(data);
+    *data<<catalogName;
+    *data<<catalogType;
+    *data<<uuid;
+    *data<<symbolName;
+    *data<<symbolType;
     *data<<(qreal)topLeft.x();
     *data<<(qreal)topLeft.y();
     *data<<(double)rectWidth;
@@ -2714,12 +2740,20 @@ void HIconComplexObj::readXml(QDomElement* dom)
 {
     if(!dom) return;
     HBaseObj::readXml(dom);
+    catalogName = dom->attribute("CatalogName");
+    catalogType = dom->attribute("CatalogType").toInt();
+    uuid = dom->attribute("Uuid");
+    symbolName = dom->attribute("SymbolName");
+    symbolType = dom->attribute("SymbolType").toInt();
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
     rectWidth = dom->attribute("rectWidth").toInt();
     rectHeight = dom->attribute("rectHeight").toInt();
 
     //动态数据
+    QDomElement RelationDom = dom->namedItem("Relation").toElement();
+    if(pDynamicObj)
+        pDynamicObj->readXml(&RelationDom);
 
 }
 
@@ -2727,18 +2761,27 @@ void HIconComplexObj::writeXml(QDomElement* dom)
 {
     if(!dom)return;
     HBaseObj::writeXml(dom);
+    dom->setAttribute("CatalogName",catalogName);
+    dom->setAttribute("CatalogType",catalogType);
+    dom->setAttribute("Uuid",uuid);
+    dom->setAttribute("SymbolName",symbolName);
+    dom->setAttribute("SymbolType",symbolType);
     dom->setAttribute("topLeftx",topLeft.x());
     dom->setAttribute("topLefty",topLeft.y());
     dom->setAttribute("rectWidth",rectWidth);
     dom->setAttribute("rectHeight",rectHeight);
 
     //动态数据
+    QDomElement RelationDom = dom->ownerDocument().createElement("Relation");
+    dom->appendChild(RelationDom);
+    if(pDynamicObj)
+        pDynamicObj->writeXml(&RelationDom);
 }
 
 
 QString HIconComplexObj::TagName()
 {
-    return "IconSymbol";
+    return "ComplexObj";
 }
 
 //拷贝克隆
@@ -2879,10 +2922,14 @@ HIconTemplate* HIconComplexObj::iconTemplate()
 
 void HIconComplexObj::initDynamicData()
 {
-
+    clearDynamicData();
 }
 
 void HIconComplexObj::clearDynamicData()
 {
-
+    if(pDynamicObj)
+    {
+        delete pDynamicObj;
+        pDynamicObj = NULL;
+    }
 }
