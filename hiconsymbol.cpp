@@ -111,6 +111,16 @@ void HIconSymbol::writeXml(QDomElement *dom)
     }
 }
 
+void HIconSymbol::readData(int v,QDataStream* d)
+{
+
+}
+
+void HIconSymbol::writeData(int v,QDataStream *d)
+{
+
+}
+
 HBaseObj* HIconSymbol::newObj(QString tagName)
 {
     quint8 drawShape = enumNo;

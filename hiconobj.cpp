@@ -2674,10 +2674,10 @@ HIconComplexObj::HIconComplexObj(HIconTemplate* it)
 {
     //注意这个picontemplate已经从模板库拷贝过来的，否则会把模板库的图元作为操作对象
     //pIconSymbol的数据都是从readXml里面获取的，这里暂时不需要获取
-    if(pIconTemplate && pIconTemplate->getSymbol())
-    {
-        pIconSymbol = new HIconSymbol(pIconTemplate);
-    }
+    //if(pIconTemplate && pIconTemplate->getSymbol())
+    //{
+    //    pIconSymbol = new HIconSymbol(pIconTemplate);
+   // }
     pDynamicObj = new HDynamicObj;
 }
 

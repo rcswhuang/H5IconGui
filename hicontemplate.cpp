@@ -43,6 +43,37 @@ void HIconTemplate::copyTo(HIconTemplate *temp)
     pIconSymbol->copyTo(temp->pIconSymbol);
 }
 
+void HIconTemplate::readData(int v,QDataStream* d)
+{
+    int n;
+    *d>>n;
+    nVersion = n;
+    QString s;
+    *d>>s;
+    strCatalogName = s;
+    *d>>n;
+    nCatalogType = n;
+    qreal r;
+    *d>>r;
+    sDefaultSize.setWidth(r);
+    *d>>r;
+    sDefaultSize.setHeight(r);
+    *d>>s;
+    uUid = QUuid(s);
+    pIconSymbol->readData(v,d);
+}
+
+void HIconTemplate::writeData(int v,QDataStream *d)
+{
+    *d<<nVersion;
+    *d<<strCatalogName;
+    *d<<nCatalogType;
+    *d<<sDefaultSize.width();
+    *d<<sDefaultSize.height();
+    *d<<uUid.toString();
+    pIconSymbol->writeData(v,d);
+}
+
 void HIconTemplate::readXml(const QString &strXmlFile)
 {
     QFile file(strXmlFile);
