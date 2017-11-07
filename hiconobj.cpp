@@ -2803,7 +2803,7 @@ void HIconComplexObj::clone(HBaseObj* obj)
 
 DRAWSHAPE HIconComplexObj::getShapeType()
 {
-    return enumIconComplex;
+    return enumComplex;
 }
 
 void HIconComplexObj::moveBy(qreal dx,qreal dy)
@@ -2815,7 +2815,7 @@ void HIconComplexObj::moveBy(qreal dx,qreal dy)
     HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
     for(int i = 0; i < pattern->pObjList.count();i++)
     {
-        HBaseObj* pObj = qobject_cast<HBaseObj*>(pattern->pObjList[i]);
+        HBaseObj* pObj = (HBaseObj*)(pattern->pObjList[i]);
         if(pObj)
         {
            pObj->moveBy(dx,dy);
@@ -2833,7 +2833,7 @@ void HIconComplexObj::paint(QPainter* painter)
     HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
     for(int i = 0; i < pattern->pObjList.count();i++)
     {
-        HBaseObj* pObj = qobject_cast<HBaseObj*>(pattern->pObjList[i]);
+        HBaseObj* pObj = (HBaseObj*)(pattern->pObjList[i]);
         if(pObj)
         {
            pObj->paint(painter);
@@ -2919,6 +2919,11 @@ void HIconComplexObj::setIconTemplate(HIconTemplate* t)
 HIconTemplate* HIconComplexObj::iconTemplate()
 {
     return pIconTemplate;
+}
+
+HIconSymbol* HIconComplexObj::getIconSymbol()
+{
+    return pIconTemplate->getSymbol();
 }
 
 void HIconComplexObj::initDynamicData()

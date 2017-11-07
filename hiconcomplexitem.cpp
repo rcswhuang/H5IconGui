@@ -66,7 +66,7 @@ QPainterPath HIconComplexItem::shape() const
 
 int HIconComplexItem::type() const
 {
-    return enumIconComplex;
+    return enumComplex;
 }
 
 void HIconComplexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

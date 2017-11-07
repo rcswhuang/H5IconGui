@@ -3,6 +3,11 @@
 #include <QTextStream>
 #include <QDomProcessingInstruction>
 #include <QTextCodec>
+#include <QIcon>
+#include <QSizeF>
+#include <QImage>
+#include "H5IconGui/hbaseobj.h"
+#include "H5IconGui/hiconobj.h"
 HIconTemplate::HIconTemplate(const QUuid& uuid,QObject* parent)
     :uUid(uuid)
 {
@@ -223,4 +228,21 @@ bool HIconTemplate::getModify()
     return pIconSymbol->getModify();
 }
 
+QIcon HIconTemplate::getIcon()
+{
+    QSizeF sizeF = sDefaultSize;
+    QImage image(sizeF.width()+1,sizeF.height(),QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    HIconComplexObj* pObj = new HIconComplexObj(this);
+    QPolygonF pf;
+    pf<<QPointF(0,0)<<QPointF(sizeF.width(),sizeF.height());
+    QRectF rectF = pf.boundingRect();
+    pObj->resize(rectF.width(),rectF.height());
+    //应该还有一个move
+    painter.translate(sizeF.width()/2.0,sizeF.height()/2.0);
+    pObj->paint(&painter);
+    delete pObj;
 
+    return QIcon(QPixmap().fromImage(image));
+}
