@@ -109,9 +109,6 @@ void HIconShowPattern::copyTo(HIconShowPattern* sp)
         }
         else if(pObj->getShapeType() == enumPolyline)
         {
-            //HEllipseObj* pEllipseObj = new HEllipseObj;
-            //pObj->copyTo(pEllipseObj);
-            //sp->addObj(pEllipseObj);
             HPolylineObj* pPolylineObj = new HPolylineObj;
             pObj->clone(pPolylineObj);
             sp->addObj(pPolylineObj);

@@ -2666,27 +2666,23 @@ void HTextObj::resize(double w,double h)
 HIconComplexObj::HIconComplexObj()
 {
     //去掉本身所有的边框颜色设置，这些都是不需要的
+    pDynamicObj = new HDynamicObj;
     bFrameSee = false;
 }
 
 HIconComplexObj::HIconComplexObj(HIconTemplate* it)
     :pIconTemplate(it)
 {
-    //注意这个picontemplate已经从模板库拷贝过来的，否则会把模板库的图元作为操作对象
-    //pIconSymbol的数据都是从readXml里面获取的，这里暂时不需要获取
-    //if(pIconTemplate && pIconTemplate->getSymbol())
-    //{
-    //    pIconSymbol = new HIconSymbol(pIconTemplate);
-   // }
     pDynamicObj = new HDynamicObj;
+    bFrameSee = false;
 }
 
 HIconComplexObj::~HIconComplexObj()
 {
     if(pDynamicObj)
         delete pDynamicObj;
-    if(pIconSymbol)
-        delete pIconSymbol;
+    if(pIconTemplate)
+        delete pIconTemplate;
 }
 
 //二进制读写
@@ -2717,6 +2713,8 @@ void HIconComplexObj::readData(QDataStream* data)
     rectHeight = qr;
 
     //还有动态数据
+    if(pDynamicObj)
+        pDynamicObj->readData(data);
 }
 
 void HIconComplexObj::writeData(QDataStream* data)
@@ -2734,6 +2732,8 @@ void HIconComplexObj::writeData(QDataStream* data)
     *data<<(double)rectHeight;
 
     //动态数据
+    if(pDynamicObj)
+        pDynamicObj->writeData(data);
 }
 
 //xml文件读写
@@ -2788,10 +2788,19 @@ QString HIconComplexObj::TagName()
 //拷贝克隆
 void HIconComplexObj::copyTo(HBaseObj* obj)
 {
-    HEllipseObj* ob = (HEllipseObj*)obj;
+    HIconComplexObj* ob = (HIconComplexObj*)obj;
     ob->topLeft = topLeft;
     ob->rectWidth = rectWidth;
     ob->rectHeight = rectHeight;
+    ob->catalogName = catalogName;
+    ob->catalogType = catalogType;
+    ob->symbolName = symbolName;
+    ob->symbolType = symbolType;
+
+    if(pDynamicObj && ob->pDynamicObj)
+    {
+        ob->pDynamicObj->copyTo(pDynamicObj);
+    }
 }
 
 void HIconComplexObj::clone(HBaseObj* obj)
@@ -2874,6 +2883,16 @@ void HIconComplexObj::resize(qreal w,qreal h)
 {
     if(pIconSymbol)
         pIconSymbol->resize(w,h);
+}
+
+void HIconComplexObj::setUuid(const QString& uuid)
+{
+    this->uuid = uuid;
+}
+
+QString HIconComplexObj::getUuid()
+{
+    return uuid;
 }
 
 void HIconComplexObj::setTopLeft(const QPointF& pointF)
