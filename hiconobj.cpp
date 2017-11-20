@@ -1,5 +1,6 @@
 ﻿#include "H5IconGui/hiconobj.h"
 #include <QVariant>
+
 #include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconlineitem.h"
 #include "H5IconGui/hiconrectitem.h"
@@ -351,8 +352,8 @@ void HRectObj::readXml(QDomElement* dom)
     HBaseObj::readXml(dom);
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
-    rectWidth = dom->attribute("rectWidth").toInt();
-    rectHeight = dom->attribute("rectHeight").toInt();
+    rectWidth = dom->attribute("rectWidth").toDouble();
+    rectHeight = dom->attribute("rectHeight").toDouble();
 }
 
 void HRectObj::writeXml(QDomElement* dom)
@@ -398,9 +399,39 @@ void HRectObj::moveBy(qreal dx, qreal dy)
     bModify = true;
 }
 
+QRectF HRectObj::boundingRect() const
+{
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x());
+    boundingRect.setY(topLeft.y());
+    boundingRect.setWidth(rectWidth );
+    boundingRect.setHeight(rectHeight);
+    return boundingRect;
+}
+
+bool HRectObj::contains(const QPointF &point) const
+{
+    return shape().contains(point);
+}
+
+QPainterPath HRectObj::shape() const
+{
+    QPainterPath path;
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x());
+    boundingRect.setY(topLeft.y());
+    boundingRect.setWidth(rectWidth );
+    boundingRect.setHeight(rectHeight);
+    path.addRect(boundingRect);
+
+    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
+    path.addRect(shapeRect);
+    return path;
+}
+
 void HRectObj::paint(QPainter* painter)
 {
-    HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
+    //HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -416,13 +447,22 @@ void HRectObj::paint(QPainter* painter)
     qreal fRotateAngle = getRotateAngle();
 
 
-    QPointF centerPoint = pItem->boundingRect().center();
-    pItem->setTransformOriginPoint(centerPoint);
+    //QPointF centerPoint = pItem->boundingRect().center();
+    QRectF rect = boundingRect();
+    QPointF centerPoint = boundingRect().center();
 
-    QTransform transform;
-    transform.rotate(fRotateAngle,Qt::ZAxis);
-    pItem->setTransform(transform);
     painter->save();
+    //painter->translate(centerPoint);
+    painter->rotate(fRotateAngle/qreal(16.0));
+
+    //pItem->setTransformOriginPoint(centerPoint);
+
+    //QTransform transform;
+    //transform.rotate(fRotateAngle,Qt::ZAxis);
+    //painter->setTransform(transform);
+
+
+
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
     pen.setWidth(penWidth);
@@ -432,7 +472,7 @@ void HRectObj::paint(QPainter* painter)
     else
         painter->setPen(Qt::NoPen);
 
-    painter->drawRect(pItem->rect());
+    painter->drawRect(rect);
     //需要判断nFillStyle 如果是linear的模式 就要考虑填充方向了
     //
     QBrush brush;//(Qt::NoBrush);
@@ -446,50 +486,50 @@ void HRectObj::paint(QPainter* painter)
             {
                 case DIRECT_BOTTOM_TO_TOP:
                 {
-                    ps2 = pItem->rect().topLeft();
-                    ps1 = pItem->rect().bottomLeft();
+                    ps2 = rect.topLeft();
+                    ps1 = rect.bottomLeft();
                     break;
                 }
                 case DIRECT_TOP_TO_BOTTOM: //有顶到底
                 {
-                    ps1 = pItem->rect().topLeft();
-                    ps2 = pItem->rect().bottomLeft();
+                    ps1 = rect.topLeft();
+                    ps2 = rect.bottomLeft();
                     break;
                 }
                 case DIRECT_LEFT_TO_RIGHT: //由左到右
                 {
-                    ps1 = pItem->rect().topLeft();
-                    ps2 = pItem->rect().topRight();
+                    ps1 = rect.topLeft();
+                    ps2 = rect.topRight();
                     break;
                 }
                 case DIRECT_RIGHT_TO_LEFT: //由右到左
                 {
-                    ps1 = pItem->rect().topRight();
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = rect.topRight();
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_VER_TO_OUT: //垂直到外
                 {
-                    ps1 = QPointF(pItem->rect().center().x(),pItem->rect().top());
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = QPointF(rect.center().x(),rect.top());
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_HORi_TO_OUT: //水平向外
                 {
-                    ps1 = QPointF(pItem->rect().left(),pItem->rect().center().y());
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = QPointF(rect.left(),rect.center().y());
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_VER_TO_IN: //垂直向里
                 {
-                    ps2 = QPointF(pItem->rect().center().x(),pItem->rect().top());
-                    ps1 = pItem->rect().topLeft();
+                    ps2 = QPointF(rect.center().x(),rect.top());
+                    ps1 = rect.topLeft();
                     break;
                 }
                 case DIRECT_HORI_TO_IN: //垂直向里
                 {
-                    ps2 = QPointF(pItem->rect().left(),pItem->rect().center().y());
-                    ps1 = pItem->rect().topLeft();
+                    ps2 = QPointF(rect.left(),rect.center().y());
+                    ps1 = rect.topLeft();
                     break;
                 }
             }
@@ -503,7 +543,7 @@ void HRectObj::paint(QPainter* painter)
         }
         else if(nFillStyle == Qt::RadialGradientPattern)
         {
-            QRadialGradient lgrd(pItem->rect().center(),qMin(pItem->rect().width(),pItem->rect().height())/2);
+            QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
             lgrd.setColorAt(0.0,fillClr);
             lgrd.setColorAt(0.5,fillClr.dark(150));
             lgrd.setColorAt(1.0,fillClr.dark(250));
@@ -513,7 +553,7 @@ void HRectObj::paint(QPainter* painter)
         }
         else if(nFillStyle == Qt::ConicalGradientPattern)
         {
-            QConicalGradient lgrd(pItem->rect().center(),270);
+            QConicalGradient lgrd(rect.center(),270);
             lgrd.setColorAt(0.0,fillClr);
             lgrd.setColorAt(0.5,fillClr.lighter(150));
             lgrd.setColorAt(1.0,fillClr.lighter(250));
@@ -528,8 +568,9 @@ void HRectObj::paint(QPainter* painter)
             brush = brush1;
         }
     }
-    painter->fillRect(pItem->rect(),brush);
+    painter->fillRect(rect,brush);
 
+    /*
     if(pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
@@ -555,7 +596,7 @@ void HRectObj::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }
+    }*/
     painter->restore();
 
 }
@@ -2674,6 +2715,9 @@ HIconComplexObj::HIconComplexObj(HIconTemplate* it)
     :pIconTemplate(it)
 {
     pDynamicObj = new HDynamicObj;
+    pIconSymbol = new HIconSymbol(it);
+    initIconTemplate();
+
     bFrameSee = false;
 }
 
@@ -2681,6 +2725,8 @@ HIconComplexObj::~HIconComplexObj()
 {
     if(pDynamicObj)
         delete pDynamicObj;
+    if(pIconSymbol)
+        delete pIconSymbol;
     if(pIconTemplate)
         delete pIconTemplate;
 }
@@ -2797,9 +2843,14 @@ void HIconComplexObj::copyTo(HBaseObj* obj)
     ob->symbolName = symbolName;
     ob->symbolType = symbolType;
 
+    if(pIconSymbol && ob->pIconSymbol)
+    {
+        pIconSymbol->copyTo(ob->pIconSymbol);
+    }
+
     if(pDynamicObj && ob->pDynamicObj)
     {
-        ob->pDynamicObj->copyTo(pDynamicObj);
+        pDynamicObj->copyTo(ob->pDynamicObj);
     }
 }
 
@@ -2835,7 +2886,7 @@ void HIconComplexObj::moveBy(qreal dx,qreal dy)
 
 void HIconComplexObj::paint(QPainter* painter)
 {
-    HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
+    //HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
     painter->save();
     if(!getIconSymbol() && !getIconSymbol()->findPatternById(0))
         return;
@@ -2848,8 +2899,9 @@ void HIconComplexObj::paint(QPainter* painter)
            pObj->paint(painter);
         }
     }
-    painter->drawRect(pItem->rect());
+    //painter->drawRect(boundingRect());
 
+    /*
     if(pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
@@ -2875,7 +2927,7 @@ void HIconComplexObj::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }
+    }*/
     painter->restore();
 }
 
@@ -2883,6 +2935,36 @@ void HIconComplexObj::resize(qreal w,qreal h)
 {
     if(pIconSymbol)
         pIconSymbol->resize(w,h);
+}
+
+QRectF HIconComplexObj::boundingRect() const
+{
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x());
+    boundingRect.setY(topLeft.y());
+    boundingRect.setWidth(rectWidth );
+    boundingRect.setHeight(rectHeight);
+    return boundingRect;
+}
+
+bool HIconComplexObj::contains(const QPointF &point) const
+{
+    return shape().contains(point);
+}
+
+QPainterPath HIconComplexObj::shape() const
+{
+    QPainterPath path;
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x());
+    boundingRect.setY(topLeft.y());
+    boundingRect.setWidth(rectWidth );
+    boundingRect.setHeight(rectHeight);
+    path.addRect(boundingRect);
+
+    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
+    path.addRect(shapeRect);
+    return path;
 }
 
 void HIconComplexObj::setUuid(const QString& uuid)
@@ -2927,12 +3009,17 @@ double HIconComplexObj::getRectHeight()
 
 void HIconComplexObj::initIconTemplate()
 {
-    pIconSymbol->copyTo(pIconTemplate->getSymbol());
+    pIconTemplate->getSymbol()->copyTo(pIconSymbol);
 }
 
 void HIconComplexObj::setIconTemplate(HIconTemplate* t)
 {
     pIconTemplate = t;
+    if(!pIconSymbol)
+    {
+        pIconSymbol = new HIconSymbol(t);
+        initIconTemplate();
+    }
 }
 
 HIconTemplate* HIconComplexObj::iconTemplate()
@@ -2942,7 +3029,7 @@ HIconTemplate* HIconComplexObj::iconTemplate()
 
 HIconSymbol* HIconComplexObj::getIconSymbol()
 {
-    return pIconTemplate->getSymbol();
+    return pIconSymbol;
 }
 
 void HIconComplexObj::initDynamicData()

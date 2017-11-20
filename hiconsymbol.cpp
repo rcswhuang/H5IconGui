@@ -72,7 +72,7 @@ void HIconSymbol::readXml(QDomElement* dom)
         //pShowPatternVector.append(pattern);
     }
     updateShowPattern(pTempList);
-
+    setCurrentPattern(0);
     pTempList.clear();
     //还要刷新一下 把对应的Obj 放到showPattern下面
 }
@@ -434,8 +434,8 @@ HIconShowPattern* HIconSymbol::getCurrentPatternPtr()
 void HIconSymbol::resize(double w,double h)
 {
     QSizeF pt = pIconTemplate->getDefaultSize();
-    double w1 = pt.width()*10/w;
-    double h1 = pt.height()*10/h;
+    double w1 = w/(pt.width()*10);
+    double h1 = h/(pt.height()*10);
     for(int i = 0; i < pShowPatternVector.count();i++)
     {
         HIconShowPattern* pattern = (HIconShowPattern*)(pShowPatternVector[i]);

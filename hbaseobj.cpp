@@ -575,3 +575,20 @@ void HBaseObj::resize(double w,double h)
 {
 
 }
+
+QRectF HBaseObj::boundingRect() const
+{
+    return QRectF();
+}
+bool HBaseObj::contains(const QPointF &point) const
+{
+    return false;
+}
+
+QPainterPath HBaseObj::shape() const
+{
+    return QPainterPath();
+
+}
+
+

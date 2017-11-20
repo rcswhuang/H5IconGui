@@ -27,12 +27,14 @@ HIconRectItem::HIconRectItem(const QRectF &rectF, HIconGraphicsItem *parent)
 
 QRectF HIconRectItem::boundingRect() const
 { 
-    return shape().boundingRect();
+    return pRectObj->boundingRect();
+    //return shape().boundingRect();
 }
 
 bool HIconRectItem::contains(const QPointF &point) const
 {
-    return shape().boundingRect().contains(point);
+    return pRectObj->contains(point);
+
 }
 
 void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -45,6 +47,8 @@ void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 QPainterPath HIconRectItem::shape() const
 {
+    return pRectObj->shape();
+    /*
     QPainterPath path;
     QRectF rectPath;
     rectPath.setX(rect().x() - 10);
@@ -52,6 +56,7 @@ QPainterPath HIconRectItem::shape() const
     rectPath.setWidth(rect().width() + 20);
     rectPath.setHeight(rect().height() + 20);
     path.addRect(rectPath);
+    return path;*/
     /*QPainterPathStroker ps;
     ps.setWidth(20);
     path.moveTo(rect().topLeft());
@@ -60,7 +65,7 @@ QPainterPath HIconRectItem::shape() const
     path.lineTo(rect().bottomLeft());
     path.lineTo(rect().topLeft());
     return ps.createStroke(path);*/
-    return path;
+
 
 }
 

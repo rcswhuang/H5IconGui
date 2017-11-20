@@ -9,6 +9,7 @@ QT += gui
 QT += widgets
 TARGET = H5IconGui
 TEMPLATE = lib
+DESTDIR = $$(WF_ROOT)\lib
 
 DEFINES += H5ICONGUI_DLL
 
