@@ -43,15 +43,7 @@ void HIconPieItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 QPainterPath HIconPieItem::shape() const
 {
-    QPainterPath path;// = QGraphicsLineItem::shape();
-    QRectF rectPath;
-    rectPath.setX(rect().x() - 10);
-    rectPath.setY(rect().y() - 10);
-    rectPath.setWidth(rect().width() + 20);
-    rectPath.setHeight(rect().height() + 20);
-    path.addRect(rectPath);
-    return path;
-
+   pPieObj->shape();
 }
 
 int HIconPieItem::type() const
@@ -113,7 +105,12 @@ void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pPieObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp(pPieObj->topLeft,QSize(pPieObj->rectWidth,pPieObj->rectHeight));
+        //recttemp.setTopLeft(pArcObj->topLeft);
+        //recttemp.setWidth(pArcObj->rectWidth);
+        //recttemp.setHeight(pArcObj->rectHeight);
+        setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -172,7 +169,7 @@ void HIconPieItem::setRect(const QRectF& rect)
     if(rect == rectF) return;
     prepareGeometryChange();
     rectF = rect;
-    refreshBaseObj();
+    refreshBaseObj(rect);
     update();
 }
 
@@ -184,6 +181,7 @@ QRectF HIconPieItem::rect()const
 void HIconPieItem::setItemObj(HBaseObj *pObj)
 {
     pPieObj = (HPieObj*)pObj;
+    pPieObj->setIconGraphicsItem(this);
 }
 
 HBaseObj* HIconPieItem::getItemObj()
@@ -209,12 +207,12 @@ void HIconPieItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconPieItem::refreshBaseObj()
+void HIconPieItem::refreshBaseObj(const QRectF& rect)
 {
-    pPieObj->topLeft = mapToScene(rect().topLeft());
-    pPieObj->rectWidth = rect().width();
-    pPieObj->rectHeight = rect().height();
-    QPointF p = mapToScene(rect().center());
+    pPieObj->topLeft = rect.topLeft();
+    pPieObj->rectWidth = rect.width();
+    pPieObj->rectHeight = rect.height();
+    QPointF p = rect.center();
     pPieObj->setOX(p.x());
     pPieObj->setOY(p.y());
     pPieObj->setModify(true);

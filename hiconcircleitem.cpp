@@ -41,14 +41,7 @@ void HIconCircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 QPainterPath HIconCircleItem::shape() const
 {
-    QPainterPath path;// = QGraphicsLineItem::shape();
-    QRectF rectPath;
-    rectPath.setX(rect().x() - 10);
-    rectPath.setY(rect().y() - 10);
-    rectPath.setWidth(rect().width() + 20);
-    rectPath.setHeight(rect().height() + 20);
-    path.addRect(rectPath);
-    return path;
+    return pCircleObj->shape();
 
 }
 
@@ -56,7 +49,6 @@ int HIconCircleItem::type() const
 {
     return enumCircle;
 }
-
 
 void HIconCircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -110,7 +102,12 @@ void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pCircleObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp(pCircleObj->topLeft,QSize(pCircleObj->rectWidth,pCircleObj->rectHeight));
+        //recttemp.setTopLeft(pArcObj->topLeft);
+        //recttemp.setWidth(pArcObj->rectWidth);
+        //recttemp.setHeight(pArcObj->rectHeight);
+        setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -167,7 +164,7 @@ void HIconCircleItem::setRect(const QRectF& rect)
     if(rect == rectF) return;
     prepareGeometryChange();
     rectF = rect;
-    refreshBaseObj();
+    refreshBaseObj(rect);
     update();
 }
 
@@ -179,6 +176,7 @@ QRectF HIconCircleItem::rect()const
 void HIconCircleItem::setItemObj(HBaseObj *pObj)
 {
     pCircleObj = (HCircleObj*)pObj;
+    pCircleObj->setIconGraphicsItem(this);
 }
 
 HBaseObj* HIconCircleItem::getItemObj()
@@ -203,12 +201,12 @@ void HIconCircleItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconCircleItem::refreshBaseObj()
+void HIconCircleItem::refreshBaseObj(const QRectF& rect)
 {
-    pCircleObj->topLeft = mapToScene(rect().topLeft());
-    pCircleObj->rectWidth = rect().width();
-    pCircleObj->rectHeight = rect().height();
-    QPointF p = mapToScene(rect().center());
+    pCircleObj->topLeft = rect.topLeft();
+    pCircleObj->rectWidth = rect.width();
+    pCircleObj->rectHeight = rect.height();
+    QPointF p = rect.center();
     pCircleObj->setOX(p.x());
     pCircleObj->setOY(p.y());
     pCircleObj->setModify(true);

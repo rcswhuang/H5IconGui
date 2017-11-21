@@ -41,14 +41,7 @@ void HIconEllipseItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 QPainterPath HIconEllipseItem::shape() const
 {
-    QPainterPath path;// = QGraphicsLineItem::shape();
-    QRectF rectPath;
-    rectPath.setX(rect().x() - 10);
-    rectPath.setY(rect().y() - 10);
-    rectPath.setWidth(rect().width() + 20);
-    rectPath.setHeight(rect().height() + 20);
-    path.addRect(rectPath);
-    return path;
+    return pEllipseObj->shape();
 
 }
 
@@ -110,7 +103,12 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pEllipseObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp;//(pEllipseObj->topLeft,QSize(pEllipseObj->rectWidth,pEllipseObj->rectHeight));
+        recttemp.setTopLeft(pEllipseObj->topLeft);
+        recttemp.setWidth(pEllipseObj->rectWidth);
+        recttemp.setHeight(pEllipseObj->rectHeight);
+        setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -167,7 +165,7 @@ void HIconEllipseItem::setRect(const QRectF& rect)
     if(rect == rectF) return;
     prepareGeometryChange();
     rectF = rect;
-    refreshBaseObj();
+    refreshBaseObj(rect);
     update();
 }
 
@@ -179,6 +177,7 @@ QRectF HIconEllipseItem::rect()const
 void HIconEllipseItem::setItemObj(HBaseObj *pObj)
 {
     pEllipseObj = (HEllipseObj*)pObj;
+    pEllipseObj->setIconGraphicsItem(this);
 
 }
 
@@ -205,12 +204,12 @@ void HIconEllipseItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconEllipseItem::refreshBaseObj()
+void HIconEllipseItem::refreshBaseObj(const QRectF& rect)
 {
-    pEllipseObj->topLeft = mapToScene(rect().topLeft());
-    pEllipseObj->rectWidth = rect().width();
-    pEllipseObj->rectHeight = rect().height();
-    QPointF p = mapToScene(rect().center());
+    pEllipseObj->topLeft = rect.topLeft();
+    pEllipseObj->rectWidth = rect.width();
+    pEllipseObj->rectHeight = rect.height();
+    QPointF p = rect.center();
     pEllipseObj->setOX(p.x());
     pEllipseObj->setOY(p.y());
     pEllipseObj->setModify(true);

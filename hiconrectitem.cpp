@@ -169,22 +169,13 @@ void HIconRectItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-    pRectObj->topLeft = rect.topLeft();
-    pRectObj->rectWidth = rect.width();
-    pRectObj->rectHeight = rect.height();
-    QPointF p = mapToScene(rect.center());
-    pRectObj->setOX(p.x());
-    pRectObj->setOY(p.y());
-    pRectObj->setModify(true);
+    refreshBaseObj(rect);
     rectF = rect;
     update();
 }
 
 QRectF HIconRectItem::rect() const
 {
-    //rectF.setTopLeft(pRectObj->topLeft);
-    //rectF.setWidth(pRectObj->rectWidth);
-    //rectF.setHeight(pRectObj->rectHeight);
     return rectF;
 }
 
@@ -217,12 +208,12 @@ void HIconRectItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconRectItem::refreshBaseObj()
+void HIconRectItem::refreshBaseObj(const QRectF& rect)
 {
-    pRectObj->topLeft = mapToScene(rect().topLeft());
-    pRectObj->rectWidth = rect().width();
-    pRectObj->rectHeight = rect().height();
-    QPointF p = mapToScene(rect().center());
+    pRectObj->topLeft = rect.topLeft();
+    pRectObj->rectWidth = rect.width();
+    pRectObj->rectHeight = rect.height();
+    QPointF p = rect.center();
     pRectObj->setOX(p.x());
     pRectObj->setOY(p.y());
     pRectObj->setModify(true);

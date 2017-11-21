@@ -47,14 +47,7 @@ void HIconArcItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 QPainterPath HIconArcItem::shape() const
 {
-    QPainterPath path;
-    QRectF rectPath;
-    rectPath.setX(rect().x() - 10);
-    rectPath.setY(rect().y() - 10);
-    rectPath.setWidth(rect().width() + 20);
-    rectPath.setHeight(rect().height() + 20);
-    path.addRect(rectPath);
-    return path;
+    return pArcObj->shape();
 
 }
 
@@ -115,7 +108,12 @@ void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pArcObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp(pArcObj->topLeft,QSize(pArcObj->rectWidth,pArcObj->rectHeight));
+        //recttemp.setTopLeft(pArcObj->topLeft);
+        //recttemp.setWidth(pArcObj->rectWidth);
+        //recttemp.setHeight(pArcObj->rectHeight);
+        setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -171,8 +169,8 @@ void HIconArcItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
+    refreshBaseObj(rect);
     rectF = rect;
-    refreshBaseObj();
     update();
 }
 
@@ -184,6 +182,7 @@ QRectF HIconArcItem::rect()const
 void HIconArcItem::setItemObj(HBaseObj *pObj)
 {
     pArcObj = (HArcObj*)pObj;
+    pArcObj->setIconGraphicsItem(this);
 }
 
 HBaseObj* HIconArcItem::getItemObj()
@@ -201,12 +200,12 @@ void HIconArcItem::moveItemBy(qreal dx, qreal dy)
     setRect(newRectF);
 }
 
-void HIconArcItem::refreshBaseObj()
+void HIconArcItem::refreshBaseObj(const QRectF& rect)
 {
-    pArcObj->topLeft = mapToScene(rect().topLeft());
-    pArcObj->rectWidth = rect().width();
-    pArcObj->rectHeight = rect().height();
-    QPointF p = mapToScene(rect().center());
+    pArcObj->topLeft = rect.topLeft();
+    pArcObj->rectWidth = rect.width();
+    pArcObj->rectHeight = rect.height();
+    QPointF p = rect.center();
     pArcObj->setOX(p.x());
     pArcObj->setOY(p.y());
     pArcObj->setModify(true);

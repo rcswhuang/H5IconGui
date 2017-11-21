@@ -42,22 +42,13 @@ void HIconTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 QPainterPath HIconTextItem::shape() const
 {
-    QPainterPath path;// = QGraphicsLineItem::shape();
-    QRectF rectPath;
-    rectPath.setX(rect().x() - 10);
-    rectPath.setY(rect().y() - 10);
-    rectPath.setWidth(rect().width() + 20);
-    rectPath.setHeight(rect().height() + 20);
-    path.addRect(rectPath);
-    return path;
-
+    pTextObj->shape();
 }
 
 int HIconTextItem::type() const
 {
     return enumText;
 }
-
 
 void HIconTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -108,14 +99,18 @@ void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pTextObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp(pTextObj->getTopLeftPoint(),QSize(pTextObj->getRectWidth(),pTextObj->getRectHeight()));
+        //recttemp.setTopLeft(pArcObj->topLeft);
+        //recttemp.setWidth(pArcObj->rectWidth);
+        //recttemp.setHeight(pArcObj->rectHeight);
+        setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
 
 void HIconTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-
     HIconGraphicsItem::mouseReleaseEvent(event);
 }
 
@@ -166,7 +161,7 @@ void HIconTextItem::setRect(const QRectF& rect)
     if(rect == rectF) return;
     prepareGeometryChange();
     rectF = rect;
-    refreshBaseObj();
+    refreshBaseObj(rect);
     update();
 }
 
@@ -178,6 +173,7 @@ QRectF HIconTextItem::rect()const
 void HIconTextItem::setItemObj(HBaseObj *pObj)
 {
     pTextObj = (HTextObj*)pObj;
+    pTextObj->setIconGraphicsItem(this);
 }
 
 HBaseObj* HIconTextItem::getItemObj()
@@ -203,12 +199,12 @@ void HIconTextItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconTextItem::refreshBaseObj()
+void HIconTextItem::refreshBaseObj(const QRectF& rect)
 {
-    pTextObj->setTopLeftPoint(mapToScene(rect().topLeft()));
-    pTextObj->setRectWidth(rect().width());
-    pTextObj->setRectHeight(rect().height());
-    QPointF p = mapToScene(rect().center());
+    pTextObj->setTopLeftPoint(rect.topLeft());
+    pTextObj->setRectWidth(rect.width());
+    pTextObj->setRectHeight(rect.height());
+    QPointF p = rect.center();
     pTextObj->setOX(p.x());
     pTextObj->setOY(p.y());
     pTextObj->setModify(true);

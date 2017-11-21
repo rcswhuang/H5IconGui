@@ -1,6 +1,6 @@
 ﻿#include "H5IconGui/hiconobj.h"
 #include <QVariant>
-
+#include <math.h>
 #include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconlineitem.h"
 #include "H5IconGui/hiconrectitem.h"
@@ -728,12 +728,7 @@ void HEllipseObj::moveBy(qreal dx, qreal dy)
 
 QRectF HEllipseObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+    return shape().controlPointRect();
 }
 
 bool HEllipseObj::contains(const QPointF &point) const
@@ -745,21 +740,17 @@ QPainterPath HEllipseObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
-
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
     return path;
 }
 
 void HEllipseObj::paint(QPainter* painter)
 {
-    //HIconEllipseItem* pItem = qgraphicsitem_cast<HIconEllipseItem*>(getIconGraphicsItem());
-    painter->save();
+    HIconEllipseItem* pItem = qgraphicsitem_cast<HIconEllipseItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -772,18 +763,24 @@ void HEllipseObj::paint(QPainter* painter)
     quint8 nFillDir = getFillDirection();//填充方向
     QColor fillClr = QColor(getFillColorName());//填充颜色
     //quint8 nFillPercentage = pEllipseObj->getFillPercentage(); //填充比例
-    //qreal fRotateAngle = getRotateAngle();
+    qreal fRotateAngle = getRotateAngle();
 
-    QRectF rect = boundingRect();
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
-    //QPointF centerPoint = pItem->boundingRect().center();
-    //pItem->setTransformOriginPoint(centerPoint);
-    //QTransform transform;
-    //transform.rotate(fRotateAngle);
-    //pItem->setTransform(transform);
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        painter->setTransform(transform);
+    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -898,8 +895,8 @@ void HEllipseObj::paint(QPainter* painter)
 
     }
 
-    /*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
@@ -919,7 +916,7 @@ void HEllipseObj::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }*/
+    }
     painter->restore();
 }
 
@@ -1024,12 +1021,7 @@ void HCircleObj::moveBy(qreal dx, qreal dy)
 
 QRectF HCircleObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+    return shape().controlPointRect();
 }
 
 bool HCircleObj::contains(const QPointF &point) const
@@ -1041,14 +1033,11 @@ QPainterPath HCircleObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
-
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
     return path;
 }
 
@@ -1069,18 +1058,23 @@ void HCircleObj::paint(QPainter* painter)
     //quint8 nFillPercentage = pEllipseObj->getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
-    QRectF rect = boundingRect();
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        painter->setTransform(transform);
+    }
 
-    //QPointF centerPoint = pItem->boundingRect().center();
-    //pItem->setTransformOriginPoint(centerPoint);
-    //QTransform transform;
-    //transform.rotate(fRotateAngle);
-    //pItem->setTransform(transform);
-    //painter->save();
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
     pen.setWidth(penWidth);
@@ -1194,8 +1188,8 @@ void HCircleObj::paint(QPainter* painter)
 
     }
 
-    /*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
 
         QPen pen1 = QPen(Qt::green);
@@ -1217,7 +1211,7 @@ void HCircleObj::paint(QPainter* painter)
         painter->drawRect(rect3);
         painter->drawRect(rect4);
 
-    }*/
+    }
     painter->restore();
 }
 
@@ -1997,12 +1991,7 @@ void HArcObj::moveBy(qreal dx, qreal dy)
 
 QRectF HArcObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+   return shape().controlPointRect();
 }
 
 bool HArcObj::contains(const QPointF &point) const
@@ -2014,14 +2003,11 @@ QPainterPath HArcObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
-
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
     return path;
 }
 
@@ -2041,17 +2027,22 @@ void HArcObj::paint(QPainter* painter)
     QColor fillClr = QColor(getFillColorName());//填充颜色
     //quint8 nFillPercentage = pRectObj->getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
-    QRectF rect = boundingRect();
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
-
-    //QPointF centerPoint = pItem->boundingRect().center();
-    //pItem->setTransformOriginPoint(centerPoint);
-    QTransform transform;
-    transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        painter->setTransform(transform);
+    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -2170,8 +2161,8 @@ void HArcObj::paint(QPainter* painter)
             painter->drawArc(rect,startAngle,spanAngle);
 
     }
-/*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
@@ -2192,7 +2183,7 @@ void HArcObj::paint(QPainter* painter)
         painter->drawRect(rect3);
         painter->drawRect(rect4);
     }
-*/
+
     painter->restore();
 }
 
@@ -2331,12 +2322,7 @@ void HPieObj::moveBy(qreal dx, qreal dy)
 
 QRectF HPieObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+    return shape().controlPointRect();
 }
 
 bool HPieObj::contains(const QPointF &point) const
@@ -2348,20 +2334,17 @@ QPainterPath HPieObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
-
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
     return path;
 }
 
 void HPieObj::paint(QPainter* painter)
 {
-    //HIconPieItem* pItem = qgraphicsitem_cast<HIconPieItem*>(getIconGraphicsItem());
+    HIconPieItem* pItem = qgraphicsitem_cast<HIconPieItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -2375,19 +2358,23 @@ void HPieObj::paint(QPainter* painter)
     QColor fillClr = QColor(getFillColorName());//填充颜色
     //quint8 nFillPercentage = pRectObj->getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
-    QRectF rect = boundingRect();
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        painter->setTransform(transform);
+    }
 
-    /*
-    QPointF centerPoint = pItem->boundingRect().center();
-    pItem->setTransformOriginPoint(centerPoint);
-    QTransform transform;
-    transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);
-*/
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
     pen.setWidth(penWidth);
@@ -2411,8 +2398,8 @@ void HPieObj::paint(QPainter* painter)
     painter->setBrush(brush);
 
     painter->drawPie(rect,startAngle,spanAngle);
-   /*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         painter->save();
         QPen pen1 = QPen(Qt::green);
@@ -2433,7 +2420,7 @@ void HPieObj::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }*/
+    }
     painter->restore();
 }
 
@@ -2727,12 +2714,7 @@ void HTextObj::moveBy(qreal dx, qreal dy)
 
 QRectF HTextObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+    return shape().controlPointRect();
 }
 
 bool HTextObj::contains(const QPointF &point) const
@@ -2744,21 +2726,18 @@ QPainterPath HTextObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
-
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
     return path;
 }
 
 void HTextObj::paint(QPainter* painter)
 {
     //if(!painter) return;
-    //HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
+    HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -2774,21 +2753,25 @@ void HTextObj::paint(QPainter* painter)
     ushort nLayout = getLayout();
     QString strTextContent = getTextContent();
     qreal fRotateAngle = getRotateAngle();
-    QRectF rect = boundingRect();
-    QRectF mainRectF = boundingRect();
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    QRectF mainRectF = rect;
     QRectF drawRectF = mainRectF;
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        painter->setTransform(transform);
+    }
 
-    /*
-    QPointF centerPoint = pItem->boundingRect().center();
-    pItem->setTransformOriginPoint(centerPoint);
-    QTransform transform;
-    transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);
-*/
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
     pen.setWidth(penWidth);
@@ -2924,8 +2907,8 @@ void HTextObj::paint(QPainter* painter)
     }
     painter->drawText(mainRectF,nAlign,strTextContent);
 
-    /*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
@@ -2945,7 +2928,7 @@ void HTextObj::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }*/
+    }
 
     painter->restore();
 
