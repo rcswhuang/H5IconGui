@@ -28,13 +28,11 @@ HIconRectItem::HIconRectItem(const QRectF &rectF, HIconGraphicsItem *parent)
 QRectF HIconRectItem::boundingRect() const
 { 
     return pRectObj->boundingRect();
-    //return shape().boundingRect();
 }
 
 bool HIconRectItem::contains(const QPointF &point) const
 {
     return pRectObj->contains(point);
-
 }
 
 void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -48,25 +46,6 @@ void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 QPainterPath HIconRectItem::shape() const
 {
     return pRectObj->shape();
-    /*
-    QPainterPath path;
-    QRectF rectPath;
-    rectPath.setX(rect().x() - 10);
-    rectPath.setY(rect().y() - 10);
-    rectPath.setWidth(rect().width() + 20);
-    rectPath.setHeight(rect().height() + 20);
-    path.addRect(rectPath);
-    return path;*/
-    /*QPainterPathStroker ps;
-    ps.setWidth(20);
-    path.moveTo(rect().topLeft());
-    path.lineTo(rect().topRight());
-    path.lineTo(rect().bottomRight());
-    path.lineTo(rect().bottomLeft());
-    path.lineTo(rect().topLeft());
-    return ps.createStroke(path);*/
-
-
 }
 
 int HIconRectItem::type() const
@@ -85,11 +64,12 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qreal fRotateAngle = pRectObj->getRotateAngle();
     QTransform transform;
+    //transform.translate(rect().center().x(),rect().center().y());
     transform.rotate(-fRotateAngle);
     QPointF pt = transform.map(event->scenePos()) - transform.map(pointStart);
     transform.rotate(fRotateAngle);
 
-
+    QPointF pt1 = event->scenePos() - pointStart;
     qreal deltaX =pt.x();
     qreal deltaY = pt.y();
     pointStart = event->scenePos();
@@ -128,7 +108,12 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pRectObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp;
+        recttemp.setTopLeft(pRectObj->topLeft);
+        recttemp.setWidth(pRectObj->rectWidth);
+        recttemp.setHeight(pRectObj->rectHeight);
+        setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -184,13 +169,22 @@ void HIconRectItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
+    pRectObj->topLeft = rect.topLeft();
+    pRectObj->rectWidth = rect.width();
+    pRectObj->rectHeight = rect.height();
+    QPointF p = mapToScene(rect.center());
+    pRectObj->setOX(p.x());
+    pRectObj->setOY(p.y());
+    pRectObj->setModify(true);
     rectF = rect;
-    refreshBaseObj();
     update();
 }
 
-QRectF HIconRectItem::rect()const
+QRectF HIconRectItem::rect() const
 {
+    //rectF.setTopLeft(pRectObj->topLeft);
+    //rectF.setWidth(pRectObj->rectWidth);
+    //rectF.setHeight(pRectObj->rectHeight);
     return rectF;
 }
 

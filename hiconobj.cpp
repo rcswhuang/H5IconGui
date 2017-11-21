@@ -187,12 +187,7 @@ void HLineObj::resize(double w,double h)
 
 QRectF HLineObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+   return shape().controlPointRect();
 }
 
 bool HLineObj::contains(const QPointF &point) const
@@ -203,16 +198,17 @@ bool HLineObj::contains(const QPointF &point) const
 QPainterPath HLineObj::shape() const
 {
     QPainterPath path;
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    path.addRect(boundingRect);
-
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
-    return path;
+    QPainterPathStroker ps;
+    int w = arrowWidth;
+    int h = arrowHeight;
+    quint16 arrowLength = sqrt(w*w+h*h);
+    int pen = (int)(arrowLength*sin(PI/3))*2+1;
+    if(pen <= 20)
+        pen = 20;
+    ps.setWidth(pen);
+    path.moveTo(pfHeadPoint);
+    path.lineTo(pfTailPoint);
+    return ps.createStroke(path);
 }
 
 void HLineObj::paint(QPainter* painter)
@@ -318,7 +314,7 @@ void HLineObj::paint(QPainter* painter)
     painter->drawLine(QLineF(ptS,ptE));
 
 
-    if(pItem->isSelected())
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(penClr,penWidth,penStyle);
         painter->setPen(pen1);
@@ -431,12 +427,7 @@ void HRectObj::moveBy(qreal dx, qreal dy)
 
 QRectF HRectObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+    return shape().controlPointRect();
 }
 
 bool HRectObj::contains(const QPointF &point) const
@@ -448,20 +439,25 @@ QPainterPath HRectObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
 
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
+    /*QPainterPath path;
+    QRectF rectPath;
+    rectPath.setX(rect().x() - 10);
+    rectPath.setY(rect().y() - 10);
+    rectPath.setWidth(rect().width() + 20);
+    rectPath.setHeight(rect().height() + 20);
+    path.addRect(rectPath);*/
     return path;
 }
 
 void HRectObj::paint(QPainter* painter)
 {
-    //HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
+    HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -476,22 +472,22 @@ void HRectObj::paint(QPainter* painter)
     quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
-
-    //QPointF centerPoint = pItem->boundingRect().center();
-    QRectF rect = boundingRect();
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    //painter->translate(centerPoint);
-    painter->rotate(fRotateAngle/qreal(16.0));
-
-    //pItem->setTransformOriginPoint(centerPoint);
-
-    //QTransform transform;
-    //transform.rotate(fRotateAngle,Qt::ZAxis);
-    //painter->setTransform(transform);
-
-
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        painter->setTransform(transform);
+    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -600,8 +596,8 @@ void HRectObj::paint(QPainter* painter)
     }
     painter->fillRect(rect,brush);
 
-    /*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
@@ -610,23 +606,23 @@ void HRectObj::paint(QPainter* painter)
         QRectF rect1,rect2,rect3,rect4;
         rect1.setSize(QSizeF(halfpw,halfpw));
         QPointF pt21,pt22,pt23,pt24;
-        pt21 = pItem->rect().topLeft();
-        pt22 = pItem->rect().topRight();
-        pt23 = pItem->rect().bottomLeft();
-        pt24 = pItem->rect().bottomRight();
-        rect1.moveCenter(pItem->rect().topLeft());
+        pt21 = rect.topLeft();
+        pt22 = rect.topRight();
+        pt23 = rect.bottomLeft();
+        pt24 = rect.bottomRight();
+        rect1.moveCenter(rect.topLeft());
         rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(pItem->rect().topRight());
+        rect2.moveCenter(rect.topRight());
         rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(pItem->rect().bottomLeft());
+        rect3.moveCenter(rect.bottomLeft());
         rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(pItem->rect().bottomRight());
+        rect4.moveCenter(rect.bottomRight());
 
         painter->drawRect(rect1);
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }*/
+    }
     painter->restore();
 
 }
@@ -1344,9 +1340,32 @@ void HPolygonObj::moveBy(qreal dx, qreal dy)
    }
 }
 
+QRectF HPolygonObj::boundingRect() const
+{
+   return shape().controlPointRect();
+}
+
+bool HPolygonObj::contains(const QPointF &point) const
+{
+    return shape().contains(point);
+}
+
+QPainterPath HPolygonObj::shape() const
+{
+    QPainterPath path;
+    path.addPolygon(pylist);
+    QPainterPathStroker ps;
+    int pen = 10;
+    ps.setWidth(pen);
+    QPainterPath p = ps.createStroke(path);
+    p.addPath(path);
+    return p;
+}
+
+
 void HPolygonObj::paint(QPainter* painter)
 {
-    HIconPolygonItem* pItem = qgraphicsitem_cast<HIconPolygonItem*>(getIconGraphicsItem());
+    //HIconPolygonItem* pItem = qgraphicsitem_cast<HIconPolygonItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -1361,12 +1380,17 @@ void HPolygonObj::paint(QPainter* painter)
     quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
+    QRectF rect = boundingRect();
+    QPointF centerPoint = boundingRect().center();
+
     painter->save();
-    QPointF centerPoint = pItem->boundingRect().center();
+    painter->rotate(fRotateAngle/qreal(16.0));
+
+    /*QPointF centerPoint = pItem->boundingRect().center();
     pItem->setTransformOriginPoint(centerPoint);
     QTransform transform;
     transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);
+    pItem->setTransform(transform);*/
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -1377,18 +1401,19 @@ void HPolygonObj::paint(QPainter* painter)
     else
         painter->setPen(Qt::NoPen);
 
+    QPolygonF polygon(pylist);
     QPainterPath path;
-    if(pItem->polygon().isClosed())
+    if(polygon.isClosed())
     {
         path.setFillRule(Qt::WindingFill);
-        path.addPolygon(pItem->polygon());
+        path.addPolygon(polygon);
         painter->drawPath(path);
     }
     else
     {
-        path.moveTo(pItem->polygon().at(0));
-        for(int i = 1; i < pItem->polygon().size();i++)
-            path.lineTo(pItem->polygon().at(i));
+        path.moveTo(polygon.at(0));
+        for(int i = 1; i < polygon.size();i++)
+            path.lineTo(polygon.at(i));
         painter->drawPath(path);
     }
 
@@ -1403,50 +1428,50 @@ void HPolygonObj::paint(QPainter* painter)
             {
                 case DIRECT_BOTTOM_TO_TOP:
                 {
-                    ps2 = pItem->rect().topLeft();
-                    ps1 = pItem->rect().bottomLeft();
+                    ps2 = rect.topLeft();
+                    ps1 = rect.bottomLeft();
                     break;
                 }
                 case DIRECT_TOP_TO_BOTTOM: //有顶到底
                 {
-                    ps1 = pItem->rect().topLeft();
-                    ps2 = pItem->rect().bottomLeft();
+                    ps1 = rect.topLeft();
+                    ps2 = rect.bottomLeft();
                     break;
                 }
                 case DIRECT_LEFT_TO_RIGHT: //由左到右
                 {
-                    ps1 = pItem->rect().topLeft();
-                    ps2 = pItem->rect().topRight();
+                    ps1 = rect.topLeft();
+                    ps2 = rect.topRight();
                     break;
                 }
                 case DIRECT_RIGHT_TO_LEFT: //由右到左
                 {
-                    ps1 = pItem->rect().topRight();
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = rect.topRight();
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_VER_TO_OUT: //垂直到外
                 {
-                    ps1 = QPointF(pItem->rect().center().x(),pItem->rect().top());
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = QPointF(rect.center().x(),rect.top());
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_HORi_TO_OUT: //水平向外
                 {
-                    ps1 = QPointF(pItem->rect().left(),pItem->rect().center().y());
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = QPointF(rect.left(),rect.center().y());
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_VER_TO_IN: //垂直向里
                 {
-                    ps2 = QPointF(pItem->rect().center().x(),pItem->rect().top());
-                    ps1 = pItem->rect().topLeft();
+                    ps2 = QPointF(rect.center().x(),rect.top());
+                    ps1 = rect.topLeft();
                     break;
                 }
                 case DIRECT_HORI_TO_IN: //垂直向里
                 {
-                    ps2 = QPointF(pItem->rect().left(),pItem->rect().center().y());
-                    ps1 = pItem->rect().topLeft();
+                    ps2 = QPointF(rect.left(),rect.center().y());
+                    ps1 = rect.topLeft();
                     break;
                 }
             }
@@ -1460,7 +1485,7 @@ void HPolygonObj::paint(QPainter* painter)
         }
         else if(nFillStyle == Qt::RadialGradientPattern)
         {
-            QRadialGradient lgrd(pItem->rect().center(),qMin(pItem->rect().width(),pItem->rect().height())/2);
+            QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
             lgrd.setColorAt(0.0,fillClr);
             lgrd.setColorAt(0.5,fillClr.dark(150));
             lgrd.setColorAt(1.0,fillClr.dark(250));
@@ -1470,7 +1495,7 @@ void HPolygonObj::paint(QPainter* painter)
         }
         else if(nFillStyle == Qt::ConicalGradientPattern)
         {
-            QConicalGradient lgrd(pItem->rect().center(),270);
+            QConicalGradient lgrd(rect.center(),270);
             lgrd.setColorAt(0.0,fillClr);
             lgrd.setColorAt(0.5,fillClr.lighter(150));
             lgrd.setColorAt(1.0,fillClr.lighter(250));
@@ -1485,13 +1510,13 @@ void HPolygonObj::paint(QPainter* painter)
             brush = brush1;
         }
     }
-    if(pItem->polygon().isClosed())
+    if(polygon.isClosed())
     {
         painter->setBrush(brush);
         path.setFillRule(Qt::WindingFill);
         painter->drawPath(path);
     }
-
+/*
     if(pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
@@ -1511,7 +1536,7 @@ void HPolygonObj::paint(QPainter* painter)
             delete[] pRect;
             pRect = NULL;
         }
-    }
+    }*/
     painter->restore();
 }
 
@@ -1634,9 +1659,32 @@ void HPolylineObj::moveBy(qreal dx, qreal dy)
    }
 }
 
+QRectF HPolylineObj::boundingRect() const
+{
+   return shape().controlPointRect();
+}
+
+bool HPolylineObj::contains(const QPointF &point) const
+{
+    return shape().contains(point);
+}
+
+QPainterPath HPolylineObj::shape() const
+{
+    QPainterPath path;
+    path.addPolygon(pylist);
+    QPainterPathStroker ps;
+    int pen = 10;
+    ps.setWidth(pen);
+    QPainterPath p = ps.createStroke(path);
+    p.addPath(path);
+    return p;
+}
+
+
 void HPolylineObj::paint(QPainter* painter)
 {
-    HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
+    //HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -1651,12 +1699,16 @@ void HPolylineObj::paint(QPainter* painter)
     quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
+    QRectF rect = boundingRect();
+    QPointF centerPoint = boundingRect().center();
+
     painter->save();
-    QPointF centerPoint = pItem->boundingRect().center();
+    painter->rotate(fRotateAngle/qreal(16.0));
+    /*QPointF centerPoint = pItem->boundingRect().center();
     pItem->setTransformOriginPoint(centerPoint);
     QTransform transform;
     transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);
+    pItem->setTransform(transform);*/
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -1667,10 +1719,11 @@ void HPolylineObj::paint(QPainter* painter)
     else
         painter->setPen(Qt::NoPen);
 
+    QPolygonF polygon(pylist);
     QPainterPath path;
-    path.moveTo(pItem->polygon().at(0));
-    for(int i = 1; i < pItem->polygon().size();i++)
-        path.lineTo(pItem->polygon().at(i));
+    path.moveTo(polygon.at(0));
+    for(int i = 1; i < polygon.size();i++)
+        path.lineTo(polygon.at(i));
     painter->drawPath(path);
 
 
@@ -1685,50 +1738,50 @@ void HPolylineObj::paint(QPainter* painter)
             {
                 case DIRECT_BOTTOM_TO_TOP:
                 {
-                    ps2 = pItem->rect().topLeft();
-                    ps1 = pItem->rect().bottomLeft();
+                    ps2 = rect.topLeft();
+                    ps1 = rect.bottomLeft();
                     break;
                 }
                 case DIRECT_TOP_TO_BOTTOM: //有顶到底
                 {
-                    ps1 = pItem->rect().topLeft();
-                    ps2 = pItem->rect().bottomLeft();
+                    ps1 = rect.topLeft();
+                    ps2 = rect.bottomLeft();
                     break;
                 }
                 case DIRECT_LEFT_TO_RIGHT: //由左到右
                 {
-                    ps1 = pItem->rect().topLeft();
-                    ps2 = pItem->rect().topRight();
+                    ps1 = rect.topLeft();
+                    ps2 = rect.topRight();
                     break;
                 }
                 case DIRECT_RIGHT_TO_LEFT: //由右到左
                 {
-                    ps1 = pItem->rect().topRight();
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = rect.topRight();
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_VER_TO_OUT: //垂直到外
                 {
-                    ps1 = QPointF(pItem->rect().center().x(),pItem->rect().top());
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = QPointF(rect.center().x(),rect.top());
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_HORi_TO_OUT: //水平向外
                 {
-                    ps1 = QPointF(pItem->rect().left(),pItem->rect().center().y());
-                    ps2 = pItem->rect().topLeft();
+                    ps1 = QPointF(rect.left(),rect.center().y());
+                    ps2 = rect.topLeft();
                     break;
                 }
                 case DIRECT_VER_TO_IN: //垂直向里
                 {
-                    ps2 = QPointF(pItem->rect().center().x(),pItem->rect().top());
-                    ps1 = pItem->rect().topLeft();
+                    ps2 = QPointF(rect.center().x(),rect.top());
+                    ps1 = rect.topLeft();
                     break;
                 }
                 case DIRECT_HORI_TO_IN: //垂直向里
                 {
-                    ps2 = QPointF(pItem->rect().left(),pItem->rect().center().y());
-                    ps1 = pItem->rect().topLeft();
+                    ps2 = QPointF(rect.left(),rect.center().y());
+                    ps1 = rect.topLeft();
                     break;
                 }
             }
@@ -1742,7 +1795,7 @@ void HPolylineObj::paint(QPainter* painter)
         }
         else if(nFillStyle == Qt::RadialGradientPattern)
         {
-            QRadialGradient lgrd(pItem->rect().center(),qMin(pItem->rect().width(),pItem->rect().height())/2);
+            QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
             lgrd.setColorAt(0.0,fillClr);
             lgrd.setColorAt(0.5,fillClr.dark(150));
             lgrd.setColorAt(1.0,fillClr.dark(250));
@@ -1752,7 +1805,7 @@ void HPolylineObj::paint(QPainter* painter)
         }
         else if(nFillStyle == Qt::ConicalGradientPattern)
         {
-            QConicalGradient lgrd(pItem->rect().center(),270);
+            QConicalGradient lgrd(rect.center(),270);
             lgrd.setColorAt(0.0,fillClr);
             lgrd.setColorAt(0.5,fillClr.lighter(150));
             lgrd.setColorAt(1.0,fillClr.lighter(250));
@@ -1767,7 +1820,7 @@ void HPolylineObj::paint(QPainter* painter)
             brush = brush1;
         }
     }
-
+/*
     if(pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
@@ -1787,7 +1840,7 @@ void HPolylineObj::paint(QPainter* painter)
             delete[] pRect;
             pRect = NULL;
         }
-    }
+    }*/
     painter->restore();
 }
 
@@ -2723,7 +2776,7 @@ void HTextObj::paint(QPainter* painter)
     qreal fRotateAngle = getRotateAngle();
     QRectF rect = boundingRect();
     QRectF mainRectF = boundingRect();
-    //QRectF drawRectF = mainRectF;
+    QRectF drawRectF = mainRectF;
     QPointF centerPoint = boundingRect().center();
 
     painter->save();
@@ -2839,8 +2892,8 @@ void HTextObj::paint(QPainter* painter)
             QBrush brush1(fillClr,bs);
             brush = brush1;
         }
-        qreal top = mainRectF.top()*(float)(nFillPercentage/100.00);
-        drawRectF.setTop(top);
+       // qreal top = mainRectF.top()*(float)(nFillPercentage/100.00);
+        //drawRectF.setTop(top);
     }
     painter->fillRect(drawRectF,brush);
     painter->restore();

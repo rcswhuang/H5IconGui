@@ -49,19 +49,7 @@ void HIconLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 QPainterPath HIconLineItem::shape() const
 {
-    QPainterPath path;// = QGraphicsLineItem::shape();
-    QPainterPathStroker ps;
-    int w = pLineObj->getArrowWidth();
-    int h = pLineObj->getArrowHeight();
-    quint16 arrowLength = sqrt(w*w+h*h);
-    int pen = (int)(arrowLength*sin(PI/3))*2+1;
-    if(pen <= 20)
-        pen = 20;
-    ps.setWidth(pen);
-    path.moveTo(line().p1());
-    path.lineTo(line().p2());
-    return ps.createStroke(path);
-    //return path;
+   return pLineObj->shape();
 }
 
 int HIconLineItem::type() const
@@ -100,7 +88,9 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pLineObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QLineF lineF(pLineObj->pfHeadPoint,pLineObj->pfTailPoint);
+        setLine(lineF);
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -163,8 +153,11 @@ void HIconLineItem::setLine(const QLineF &line)
 {
     if(lineF == line) return;
     prepareGeometryChange();
+    //lineF = line;
+    //refreshBaseObj();
+    pLineObj->pfHeadPoint = line.p1();
+    pLineObj->pfTailPoint = line.p2();
     lineF = line;
-    refreshBaseObj();
     update();
 }
 
