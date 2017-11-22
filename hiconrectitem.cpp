@@ -37,10 +37,7 @@ bool HIconRectItem::contains(const QPointF &point) const
 
 void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    if(!pRectObj)
-        return;
     pRectObj->paint(painter);
-
 }
 
 QPainterPath HIconRectItem::shape() const

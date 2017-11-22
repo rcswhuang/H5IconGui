@@ -434,8 +434,8 @@ HIconShowPattern* HIconSymbol::getCurrentPatternPtr()
 void HIconSymbol::resize(double w,double h)
 {
     QSizeF pt = pIconTemplate->getDefaultSize();
-    double w1 = w/(pt.width()*10);
-    double h1 = h/(pt.height()*10);
+    double w1 = w/(pt.width()*20);
+    double h1 = h/(pt.height()*20);
     for(int i = 0; i < pShowPatternVector.count();i++)
     {
         HIconShowPattern* pattern = (HIconShowPattern*)(pShowPatternVector[i]);

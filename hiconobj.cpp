@@ -12,6 +12,7 @@
 #include "H5IconGui/hiconpolylineitem.h"
 #include "H5IconGui/hicontextitem.h"
 #include "H5IconGui/hiconcomplexitem.h"
+#include <QDebug>
 HLineObj::HLineObj()
 {
     arrowHeight = 0;
@@ -484,9 +485,9 @@ void HRectObj::paint(QPainter* painter)
     }
     else
     {
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        painter->setTransform(transform);
+        //QTransform transform;
+        //transform.rotate(fRotateAngle);
+        //painter->setTransform(transform);
     }
 
     QPen pen = QPen(penClr);
