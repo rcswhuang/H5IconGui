@@ -169,8 +169,8 @@ void HIconRectItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-    refreshBaseObj(rect);
     rectF = rect;
+    refreshBaseObj(rect);
     update();
 }
 
@@ -208,12 +208,12 @@ void HIconRectItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconRectItem::refreshBaseObj(const QRectF& rect)
+void HIconRectItem::refreshBaseObj(const QRectF& rec1t)
 {
-    pRectObj->topLeft = rect.topLeft();
-    pRectObj->rectWidth = rect.width();
-    pRectObj->rectHeight = rect.height();
-    QPointF p = rect.center();
+    pRectObj->topLeft = rect().topLeft();
+    pRectObj->rectWidth = rect().width();
+    pRectObj->rectHeight = rect().height();
+    QPointF p = rect().center();
     pRectObj->setOX(p.x());
     pRectObj->setOY(p.y());
     pRectObj->setModify(true);

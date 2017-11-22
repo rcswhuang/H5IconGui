@@ -23,7 +23,7 @@ HIconPolylineItem::HIconPolylineItem(const QPolygonF &polygonF, HIconGraphicsIte
     setFlag(QGraphicsItem::ItemIsSelectable,true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
     setFlag(QGraphicsItem::ItemIsFocusable,true);
-    pPolylineObj = new HPolylineObj();
+    pPolylineObj = NULL;
 }
 
 QRectF HIconPolylineItem::boundingRect() const
@@ -38,21 +38,12 @@ bool HIconPolylineItem::contains(const QPointF &point) const
 
 void HIconPolylineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-   pPolylineObj->paint(painter);
+    pPolylineObj->paint(painter);
 }
 
 QPainterPath HIconPolylineItem::shape() const
 {
-    QPainterPath path;
-    QRectF rectPath;
-    //不是最好的方法 但现在只能用这个
-    QRectF polyRect = polygon().boundingRect();
-    rectPath.setX(polyRect.x() - 10);
-    rectPath.setY(polyRect.y() - 10);
-    rectPath.setWidth(polyRect.width() + 20);
-    rectPath.setHeight(polyRect.height() + 20);
-    path.addRect(rectPath);
-    return path;
+    return pPolylineObj->shape();
 }
 
 int HIconPolylineItem::type() const
@@ -95,7 +86,8 @@ void HIconPolylineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pPolylineObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QPolygonF polygonF = pPolylineObj->pylist;
+        setPolygon(polygonF);
     }
 }
 
@@ -213,6 +205,9 @@ void HIconPolylineItem::refreshBaseObj()
 void HIconPolylineItem::setItemObj(HBaseObj* pObj)
 {
     pPolylineObj = (HPolylineObj*)pObj;
+    pPolylineObj->setIconGraphicsItem(this);
+    if(pPolylineObj)
+        setPolygon(pyVector);
 }
 
 HBaseObj* HIconPolylineItem::getItemObj()

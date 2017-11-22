@@ -23,7 +23,7 @@ HIconPolygonItem::HIconPolygonItem(const QPolygonF &polygonF, HIconGraphicsItem 
     setFlag(QGraphicsItem::ItemIsSelectable,true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
     setFlag(QGraphicsItem::ItemIsFocusable,true);
-    pPolygonObj = new HPolygonObj();
+    pPolygonObj = NULL;
 }
 
 QRectF HIconPolygonItem::boundingRect() const
@@ -43,16 +43,7 @@ void HIconPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 QPainterPath HIconPolygonItem::shape() const
 {
-    QPainterPath path;
-    QRectF rectPath;
-    //不是最好的方法 但现在只能用这个
-    QRectF polyRect = polygon().boundingRect();
-    rectPath.setX(polyRect.x() - 10);
-    rectPath.setY(polyRect.y() - 10);
-    rectPath.setWidth(polyRect.width() + 20);
-    rectPath.setHeight(polyRect.height() + 20);
-    path.addRect(rectPath);
-    return path;
+    return pPolygonObj->shape();
 }
 
 int HIconPolygonItem::type() const
@@ -101,7 +92,9 @@ void HIconPolygonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pPolygonObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QPolygonF polygonF = pPolygonObj->pylist;
+        setPolygon(polygonF);
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -191,7 +184,7 @@ void HIconPolygonItem::setItemCursor(int location)
 
 void HIconPolygonItem::setPolygon(const QPolygonF & polygon)
 {
-    if(pyVector == polygon || polygon.size() == 0) return;
+    if(polygon.size() == 0) return;
     prepareGeometryChange();
     pyVector = polygon;
     refreshBaseObj();
@@ -219,6 +212,9 @@ void HIconPolygonItem::refreshBaseObj()
 void HIconPolygonItem::setItemObj(HBaseObj* pObj)
 {
     pPolygonObj = (HPolygonObj*)pObj;
+    pPolygonObj->setIconGraphicsItem(this);
+    if(pPolygonObj)
+        setPolygon(pyVector);
 }
 
 HBaseObj* HIconPolygonItem::getItemObj()

@@ -1327,11 +1327,13 @@ DRAWSHAPE HPolygonObj::getShapeType()
 
 void HPolygonObj::moveBy(qreal dx, qreal dy)
 {
-   foreach(QPointF pt,pylist)
-   {
-       pt.setX(pt.x()+dx);
-       pt.setY(pt.y()+dy);
-   }
+    for(int i = 0; i < pylist.count();i++)
+    {
+        QPointF pt = pylist[i];
+        pt.setX(pt.x()+dx);
+        pt.setY(pt.y()+dy);
+        pylist[i] = pt;
+    }
 }
 
 QRectF HPolygonObj::boundingRect() const
@@ -1359,7 +1361,7 @@ QPainterPath HPolygonObj::shape() const
 
 void HPolygonObj::paint(QPainter* painter)
 {
-    //HIconPolygonItem* pItem = qgraphicsitem_cast<HIconPolygonItem*>(getIconGraphicsItem());
+    HIconPolygonItem* pItem = qgraphicsitem_cast<HIconPolygonItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -1374,11 +1376,12 @@ void HPolygonObj::paint(QPainter* painter)
     quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
-    QRectF rect = boundingRect();
+    if(pylist.count() == 0) return;
+    QRectF rect = QPolygonF(pylist).boundingRect();
     QPointF centerPoint = boundingRect().center();
 
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
+    //painter->rotate(fRotateAngle/qreal(16.0));
 
     /*QPointF centerPoint = pItem->boundingRect().center();
     pItem->setTransformOriginPoint(centerPoint);
@@ -1510,8 +1513,8 @@ void HPolygonObj::paint(QPainter* painter)
         path.setFillRule(Qt::WindingFill);
         painter->drawPath(path);
     }
-/*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
@@ -1530,16 +1533,18 @@ void HPolygonObj::paint(QPainter* painter)
             delete[] pRect;
             pRect = NULL;
         }
-    }*/
+    }
     painter->restore();
 }
 
 void HPolygonObj::resize(double w,double h)
 {
-    foreach(QPointF pt,pylist)
+    for(int i = 0; i < pylist.count();i++)
     {
+        QPointF pt = pylist[i];
         pt.setX(pt.x()*w);
         pt.setY(pt.y()*h);
+        pylist[i] = pt;
     }
 }
 
@@ -1646,10 +1651,12 @@ DRAWSHAPE HPolylineObj::getShapeType()
 
 void HPolylineObj::moveBy(qreal dx, qreal dy)
 {
-   foreach(QPointF pt,pylist)
+   for(int i = 0; i < pylist.count();i++)
    {
+       QPointF pt = pylist[i];
        pt.setX(pt.x()+dx);
        pt.setY(pt.y()+dy);
+       pylist[i] = pt;
    }
 }
 
@@ -1678,7 +1685,7 @@ QPainterPath HPolylineObj::shape() const
 
 void HPolylineObj::paint(QPainter* painter)
 {
-    //HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
+    HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -1693,11 +1700,12 @@ void HPolylineObj::paint(QPainter* painter)
     quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
-    QRectF rect = boundingRect();
+    if(pylist.count() == 0) return;
+    QRectF rect = QPolygonF(pylist).boundingRect();
     QPointF centerPoint = boundingRect().center();
 
     painter->save();
-    painter->rotate(fRotateAngle/qreal(16.0));
+    //painter->rotate(fRotateAngle/qreal(16.0));
     /*QPointF centerPoint = pItem->boundingRect().center();
     pItem->setTransformOriginPoint(centerPoint);
     QTransform transform;
@@ -1814,8 +1822,8 @@ void HPolylineObj::paint(QPainter* painter)
             brush = brush1;
         }
     }
-/*
-    if(pItem->isSelected())
+
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
@@ -1834,16 +1842,18 @@ void HPolylineObj::paint(QPainter* painter)
             delete[] pRect;
             pRect = NULL;
         }
-    }*/
+    }
     painter->restore();
 }
 
 void HPolylineObj::resize(double w,double h)
 {
-    foreach(QPointF pt,pylist)
+    for(int i = 0; i < pylist.count();i++)
     {
+        QPointF pt = pylist[i];
         pt.setX(pt.x()*w);
         pt.setY(pt.y()*h);
+        pylist[i] = pt;
     }
 }
 
@@ -2014,6 +2024,7 @@ QPainterPath HArcObj::shape() const
 void HArcObj::paint(QPainter* painter)
 {
     HIconArcItem* pItem = qgraphicsitem_cast<HIconArcItem*>(getIconGraphicsItem());
+    HIconArcItem* pItem1 = (HIconArcItem*)getIconGraphicsItem();
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状

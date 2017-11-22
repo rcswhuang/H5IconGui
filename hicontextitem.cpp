@@ -42,7 +42,7 @@ void HIconTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 QPainterPath HIconTextItem::shape() const
 {
-    pTextObj->shape();
+    return pTextObj->shape();
 }
 
 int HIconTextItem::type() const

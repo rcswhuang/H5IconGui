@@ -43,7 +43,7 @@ void HIconPieItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 QPainterPath HIconPieItem::shape() const
 {
-   pPieObj->shape();
+   return pPieObj->shape();
 }
 
 int HIconPieItem::type() const

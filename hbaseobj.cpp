@@ -220,6 +220,7 @@ void HBaseObj::copyTo(HBaseObj* obj)
     //id暂时不能复制 只能等到粘贴的时候才能赋值
     obj->drawShape = drawShape;
     obj->strObjName = strObjName;
+    obj->nObjectId = nObjectId;
     obj->originX = originX;
     obj->originY = originY;
     obj->fRotateAngle = fRotateAngle;
@@ -513,12 +514,12 @@ void HBaseObj::setTurn(bool bHorizon,bool bVertical)
 }
 
 //是否可见
-void HBaseObj::setVisible(qint8 vis,int nFlag)
+void HBaseObj::setVisible(bool bvisible,int nFlag)
 {
-
+    bVisible = bvisible;
 }
 
-qint8 HBaseObj::isVisible()
+bool HBaseObj::isVisible()
 {
     return bVisible;
 }

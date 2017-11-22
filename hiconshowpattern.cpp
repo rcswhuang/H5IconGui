@@ -13,7 +13,6 @@ HIconShowPattern::~HIconShowPattern()
 void HIconShowPattern::readXml(QDomElement* dom)
 {
     if(!dom) return;
-    //实际上没有
     QDomElement objEle = dom->namedItem("ShowPatterns").toElement();
     //构建下面的元素对象
     QDomNode n = objEle.firstChild();
@@ -44,6 +43,7 @@ void HIconShowPattern::writeXml(QDomElement *dom)
         {
             pObjList.removeAt(i);
             delete pObj;
+            i--;
             continue;
         }
         QDomElement childEle = dom->ownerDocument().createElement(pObj->TagName());
