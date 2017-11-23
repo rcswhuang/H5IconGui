@@ -171,10 +171,10 @@ void HBaseObj::readXml(QDomElement* dom)
     nLineCapStyle = dom->attribute("LineCapStyle").toUInt();
     nFillWay = dom->attribute("FillWay").toUInt();
     nFillStyle = dom->attribute("FillStyle").toUInt();
-    strFillColor = dom->attribute("FillColor").toUInt();
+    strFillColor = dom->attribute("FillColor");
     nFillDirection = dom->attribute("FillDirection").toUInt();
 
-    nFillStyle = dom->attribute("nFillPercentage").toUInt();
+    nFillPercentage = dom->attribute("nFillPercentage").toUInt();
     bFrameSee = (bool)dom->attribute("FrameSee").toUInt();
     nTransparency = dom->attribute("Transparency").toUInt();
     fRotateAngle = dom->attribute("RotateAngle").toDouble();
@@ -373,14 +373,14 @@ quint8 HBaseObj::getFillWay()
 }
 
 //填充风格
-void HBaseObj::setFillStyle(Qt::BrushStyle style)
+void HBaseObj::setFillStyle(quint8 style)
 {
     nFillStyle = style;
 }
 
-Qt::BrushStyle HBaseObj::getFillStyle()
+quint8 HBaseObj::getFillStyle()
 {
-    return (Qt::BrushStyle)nFillStyle;
+    return nFillStyle;
 }
 
 //填充方向

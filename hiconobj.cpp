@@ -73,10 +73,10 @@ void HLineObj::readXml(QDomElement* dom)
     pfHeadPoint.setY(dom->attribute("pfHeadPointy").toDouble());
     pfTailPoint.setX(dom->attribute("pfTailPointx").toDouble());
     pfTailPoint.setY(dom->attribute("pfTailPointy").toDouble());
-    arrowStart = dom->attribute("arrowStart").toInt();
-    arrowEnd = dom->attribute("arrowEnd").toInt();
-    arrowWidth = dom->attribute("arrowWidth").toInt();
-    arrowHeight = dom->attribute("arrowHeight").toInt();
+    arrowStart = dom->attribute("arrowStart").toUInt();
+    arrowEnd = dom->attribute("arrowEnd").toUInt();
+    arrowWidth = dom->attribute("arrowWidth").toDouble();
+    arrowHeight = dom->attribute("arrowHeight").toDouble();
 
 }
 
@@ -485,9 +485,7 @@ void HRectObj::paint(QPainter* painter)
     }
     else
     {
-        //QTransform transform;
-        //transform.rotate(fRotateAngle);
-        //painter->setTransform(transform);
+        painter->rotate(fRotateAngle);
     }
 
     QPen pen = QPen(penClr);
@@ -680,8 +678,8 @@ void HEllipseObj::readXml(QDomElement* dom)
     HBaseObj::readXml(dom);
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
-    rectWidth = dom->attribute("rectWidth").toInt();
-    rectHeight = dom->attribute("rectHeight").toInt();
+    rectWidth = dom->attribute("rectWidth").toDouble();
+    rectHeight = dom->attribute("rectHeight").toDouble();
 }
 
 void HEllipseObj::writeXml(QDomElement* dom)
@@ -778,9 +776,7 @@ void HEllipseObj::paint(QPainter* painter)
     }
     else
     {
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        painter->setTransform(transform);
+        painter->rotate(fRotateAngle);
     }
 
     QPen pen = QPen(penClr);
@@ -973,8 +969,8 @@ void HCircleObj::readXml(QDomElement* dom)
     HBaseObj::readXml(dom);
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
-    rectWidth = dom->attribute("rectWidth").toInt();
-    rectHeight = dom->attribute("rectHeight").toInt();
+    rectWidth = dom->attribute("rectWidth").toDouble();
+    rectHeight = dom->attribute("rectHeight").toDouble();
 }
 
 void HCircleObj::writeXml(QDomElement* dom)
@@ -1071,9 +1067,7 @@ void HCircleObj::paint(QPainter* painter)
     }
     else
     {
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        painter->setTransform(transform);
+        painter->rotate(fRotateAngle);
     }
 
     QPen pen = QPen(penClr);
@@ -1379,16 +1373,20 @@ void HPolygonObj::paint(QPainter* painter)
 
     if(pylist.count() == 0) return;
     QRectF rect = QPolygonF(pylist).boundingRect();
-    QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    //painter->rotate(fRotateAngle/qreal(16.0));
-
-    /*QPointF centerPoint = pItem->boundingRect().center();
-    pItem->setTransformOriginPoint(centerPoint);
-    QTransform transform;
-    transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);*/
+    QPointF centerPoint = boundingRect().center();
+    painter->save();
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        painter->rotate(fRotateAngle);
+    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -1704,14 +1702,18 @@ void HPolylineObj::paint(QPainter* painter)
     if(pylist.count() == 0) return;
     QRectF rect = QPolygonF(pylist).boundingRect();
     QPointF centerPoint = boundingRect().center();
-
     painter->save();
-    //painter->rotate(fRotateAngle/qreal(16.0));
-    /*QPointF centerPoint = pItem->boundingRect().center();
-    pItem->setTransformOriginPoint(centerPoint);
-    QTransform transform;
-    transform.rotate(fRotateAngle);
-    pItem->setTransform(transform);*/
+    if(pItem)
+    {
+        pItem->setTransformOriginPoint(centerPoint);
+        QTransform transform;
+        transform.rotate(fRotateAngle);
+        pItem->setTransform(transform);
+    }
+    else
+    {
+        painter->rotate(fRotateAngle);
+    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -1914,11 +1916,11 @@ void HArcObj::readXml(QDomElement* dom)
     HBaseObj::readXml(dom);
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
-    rectWidth = dom->attribute("rectWidth").toInt();
-    rectHeight = dom->attribute("rectHeight").toInt();
+    rectWidth = dom->attribute("rectWidth").toDouble();
+    rectHeight = dom->attribute("rectHeight").toDouble();
     startAngle = dom->attribute("startAngle").toInt();
     spanAngle = dom->attribute("spanAngle").toInt();
-    bCloseCheck = dom->attribute("bCloseCheck").toInt();
+    bCloseCheck = dom->attribute("bCloseCheck").toUInt();
 }
 
 void HArcObj::writeXml(QDomElement* dom)
@@ -2051,9 +2053,7 @@ void HArcObj::paint(QPainter* painter)
     }
     else
     {
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        painter->setTransform(transform);
+        painter->rotate(fRotateAngle);
     }
 
     QPen pen = QPen(penClr);
@@ -2259,8 +2259,8 @@ void HPieObj::readXml(QDomElement* dom)
     HBaseObj::readXml(dom);
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
-    rectWidth = dom->attribute("rectWidth").toInt();
-    rectHeight = dom->attribute("rectHeight").toInt();
+    rectWidth = dom->attribute("rectWidth").toDouble();
+    rectHeight = dom->attribute("rectHeight").toDouble();
     startAngle = dom->attribute("startAngle").toInt();
     spanAngle = dom->attribute("spanAngle").toInt();
 }
@@ -2382,9 +2382,7 @@ void HPieObj::paint(QPainter* painter)
     }
     else
     {
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        painter->setTransform(transform);
+        painter->rotate(fRotateAngle);
     }
 
     QPen pen = QPen(penClr);
@@ -2528,8 +2526,8 @@ void HTextObj::readXml(QDomElement* dom)
     HBaseObj::readXml(dom);
     topLeft.setX(dom->attribute("topLeftx").toDouble());
     topLeft.setY(dom->attribute("topLefty").toDouble());
-    rectWidth = dom->attribute("rectWidth").toInt();
-    rectHeight = dom->attribute("rectHeight").toInt();
+    rectWidth = dom->attribute("rectWidth").toDouble();
+    rectHeight = dom->attribute("rectHeight").toDouble();
     strTextContent = dom->attribute("textContent");
     textColorName = dom->attribute("textColorName");
     textFontName = dom->attribute("textFontName");
@@ -2779,9 +2777,7 @@ void HTextObj::paint(QPainter* painter)
     }
     else
     {
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        painter->setTransform(transform);
+        painter->rotate(fRotateAngle);
     }
 
     QPen pen = QPen(penClr);
@@ -2891,9 +2887,7 @@ void HTextObj::paint(QPainter* painter)
         //drawRectF.setTop(top);
     }
     painter->fillRect(drawRectF,brush);
-    painter->restore();
 
-    painter->save();
     //设置字体部分
     QString strFontName = getTextFontName();
     int pointSize = getPointSize();
@@ -2919,15 +2913,19 @@ void HTextObj::paint(QPainter* painter)
     }
     painter->drawText(mainRectF,nAlign,strTextContent);
 
+    painter->restore();
+
 
     if(pItem && pItem->isSelected())
     {
-        QPen pen1 = QPen(Qt::green);
+        painter->save();
+        QPen pen1 = QPen(Qt::red);
         pen1.setWidth(1);
         painter->setPen(pen1);
         qreal halfpw = 14.00;
         QRectF rect1,rect2,rect3,rect4;
         rect1.setSize(QSizeF(halfpw,halfpw));
+        QRectF rect11 = pItem->rect();
         rect1.moveCenter(pItem->rect().topLeft());
         rect2.setSize(QSizeF(halfpw,halfpw));
         rect2.moveCenter(pItem->rect().topRight());
@@ -2940,9 +2938,10 @@ void HTextObj::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
+        painter->restore();
     }
 
-    painter->restore();
+
 
 
 
