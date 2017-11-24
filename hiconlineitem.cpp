@@ -19,8 +19,6 @@ HIconLineItem::HIconLineItem(HIconGraphicsItem *parent):HIconGraphicsItem(parent
 
 HIconLineItem::HIconLineItem(const QLineF &line, HIconGraphicsItem *parent):HIconGraphicsItem(parent),lineF(line)
 {
-    //setAcceptDrops(true);
-    pointLocation = LOCATIONNO;
     setFlag(QGraphicsItem::ItemIsMovable,true);
     setFlag(QGraphicsItem::ItemIsSelectable,true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
@@ -59,12 +57,8 @@ int HIconLineItem::type() const
 
 void HIconLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->button() != Qt::LeftButton)
-        return;
     curPointF = event->scenePos();
-    if((pointLocation = pointInRect(curPointF))!=LOCATIONNO)
-        lineMode = LineSize;
-
+    pointLocation = pointInRect(curPointF);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
@@ -72,17 +66,16 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - curPointF;
     curPointF = event->scenePos();
-    if(lineMode == LineSize)
+    if(pointLocation == 1)
     {
         QLineF lineF;
-        if(pointLocation == LOCATIONLEFT)
-        {
-           lineF.setPoints(line().p1()+pt,line().p2());
-        }
-        else if(pointLocation == LOCATIONRIGHT)
-        {
-            lineF.setPoints(line().p1(),line().p2()+pt);
-        }
+        lineF.setPoints(line().p1()+pt,line().p2());
+        setLine(lineF);
+    }
+    else if(pointLocation == 2)
+    {
+        QLineF lineF;
+        lineF.setPoints(line().p1(),line().p2()+pt);
         setLine(lineF);
     }
     else
@@ -96,7 +89,6 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void HIconLineItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    lineMode = LineNo;
     HIconGraphicsItem::mouseReleaseEvent(event);
 }
 
@@ -153,11 +145,8 @@ void HIconLineItem::setLine(const QLineF &line)
 {
     if(lineF == line) return;
     prepareGeometryChange();
-    //lineF = line;
-    //refreshBaseObj();
-    pLineObj->pfHeadPoint = line.p1();
-    pLineObj->pfTailPoint = line.p2();
     lineF = line;
+    refreshBaseObj();
     update();
 }
 
@@ -183,8 +172,8 @@ void HIconLineItem::moveItemBy(qreal dx, qreal dy)
 
 void HIconLineItem::refreshBaseObj()
 {
-    pLineObj->pfHeadPoint = mapToScene(line().p1());
-    pLineObj->pfTailPoint =  mapToScene(line().p2());
+    pLineObj->pfHeadPoint = line().p1();
+    pLineObj->pfTailPoint =  line().p2();
     pLineObj->setModify(true);
 }
 
@@ -198,13 +187,13 @@ void HIconLineItem::resizeItem(const QPolygonF& polygonF)
 
 ushort HIconLineItem::pointInRect(QPointF &point)
 {
-    QPointF p1 = mapToScene(line().p1());
-    QPointF p2 = mapToScene(line().p2());
+    QPointF p1 = line().p1();
+    QPointF p2 = line().p2();
     QRectF rectF1;
-    rectF1.setSize(QSizeF(10,10));
+    rectF1.setSize(QSizeF(14,14));
     rectF1.moveCenter(p1);
     QRectF rectF2;
-    rectF2.setSize(QSize(10,10));
+    rectF2.setSize(QSize(14,14));
     rectF2.moveCenter(p2);
     if(rectF1.contains(point))
         return LOCATIONLEFT;

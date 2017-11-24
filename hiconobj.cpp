@@ -324,10 +324,10 @@ void HLineObj::paint(QPainter* painter)
         pen1.setStyle(Qt::SolidLine);
         painter->setPen(pen1);
         QRectF rectF1;
-        rectF1.setSize(QSizeF(10,10));
+        rectF1.setSize(QSizeF(14,14));
         rectF1.moveCenter(p1);
         QRectF rectF2;
-        rectF2.setSize(QSize(10,10));
+        rectF2.setSize(QSize(14,14));
         rectF2.moveCenter(p2);
         painter->drawRect(rectF1);
         painter->drawRect(rectF2);

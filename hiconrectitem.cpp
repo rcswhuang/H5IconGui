@@ -231,13 +231,13 @@ ushort HIconRectItem::pointInRect(QPointF& point)
     qreal halfpw = 14.00;
     QRectF rect1,rect2,rect3,rect4;
     rect1.setSize(QSizeF(halfpw,halfpw));
-    rect1.moveCenter(mapToScene(rect().topLeft()));
+    rect1.moveCenter(rect().topLeft());
     rect2.setSize(QSizeF(halfpw,halfpw));
-    rect2.moveCenter(mapToScene(rect().topRight()));
+    rect2.moveCenter(rect().topRight());
     rect3.setSize(QSizeF(halfpw,halfpw));
-    rect3.moveCenter(mapToScene(rect().bottomLeft()));
+    rect3.moveCenter(rect().bottomLeft());
     rect4.setSize(QSizeF(halfpw,halfpw));
-    rect4.moveCenter(mapToScene(rect().bottomRight()));
+    rect4.moveCenter(rect().bottomRight());
 
     ushort location = 0;
     if(rect1.contains(point))
