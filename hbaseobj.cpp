@@ -25,7 +25,7 @@ void HBaseObj::init()
 
     //线条方面
     strLineColor = "#00FF00";//线条颜色
-    nLineWidth = 2;//线宽
+    nLineWidth = 0;//线宽
     nLineStyle = (qint8)Qt::SolidLine;//线型
     nLineJoinStyle = (qint8)Qt::BevelJoin;//线连接处形状
     nLineCapStyle = (qint8)Qt::RoundCap;//线端形状
@@ -104,7 +104,7 @@ void HBaseObj::readData(QDataStream *data)
     bHorizonTurn = b;
     *data>>b;
     bVerticalTurn = b;
-    *data>>n8;
+    *data>>b;
     bVisible = n8;
     *data>>b;
     bDeleted = b;
@@ -148,7 +148,8 @@ void HBaseObj::writeData(QDataStream *data)
     *data<<(float)fRotateAngle;
     *data<<(bool)bHorizonTurn;
     *data<<(bool)bVerticalTurn;
-    *data<<(quint8)bVisible;
+    *data<<(bool)bVisible;
+    *data<<(bool)bDeleted;
     *data<<(quint64)nStackOrder;
     *data<<(quint8)nPattern;
     *data<<(bool)bModify;
