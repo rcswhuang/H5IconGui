@@ -1373,9 +1373,9 @@ void HPolygonObj::paint(QPainter* painter)
 
     if(pylist.count() == 0) return;
     QRectF rect = QPolygonF(pylist).boundingRect();
-    painter->save();
     QPointF centerPoint = boundingRect().center();
     painter->save();
+
     if(pItem)
     {
         pItem->setTransformOriginPoint(centerPoint);
