@@ -33,7 +33,9 @@ SOURCES += \
     hicontemplate.cpp \
     hiconshowpattern.cpp \
     hdynamicobj.cpp \
-    hiconcomplexitem.cpp
+    hiconcomplexitem.cpp \
+    hgroupobj.cpp \
+    hiconitemgroup.cpp
 
 HEADERS +=\
     ../include/hiconapi.h \
@@ -55,7 +57,9 @@ HEADERS +=\
     ../include/H5IconGui/hiconshowpattern.h \
     ../include/H5IconGui/hdynamicobj.h \
     ../include/H5IconGui/hiconcomplexitem.h \
-    ../include/H5IconGui/hbaseobj.h
+    ../include/H5IconGui/hbaseobj.h \
+    ../include/H5IconGui/hgroupobj.h \
+    ../include/H5IconGui/hiconitemgroup.h
 
 win32{
     DEFINES += WIN32

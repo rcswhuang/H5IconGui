@@ -472,6 +472,9 @@ void HRectObj::paint(QPainter* painter)
     QColor fillClr = QColor(getFillColorName());//填充颜色
     quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
+    bool bRound = getRound();
+    int nXAxis = getXAxis();
+    int nYAxis = getYAxis();
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QPointF centerPoint = boundingRect().center();
@@ -497,7 +500,14 @@ void HRectObj::paint(QPainter* painter)
     else
         painter->setPen(Qt::NoPen);
 
-    painter->drawRect(rect);
+    if(!bRound)
+    {
+        painter->drawRect(rect);
+    }
+    else
+    {
+        painter->drawRoundRect(rect,nXAxis,nYAxis);
+    }
     //需要判断nFillStyle 如果是linear的模式 就要考虑填充方向了
     //
     QBrush brush;//(Qt::NoBrush);
@@ -593,7 +603,16 @@ void HRectObj::paint(QPainter* painter)
             brush = brush1;
         }
     }
-    painter->fillRect(rect,brush);
+    QPainterPath path;
+    if(!bRound)
+    {
+        path.addRect(rect);
+    }
+    else
+    {
+        path.addRoundedRect(rect,nXAxis,nYAxis);
+    }
+    painter->fillPath(path,brush);
 
 
     if(pItem && pItem->isSelected())
@@ -2763,6 +2782,10 @@ void HTextObj::paint(QPainter* painter)
     ushort nLayout = getLayout();
     QString strTextContent = getTextContent();
     qreal fRotateAngle = getRotateAngle();
+    bool bRound = getRound();
+    int nXAxis = getXAxis();
+    int nYAxis = getYAxis();
+
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     QRectF mainRectF = rect;
     QRectF drawRectF = mainRectF;
@@ -2788,8 +2811,14 @@ void HTextObj::paint(QPainter* painter)
         painter->setPen(pen);
     else
         painter->setPen(Qt::NoPen);
-    painter->drawRect(mainRectF);
-
+    if(!bRound)
+    {
+        painter->drawRect(mainRectF);
+    }
+    else
+    {
+        painter->drawRoundRect(mainRectF,nXAxis,nYAxis);
+    }
     //painter->scale(2,2);
     QBrush brush;
     if(nFillWay >= 1)
@@ -2886,7 +2915,16 @@ void HTextObj::paint(QPainter* painter)
        // qreal top = mainRectF.top()*(float)(nFillPercentage/100.00);
         //drawRectF.setTop(top);
     }
-    painter->fillRect(drawRectF,brush);
+    QPainterPath path;
+    if(!bRound)
+    {
+        path.addRect(mainRectF);
+    }
+    else
+    {
+        path.addRoundedRect(mainRectF,nXAxis,nYAxis);
+    }
+    painter->fillPath(path,brush);
 
     //设置字体部分
     QString strFontName = getTextFontName();
@@ -2912,7 +2950,6 @@ void HTextObj::paint(QPainter* painter)
         nAlign = Qt::AlignCenter | Qt::TextSingleLine;
     }
     painter->drawText(mainRectF,nAlign,strTextContent);
-
     painter->restore();
 
 
@@ -2925,7 +2962,6 @@ void HTextObj::paint(QPainter* painter)
         qreal halfpw = 14.00;
         QRectF rect1,rect2,rect3,rect4;
         rect1.setSize(QSizeF(halfpw,halfpw));
-        QRectF rect11 = pItem->rect();
         rect1.moveCenter(pItem->rect().topLeft());
         rect2.setSize(QSizeF(halfpw,halfpw));
         rect2.moveCenter(pItem->rect().topRight());

@@ -49,6 +49,9 @@ void HBaseObj::init()
     bDeleted = false;//是否删除
     nStackOrder = 0;
 
+    bRound = false;
+    nxAxis = 0;
+    nyAxis = 0;
     bModify = false;
     //父图符
     m_pParent = NULL;
@@ -122,6 +125,13 @@ void HBaseObj::readData(QDataStream *data)
     nPattern = n8;
     *data>>b;
     bModify = b;
+    *data>>b;
+    bRound = b;
+    int n;
+    *data>>n;
+    nxAxis = n;
+    *data>>n;
+    nyAxis = n;
 
 }
 
@@ -153,6 +163,9 @@ void HBaseObj::writeData(QDataStream *data)
     *data<<(quint64)nStackOrder;
     *data<<(quint8)nPattern;
     *data<<(bool)bModify;
+    *data<<(bool)bRound;
+    *data<<(int)nxAxis;
+    *data<<(int)nyAxis;
 }
 
 void HBaseObj::readXml(QDomElement* dom)
@@ -184,6 +197,9 @@ void HBaseObj::readXml(QDomElement* dom)
     bVisible = dom->attribute("Visible").toInt();
     nStackOrder = dom->attribute("StackOrder").toInt();
     nPattern = dom->attribute("nPattern").toUInt();
+    bRound = dom->attribute("Round").toUInt();
+    nxAxis = dom->attribute("xAxis").toUInt();
+    nyAxis = dom->attribute("yAxis").toUInt();
 }
 
 void HBaseObj::writeXml(QDomElement* dom)
@@ -213,6 +229,9 @@ void HBaseObj::writeXml(QDomElement* dom)
     dom->setAttribute("Visible",bVisible);
     dom->setAttribute("StackOrder",nStackOrder);
     dom->setAttribute("nPattern",nPattern);
+    dom->setAttribute("Round",bRound);
+    dom->setAttribute("xAxis",nxAxis);
+    dom->setAttribute("yAxis",nyAxis);
 }
 
 //拷贝克隆
@@ -248,6 +267,9 @@ void HBaseObj::copyTo(HBaseObj* obj)
     obj->nStackOrder = nStackOrder;
     obj->nPattern = nPattern;
     obj->bModify = bModify;
+    obj->bRound = bRound;
+    obj->nxAxis = nxAxis;
+    obj->nyAxis = nyAxis;
 }
 
 void HBaseObj::clone(HBaseObj* ob)
@@ -461,6 +483,37 @@ QColor HBaseObj::getTextColor()
 {
     return QColor();
 }
+
+void HBaseObj::setRound(bool bcheck)
+{
+    bRound = bcheck;
+}
+
+bool HBaseObj::getRound()
+{
+    return bRound;
+}
+
+void HBaseObj::setXAxis(int xAxis)
+{
+    nxAxis = xAxis;
+}
+
+int HBaseObj::getXAxis()
+{
+    return nxAxis;
+}
+
+void HBaseObj::setYAxis(int yAxis)
+{
+    nyAxis = yAxis;
+}
+
+int HBaseObj::getYAxis()
+{
+    return nyAxis;
+}
+
 
 //是否旋转
 bool HBaseObj::isRotated(qint8 nFlag)
