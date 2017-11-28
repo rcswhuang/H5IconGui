@@ -49,7 +49,6 @@ void HIconShowPattern::writeXml(QDomElement *dom)
         QDomElement childEle = dom->ownerDocument().createElement(pObj->TagName());
         dom->appendChild(childEle);
         pObj->writeXml(&childEle);
-
     }
 }
 

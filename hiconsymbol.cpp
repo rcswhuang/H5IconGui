@@ -1,6 +1,7 @@
 ﻿#include "H5IconGui/hiconsymbol.h"
 #include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hgroupobj.h"
 #include "H5IconGui/hicontemplate.h"
 #include "hiconapi.h"
 #include <QVariant>
@@ -142,6 +143,8 @@ HBaseObj* HIconSymbol::newObj(QString tagName)
         drawShape = enumText;
     else if(tagName == "Polygon")
         drawShape = enumPolygon;
+    else if(tagName == "Group")
+        drawShape = enumGroup;
     return newObj(drawShape);
 }
 
@@ -183,6 +186,10 @@ HBaseObj* HIconSymbol::newObj(int nObjType)
     else if(nObjType == enumText)
     {
         pObj = new HTextObj();
+    }
+    else if(nObjType == enumGroup)
+    {
+        pObj = new HGroupObj(this);
     }
     pObj->setShapeType((DRAWSHAPE)nObjType);
     if(pObj)
