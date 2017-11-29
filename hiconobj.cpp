@@ -2976,11 +2976,6 @@ void HTextObj::paint(QPainter* painter)
         painter->drawRect(rect4);
         painter->restore();
     }
-
-
-
-
-
 }
 
 void HTextObj::resize(double w,double h)

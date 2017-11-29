@@ -1,5 +1,6 @@
 ﻿#include "H5IconGui/hgroupobj.h"
 #include "H5IconGui/hiconsymbol.h"
+#include "H5IconGui/hiconitemgroup.h"
 HGroupObj::HGroupObj(HIconSymbol* symbol)
     :pIconSymbol(symbol)
 {
@@ -202,5 +203,44 @@ void HGroupObj::delObj(HBaseObj* pObj)
 
 void HGroupObj::paint(QPainter* painter)
 {
+    HIconItemGroup* pItem = qgraphicsitem_cast<HIconItemGroup*>(getIconGraphicsItem());
+    painter->save();
+    for(int i = 0; i < pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)(pObjList[i]);
+        if(pObj)
+        {
+           pObj->paint(painter);
+        }
+    }
+    //painter->drawRect(boundingRect());
 
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    if(pItem->isSelected())
+    {
+        QPen pen1 = QPen(Qt::green);
+        pen1.setWidth(1);
+        painter->setPen(pen1);
+        qreal halfpw = 14.00;
+        QRectF rect1,rect2,rect3,rect4;
+        rect1.setSize(QSizeF(halfpw,halfpw));
+        QPointF pt21,pt22,pt23,pt24;
+        pt21 = rect.topLeft();
+        pt22 = rect.topRight();
+        pt23 = rect.bottomLeft();
+        pt24 = rect.bottomRight();
+        rect1.moveCenter(rect.topLeft());
+        rect2.setSize(QSizeF(halfpw,halfpw));
+        rect2.moveCenter(rect.topRight());
+        rect3.setSize(QSizeF(halfpw,halfpw));
+        rect3.moveCenter(rect.bottomLeft());
+        rect4.setSize(QSizeF(halfpw,halfpw));
+        rect4.moveCenter(rect.bottomRight());
+
+        painter->drawRect(rect1);
+        painter->drawRect(rect2);
+        painter->drawRect(rect3);
+        painter->drawRect(rect4);
+    }
+    painter->restore();
 }
