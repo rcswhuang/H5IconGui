@@ -109,32 +109,49 @@ DRAWSHAPE HGroupObj::getShapeType()
 
 void HGroupObj::moveBy(qreal dx,qreal dy)
 {
-
+    topLeft.setX(topLeft.x() + dx);
+    topLeft.setY(topLeft.y() + dy);
+    for(int i = 0; i < pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)pObjList[i];
+        pObj->moveBy(dx,dy);
+    }
+    bModify = true;
 }
 
 void HGroupObj::resize(double w,double h)
 {
-
-}
-
-void HGroupObj::paint(QPainter* painter)
-{
-
+    for(int i = 0; i < pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)pObjList[i];
+        pObj->resize(w,h);
+    }
+    topLeft.setX(topLeft.x()*w);
+    topLeft.setY(topLeft.y()*h);
+    rectWidth = rectWidth * w;
+    rectHeight = rectHeight *h;
 }
 
 QRectF HGroupObj::boundingRect() const
 {
-
+    return shape().controlPointRect();
 }
 
 bool HGroupObj::contains(const QPointF &point) const
 {
-
+    return shape().contains(point);
 }
 
 QPainterPath HGroupObj::shape() const
 {
-
+    QPainterPath path;
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth+20);
+    boundingRect.setHeight(rectHeight+20);
+    path.addRect(boundingRect);
+    return path;
 }
 
 void HGroupObj::setTopLeft(const QPointF &pointF)
@@ -181,4 +198,9 @@ void HGroupObj::delObj(HBaseObj* pObj)
     pObjList.removeOne(pObj);
     delete pObj;
     pObj = NULL;
+}
+
+void HGroupObj::paint(QPainter* painter)
+{
+
 }
