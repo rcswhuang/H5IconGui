@@ -204,7 +204,7 @@ void HGroupObj::delObj(HBaseObj* pObj)
 void HGroupObj::paint(QPainter* painter)
 {
     HIconItemGroup* pItem = qgraphicsitem_cast<HIconItemGroup*>(getIconGraphicsItem());
-    painter->save();
+    painter->save(); 
     for(int i = 0; i < pObjList.count();i++)
     {
         HBaseObj* pObj = (HBaseObj*)(pObjList[i]);
@@ -213,10 +213,14 @@ void HGroupObj::paint(QPainter* painter)
            pObj->paint(painter);
         }
     }
-    //painter->drawRect(boundingRect());
-
+    QPen pen(Qt::red);
+    pen.setWidth(2);
+    painter->setPen(pen);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    if(pItem->isSelected())
+    //painter->drawRect(rect);
+
+    //QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);

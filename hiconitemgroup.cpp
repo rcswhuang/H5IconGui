@@ -1,4 +1,4 @@
-#include "H5IconGui/hiconitemgroup.h"
+﻿#include "H5IconGui/hiconitemgroup.h"
 #include "H5IconGui/hgroupobj.h"
 #include <qmath.h>
 #include <QObject>
@@ -27,6 +27,16 @@ HIconItemGroup::HIconItemGroup(const QRectF &rectF, HIconGraphicsItem *parent)
 QRectF HIconItemGroup::boundingRect() const
 {
     return pGroupObj->boundingRect();
+}
+
+bool HIconItemGroup::contains(const QPointF &point) const
+{
+    return pGroupObj->contains(point);
+}
+
+QPainterPath HIconItemGroup::shape() const
+{
+    return pGroupObj->shape();
 }
 
 void HIconItemGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -147,11 +157,11 @@ void HIconItemGroup::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-    double w1 = rectF.width()/rect.width();
-    double h1 = rectF.height()/rect.height();
+    double w1 = rect.width()/rectF.width();
+    double h1 = rect.height()/rectF.height();
     pGroupObj->resize(w1,h1);
     rectF = rect;
-    refreshBaseObj(rect);
+    //refreshBaseObj(rect);
     update();
 }
 
@@ -189,10 +199,10 @@ void HIconItemGroup::resizeItem(const QPolygonF& polygonF)
 
 void HIconItemGroup::refreshBaseObj(const QRectF& rect)
 {
-    pGroupObj->setTopLeft(rect.topLeft());
-    pGroupObj->setGroupWidth(rect.width());
-    pGroupObj->setGroupHeight(rect.height());
-    QPointF p = rect.center();
+    ////pGroupObj->setTopLeft(rect.topLeft());
+    //pGroupObj->setGroupWidth(rect.width());
+    //pGroupObj->setGroupHeight(rect.height());
+    QPointF p = rectF.center();
     pGroupObj->setOX(p.x());
     pGroupObj->setOY(p.y());
     pGroupObj->setModify(true);

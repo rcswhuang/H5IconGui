@@ -9,8 +9,13 @@ QT += gui
 QT += widgets
 TARGET = H5IconGui
 TEMPLATE = lib
-DESTDIR = /users/huangw/lib
+win32{
+    DESTDIR = $$(WF_ROOT)/lib
+}
 
+unix{
+DESTDIR = /users/huangw/lib
+}
 DEFINES += H5ICONGUI_DLL
 
 INCLUDEPATH += ../include

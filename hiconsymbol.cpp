@@ -223,6 +223,14 @@ void HIconSymbol::delObj(HBaseObj* pObj)
     pSP->delObj(pObj);
 }
 
+void HIconSymbol::takeObj(HBaseObj* pObj)
+{
+    HIconShowPattern* pSP = getCurrentPatternPtr();
+    if(!pSP)
+        return;
+    pSP->takeObj(pObj);
+}
+
 void HIconSymbol::copyTo(HIconSymbol *isymbol)
 {
     isymbol->strSymbolName = strSymbolName;

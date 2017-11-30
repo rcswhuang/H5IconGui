@@ -77,7 +77,6 @@ void HLineObj::readXml(QDomElement* dom)
     arrowEnd = dom->attribute("arrowEnd").toUInt();
     arrowWidth = dom->attribute("arrowWidth").toDouble();
     arrowHeight = dom->attribute("arrowHeight").toDouble();
-
 }
 
 void HLineObj::writeXml(QDomElement* dom)

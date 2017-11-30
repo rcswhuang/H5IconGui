@@ -70,6 +70,13 @@ void HIconShowPattern::delObj(HBaseObj* pObj)
     pObj = NULL;
 }
 
+void HIconShowPattern::takeObj(HBaseObj* pObj)
+{
+    if(!pObj)
+        return;
+    pObjList.removeOne(pObj);
+}
+
 void HIconShowPattern::copyTo(HIconShowPattern* sp)
 {
     if(!sp)
