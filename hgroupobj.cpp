@@ -127,10 +127,11 @@ void HGroupObj::resize(double w,double h)
         HBaseObj* pObj = (HBaseObj*)pObjList[i];
         pObj->resize(w,h);
     }
+/*
     topLeft.setX(topLeft.x()*w);
     topLeft.setY(topLeft.y()*h);
     rectWidth = rectWidth * w;
-    rectHeight = rectHeight *h;
+    rectHeight = rectHeight *h;*/
 }
 
 QRectF HGroupObj::boundingRect() const
