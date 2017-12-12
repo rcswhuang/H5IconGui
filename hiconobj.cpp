@@ -641,15 +641,19 @@ void HRectObj::paint(QPainter* painter)
         painter->drawRect(rect4);
     }
     painter->restore();
-
 }
 
 void HRectObj::resize(double w,double h)
 {
-    topLeft.setX(topLeft.x()*w);
-    topLeft.setY(topLeft.y()*h);
+    //topLeft.setX(topLeft.x()*w);
+    //topLeft.setY(topLeft.y()*h);
     rectWidth = rectWidth * w;
     rectHeight = rectHeight *h;
+}
+
+void HRectObj::setTopLeftPoint(const QPointF& point)
+{
+    topLeft += point;
 }
 
 ///////////////////////////////////HEllipseObj//////////////////////////////////////////////////

@@ -631,6 +631,11 @@ void HBaseObj::resize(double w,double h)
 
 }
 
+void HBaseObj::setTopLeftPoint(const QPointF& point)
+{
+
+}
+
 QRectF HBaseObj::boundingRect() const
 {
     return QRectF();

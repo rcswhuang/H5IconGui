@@ -65,35 +65,37 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
         bShift = true;
-    if(pointLocation == 1)
+    if(pointLocation > 0)
     {
-        QRectF rectNew;
-        rectNew.setTopLeft(QPointF(rect().left() + deltaX,rect().top() + deltaY));
-        rectNew.setBottomRight(rect().bottomRight());
-        setRect(rectNew.normalized());
-
-    }
-    else if(pointLocation == 2)
-    {
-        QRectF rectNew;
-        rectNew.setTopRight(QPointF(rect().right() + deltaX,rect().top() + deltaY));
-        rectNew.setBottomLeft(rect().bottomLeft());
-        setRect(rectNew.normalized());
-    }
-    else if(pointLocation == 3)
-    {
-        QRectF rectNew;
-        rectNew.setBottomLeft(QPointF(rect().left() + deltaX,rect().bottom() + deltaY));
-        rectNew.setTopRight(rect().topRight());
-        setRect(rectNew.normalized());
-    }
-    else if(pointLocation == 4)
-    {
-        QRectF rectNew;
-        //rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
-        //rectNew.setTopLeft(rect().topLeft());
-        rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
-        setRect(rectNew.normalized());
+        if(pointLocation == 1)
+        {
+            QRectF rectNew;
+            rectNew.setTopLeft(QPointF(rect().left() + deltaX,rect().top() + deltaY));
+            rectNew.setBottomRight(rect().bottomRight());
+            setRect(rectNew.normalized());
+        }
+        else if(pointLocation == 2)
+        {
+            QRectF rectNew;
+            rectNew.setTopRight(QPointF(rect().right() + deltaX,rect().top() + deltaY));
+            rectNew.setBottomLeft(rect().bottomLeft());
+            setRect(rectNew.normalized());
+        }
+        else if(pointLocation == 3)
+        {
+            QRectF rectNew;
+            rectNew.setBottomLeft(QPointF(rect().left() + deltaX,rect().bottom() + deltaY));
+            rectNew.setTopRight(rect().topRight());
+            setRect(rectNew.normalized());
+        }
+        else if(pointLocation == 4)
+        {
+            QRectF rectNew;
+            //rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
+            //rectNew.setTopLeft(rect().topLeft());
+            rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
+            setRect(rectNew.normalized());
+        }
     }
     else
     {
@@ -245,3 +247,13 @@ ushort HIconItemGroup::pointInRect(QPointF& point)
         location = 0;
     return location;
 }
+
+void HIconItemGroup::resetTopLeftPoint(const QPointF& point)
+{
+    if(pGroupObj)
+        pGroupObj->setTopLeftPoint(point);
+}
+
+
+
+
