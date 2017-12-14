@@ -93,6 +93,7 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             QRectF rectNew;
             //rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
             //rectNew.setTopLeft(rect().topLeft());
+            //settopPoint 在该函数设置四个点的位置
             rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
             setRect(rectNew.normalized());
         }
