@@ -1,5 +1,5 @@
 ﻿#include "H5IconGui/hiconarcitem.h"
-#include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 #include <QObject>
 #include <QRectF>
 #include <QPainterPath>
@@ -108,11 +108,11 @@ void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pArcObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp(pArcObj->topLeft,QSize(pArcObj->rectWidth,pArcObj->rectHeight));
+        //QRectF recttemp(pArcObj->topLeft,QSize(pArcObj->rectWidth,pArcObj->rectHeight));
         //recttemp.setTopLeft(pArcObj->topLeft);
         //recttemp.setWidth(pArcObj->rectWidth);
         //recttemp.setHeight(pArcObj->rectHeight);
-        setRect(recttemp.normalized());
+        //setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
@@ -202,9 +202,9 @@ void HIconArcItem::moveItemBy(qreal dx, qreal dy)
 
 void HIconArcItem::refreshBaseObj(const QRectF& rect)
 {
-    pArcObj->topLeft = rect.topLeft();
-    pArcObj->rectWidth = rect.width();
-    pArcObj->rectHeight = rect.height();
+    //pArcObj- = rect.topLeft();
+    //pArcObj->rectWidth = rect.width();
+    //pArcObj->rectHeight = rect.height();
     QPointF p = rect.center();
     pArcObj->setOX(p.x());
     pArcObj->setOY(p.y());

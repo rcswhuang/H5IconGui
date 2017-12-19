@@ -1,5 +1,5 @@
 ﻿#include "H5IconGui/hiconpieitem.h"
-#include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 #include "hiconapi.h"
 #include <QObject>
 #include <QRectF>
@@ -105,10 +105,7 @@ void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pPieObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp(pPieObj->topLeft,QSize(pPieObj->rectWidth,pPieObj->rectHeight));
-        //recttemp.setTopLeft(pArcObj->topLeft);
-        //recttemp.setWidth(pArcObj->rectWidth);
-        //recttemp.setHeight(pArcObj->rectHeight);
+        QRectF recttemp = pPieObj->RectObj();
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -209,9 +206,7 @@ void HIconPieItem::resizeItem(const QPolygonF& polygonF)
 
 void HIconPieItem::refreshBaseObj(const QRectF& rect)
 {
-    pPieObj->topLeft = rect.topLeft();
-    pPieObj->rectWidth = rect.width();
-    pPieObj->rectHeight = rect.height();
+    pPieObj->setRectObj(rect);
     QPointF p = rect.center();
     pPieObj->setOX(p.x());
     pPieObj->setOY(p.y());

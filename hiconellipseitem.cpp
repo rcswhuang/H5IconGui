@@ -1,5 +1,5 @@
 ﻿#include "H5IconGui/hiconellipseitem.h"
-#include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 #include <QObject>
 #include <QRectF>
 #include <QPainterPath>
@@ -103,10 +103,7 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pEllipseObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp;//(pEllipseObj->topLeft,QSize(pEllipseObj->rectWidth,pEllipseObj->rectHeight));
-        recttemp.setTopLeft(pEllipseObj->topLeft);
-        recttemp.setWidth(pEllipseObj->rectWidth);
-        recttemp.setHeight(pEllipseObj->rectHeight);
+        QRectF recttemp = pEllipseObj->RectObj();
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -206,9 +203,7 @@ void HIconEllipseItem::resizeItem(const QPolygonF& polygonF)
 
 void HIconEllipseItem::refreshBaseObj(const QRectF& rect)
 {
-    pEllipseObj->topLeft = rect.topLeft();
-    pEllipseObj->rectWidth = rect.width();
-    pEllipseObj->rectHeight = rect.height();
+    pEllipseObj->setRectObj(rect);
     QPointF p = rect.center();
     pEllipseObj->setOX(p.x());
     pEllipseObj->setOY(p.y());

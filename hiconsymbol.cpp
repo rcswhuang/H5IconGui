@@ -1,6 +1,7 @@
 ﻿#include "H5IconGui/hiconsymbol.h"
 #include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 #include "H5IconGui/hgroupobj.h"
 #include "H5IconGui/hicontemplate.h"
 #include "hiconapi.h"

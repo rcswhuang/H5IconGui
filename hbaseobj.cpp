@@ -631,7 +631,7 @@ void HBaseObj::resize(double w,double h)
 
 }
 
-void HBaseObj::setTopLeftPoint(const QPointF& point)
+void HBaseObj::resetRectPoint(qreal dx, qreal dy)
 {
 
 }

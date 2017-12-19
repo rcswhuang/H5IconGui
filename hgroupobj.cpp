@@ -120,6 +120,18 @@ void HGroupObj::moveBy(qreal dx,qreal dy)
     bModify = true;
 }
 
+//需要设置4个点的位置
+void HGroupObj::resetRectPoint(qreal dx, qreal dy)
+{
+    topLeft.setX(topLeft.x()+dx);
+    topLeft.setY(topLeft.y()+dy);
+    for(int i = 0; i < pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)pObjList[i];
+        pObj->resetRectPoint(dx,dy);
+    }
+}
+
 void HGroupObj::resize(double w,double h)
 {
     for(int i = 0; i < pObjList.count();i++)
@@ -129,9 +141,9 @@ void HGroupObj::resize(double w,double h)
     }
 /*
     topLeft.setX(topLeft.x()*w);
-    topLeft.setY(topLeft.y()*h);
-    rectWidth = rectWidth * w;
-    rectHeight = rectHeight *h;*/
+    topLeft.setY(topLeft.y()*h);*/
+    rectWidth = rectWidth*w;
+    rectHeight = rectHeight*h;
 }
 
 QRectF HGroupObj::boundingRect() const

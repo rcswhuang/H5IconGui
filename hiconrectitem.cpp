@@ -1,5 +1,5 @@
 ﻿#include "H5IconGui/hiconrectitem.h"
-#include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 #include <qmath.h>
 #include <QObject>
 #include <QRectF>
@@ -105,10 +105,7 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pRectObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp;
-        recttemp.setTopLeft(pRectObj->topLeft);
-        recttemp.setWidth(pRectObj->rectWidth);
-        recttemp.setHeight(pRectObj->rectHeight);
+        QRectF recttemp = pRectObj->RectObj();
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -205,12 +202,10 @@ void HIconRectItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconRectItem::refreshBaseObj(const QRectF& rec1t)
+void HIconRectItem::refreshBaseObj(const QRectF& rect)
 {
-    pRectObj->topLeft = rect().topLeft();
-    pRectObj->rectWidth = rect().width();
-    pRectObj->rectHeight = rect().height();
-    QPointF p = rect().center();
+    pRectObj->setRectObj(rect);
+    QPointF p = rect.center();
     pRectObj->setOX(p.x());
     pRectObj->setOY(p.y());
     pRectObj->setModify(true);

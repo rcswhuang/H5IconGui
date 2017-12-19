@@ -1,5 +1,6 @@
 ﻿#include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 HIconShowPattern::HIconShowPattern(HIconSymbol* symbol):pSymbol(symbol)
 {
 

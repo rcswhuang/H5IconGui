@@ -1,5 +1,5 @@
 ﻿#include "H5IconGui/hicontextitem.h"
-#include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconrectobj.h"
 #include <QObject>
 #include <QRectF>
 #include <QPainterPath>

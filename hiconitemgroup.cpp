@@ -67,44 +67,30 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         bShift = true;
     if(pointLocation > 0)
     {
+        QRectF rectNew;
         if(pointLocation == 1)
         {
-            QRectF rectNew;
-            rectNew.setTopLeft(QPointF(rect().left() + deltaX,rect().top() + deltaY));
-            rectNew.setBottomRight(rect().bottomRight());
-            setRect(rectNew.normalized());
+            pGroupObj->resetRectPoint(deltaX,deltaY);
         }
         else if(pointLocation == 2)
         {
-            QRectF rectNew;
-            rectNew.setTopRight(QPointF(rect().right() + deltaX,rect().top() + deltaY));
-            rectNew.setBottomLeft(rect().bottomLeft());
-            setRect(rectNew.normalized());
+            pGroupObj->resetRectPoint(-deltaX,deltaY);
         }
         else if(pointLocation == 3)
         {
-            QRectF rectNew;
-            rectNew.setBottomLeft(QPointF(rect().left() + deltaX,rect().bottom() + deltaY));
-            rectNew.setTopRight(rect().topRight());
-            setRect(rectNew.normalized());
+            pGroupObj->resetRectPoint(deltaX,-deltaY);
         }
         else if(pointLocation == 4)
         {
-            QRectF rectNew;
-            //rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
-            //rectNew.setTopLeft(rect().topLeft());
-            //settopPoint 在该函数设置四个点的位置
-            rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
-            setRect(rectNew.normalized());
+            pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
         }
+        rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
+        setRect(rectNew.normalized());
     }
     else
     {
         pGroupObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp;
-        recttemp.setTopLeft(pGroupObj->getTopLeft());
-        recttemp.setWidth(pGroupObj->getGroupWidth());
-        recttemp.setHeight(pGroupObj->getGroupHeight());
+        QRectF recttemp(pGroupObj->getTopLeft().x(),pGroupObj->getTopLeft().y(),pGroupObj->getGroupWidth(),pGroupObj->getGroupHeight());
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -249,10 +235,10 @@ ushort HIconItemGroup::pointInRect(QPointF& point)
     return location;
 }
 
-void HIconItemGroup::resetTopLeftPoint(const QPointF& point)
+void HIconItemGroup::resetRectPoint(qreal dx, qreal dy)
 {
-    if(pGroupObj)
-        pGroupObj->setTopLeftPoint(point);
+    //if(pGroupObj)
+      //  pGroupObj->setTopLeftPoint(point);
 }
 
 
