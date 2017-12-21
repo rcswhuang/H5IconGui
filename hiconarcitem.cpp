@@ -8,19 +8,15 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconArcItem::HIconArcItem(HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent)
+HIconArcItem::HIconArcItem(HIconRectItem *parent)
+    :HIconRectItem(parent)
 {
 
 }
 
-HIconArcItem::HIconArcItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),rectF(rectF)
+HIconArcItem::HIconArcItem(const QRectF &rectF, HIconRectItem *parent)
+    :HIconRectItem(rectF,parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pArcObj = NULL;
 
 }
@@ -30,14 +26,15 @@ HIconArcItem::~HIconArcItem()
 
 }
 
+
 QRectF HIconArcItem::boundingRect() const
 {
-    return shape().controlPointRect();
+    return pArcObj->boundingRect();
 }
 
 bool HIconArcItem::contains(const QPointF &point) const
 {
-    return shape().boundingRect().contains(point);
+    return pArcObj->contains(point);
 }
 
 void HIconArcItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -56,14 +53,14 @@ int HIconArcItem::type() const
     return enumArc;
 }
 
-
+/*
 void HIconArcItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
     pointLocation = pointInRect(pointStart);
     HIconGraphicsItem::mousePressEvent(event);
 }
-
+*/
 void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qreal fRotateAngle = pArcObj->getRotateAngle();
@@ -108,20 +105,19 @@ void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pArcObj->moveBy(pt.x(),pt.y());
-        //QRectF recttemp(pArcObj->topLeft,QSize(pArcObj->rectWidth,pArcObj->rectHeight));
-        //recttemp.setTopLeft(pArcObj->topLeft);
-        //recttemp.setWidth(pArcObj->rectWidth);
-        //recttemp.setHeight(pArcObj->rectHeight);
-        //setRect(recttemp.normalized());
+        QRectF recttemp = pArcObj->getObjRect();
+        setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
+/*
 void HIconArcItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
 }
-
+*/
+/*
 void HIconArcItem::keyPressEvent(QKeyEvent *event)
 {
     int nStep = 5;
@@ -163,7 +159,7 @@ void HIconArcItem::keyPressEvent(QKeyEvent *event)
 
     QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
     setRect(newRect);
-}
+}*/
 
 void HIconArcItem::setRect(const QRectF& rect)
 {
@@ -192,6 +188,7 @@ HBaseObj* HIconArcItem::getItemObj()
     return NULL;
 }
 
+/*
 void HIconArcItem::moveItemBy(qreal dx, qreal dy)
 {
     //主要是记录HBaseObj的位置信息，图元移动的信息由mousemoveevent来解决
@@ -199,18 +196,17 @@ void HIconArcItem::moveItemBy(qreal dx, qreal dy)
     newRectF = rect().translated(dx,dy);
     setRect(newRectF);
 }
-
+*/
 void HIconArcItem::refreshBaseObj(const QRectF& rect)
 {
-    //pArcObj- = rect.topLeft();
-    //pArcObj->rectWidth = rect.width();
-    //pArcObj->rectHeight = rect.height();
+    pArcObj->setObjRect(rect);
     QPointF p = rect.center();
     pArcObj->setOX(p.x());
     pArcObj->setOY(p.y());
     pArcObj->setModify(true);
 }
 
+/*
 void HIconArcItem::resizeItem(const QPolygonF& polygonF)
 {
     if(polygonF.size() != 2)
@@ -255,4 +251,4 @@ ushort HIconArcItem::pointInRect(QPointF& point)
     else
         location = 0;
     return location;
-}
+}*/

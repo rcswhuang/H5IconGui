@@ -147,7 +147,7 @@ void HRectObj::setPainter(QPainter *painter,const QRectF& rect)
     quint8 nTransparency = getTransparency(); //透明度
     quint8 nFillDir = getFillDirection();//填充方向
     QColor fillClr = QColor(getFillColorName());//填充颜色
-    quint8 nFillPercentage = getFillPercentage(); //填充比例
+    //quint8 nFillPercentage = getFillPercentage(); //填充比例
     QBrush brush;//(Qt::NoBrush);
     if(nFillWay >= 1)
     {
@@ -318,16 +318,46 @@ void HRectObj::resetRectPoint(qreal dx, qreal dy)
     topLeft.setY(topLeft.y()+dy);
 }
 
-void HRectObj::setRectObj(const QRectF& rect)
+void HRectObj::setObjRect(const QRectF& rect)
 {
     topLeft = rect.topLeft();
     rectWidth = rect.width();
     rectHeight = rect.height();
 }
 
-QRectF HRectObj::RectObj()
+QRectF HRectObj::getObjRect()
 {
     return QRectF(topLeft,QSize(rectWidth,rectHeight));
+}
+
+void HRectObj::setTopLeft(const QPointF& point)
+{
+    topLeft = point;
+}
+
+QPointF HRectObj::getTopLeft()
+{
+    return topLeft;
+}
+
+void HRectObj::setRectWidth(double width)
+{
+    rectWidth = width;
+}
+
+double HRectObj::getRectWidth()
+{
+    return rectWidth;
+}
+
+void HRectObj::setRectHeight(double height)
+{
+    rectHeight = height;
+}
+
+double HRectObj::getRectHeigth()
+{
+    return rectHeight;
 }
 
 ///////////////////////////////////HEllipseObj//////////////////////////////////////////////////

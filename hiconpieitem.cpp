@@ -105,7 +105,7 @@ void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pPieObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pPieObj->RectObj();
+        QRectF recttemp = pPieObj->getObjRect();
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -206,7 +206,7 @@ void HIconPieItem::resizeItem(const QPolygonF& polygonF)
 
 void HIconPieItem::refreshBaseObj(const QRectF& rect)
 {
-    pPieObj->setRectObj(rect);
+    pPieObj->setObjRect(rect);
     QPointF p = rect.center();
     pPieObj->setOX(p.x());
     pPieObj->setOY(p.y());

@@ -102,7 +102,7 @@ void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pCircleObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pCircleObj->RectObj();
+        QRectF recttemp = pCircleObj->getObjRect();
         //recttemp.setTopLeft(pArcObj->topLeft);
         //recttemp.setWidth(pArcObj->rectWidth);
         //recttemp.setHeight(pArcObj->rectHeight);
@@ -203,7 +203,7 @@ void HIconCircleItem::resizeItem(const QPolygonF& polygonF)
 
 void HIconCircleItem::refreshBaseObj(const QRectF& rect)
 {
-    pCircleObj->setRectObj(rect);
+    pCircleObj->setObjRect(rect);
     QPointF p = rect.center();
     pCircleObj->setOX(p.x());
     pCircleObj->setOY(p.y());

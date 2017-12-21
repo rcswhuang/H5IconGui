@@ -484,7 +484,7 @@ void HPolygonObj::paint(QPainter* painter)
     quint8 nTransparency = getTransparency(); //透明度
     quint8 nFillDir = getFillDirection();//填充方向
     QColor fillClr = QColor(getFillColorName());//填充颜色
-    quint8 nFillPercentage = getFillPercentage(); //填充比例
+    //quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
     if(pylist.count() == 0) return;
@@ -812,7 +812,7 @@ void HPolylineObj::paint(QPainter* painter)
     quint8 nTransparency = getTransparency(); //透明度
     quint8 nFillDir = getFillDirection();//填充方向
     QColor fillClr = QColor(getFillColorName());//填充颜色
-    quint8 nFillPercentage = getFillPercentage(); //填充比例
+    //quint8 nFillPercentage = getFillPercentage(); //填充比例
     qreal fRotateAngle = getRotateAngle();
 
     if(pylist.count() == 0) return;

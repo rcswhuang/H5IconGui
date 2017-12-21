@@ -15,6 +15,7 @@ HIconRectItem::HIconRectItem(HIconGraphicsItem *parent)
 
 }
 
+//ok
 HIconRectItem::HIconRectItem(const QRectF &rectF, HIconGraphicsItem *parent)
     :HIconGraphicsItem(parent),rectF(rectF)
 {
@@ -50,6 +51,7 @@ int HIconRectItem::type() const
     return enumRectangle;
 }
 
+//ok
 void HIconRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
@@ -57,6 +59,7 @@ void HIconRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     HIconGraphicsItem::mousePressEvent(event);
 }
 
+//ok
 void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qreal fRotateAngle = pRectObj->getRotateAngle();
@@ -105,18 +108,19 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pRectObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pRectObj->RectObj();
+        QRectF recttemp = pRectObj->getObjRect();
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
-
+//ok
 void HIconRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
 }
 
+//ok
 void HIconRectItem::keyPressEvent(QKeyEvent *event)
 {
     int nStep = 5;
@@ -159,6 +163,7 @@ void HIconRectItem::keyPressEvent(QKeyEvent *event)
     setRect(newRect);
 }
 
+//no
 void HIconRectItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
@@ -186,6 +191,7 @@ HBaseObj* HIconRectItem::getItemObj()
     return NULL;
 }
 
+//ok
 void HIconRectItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
@@ -193,6 +199,7 @@ void HIconRectItem::moveItemBy(qreal dx, qreal dy)
     setRect(newRectF);
 }
 
+//ok
 void HIconRectItem::resizeItem(const QPolygonF& polygonF)
 {
     if(polygonF.size() != 4)
@@ -204,13 +211,14 @@ void HIconRectItem::resizeItem(const QPolygonF& polygonF)
 
 void HIconRectItem::refreshBaseObj(const QRectF& rect)
 {
-    pRectObj->setRectObj(rect);
+    pRectObj->setObjRect(rect);
     QPointF p = rect.center();
     pRectObj->setOX(p.x());
     pRectObj->setOY(p.y());
     pRectObj->setModify(true);
 }
 
+//ok
 void HIconRectItem::setItemCursor(int location)
 {
     if(location == 1 || location == 4)
@@ -221,6 +229,7 @@ void HIconRectItem::setItemCursor(int location)
         setCursor(QCursor(Qt::ArrowCursor));
 }
 
+//ok
 ushort HIconRectItem::pointInRect(QPointF& point)
 {
     qreal halfpw = 14.00;

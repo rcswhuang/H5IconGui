@@ -103,7 +103,7 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pEllipseObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pEllipseObj->RectObj();
+        QRectF recttemp = pEllipseObj->getObjRect();
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -203,7 +203,7 @@ void HIconEllipseItem::resizeItem(const QPolygonF& polygonF)
 
 void HIconEllipseItem::refreshBaseObj(const QRectF& rect)
 {
-    pEllipseObj->setRectObj(rect);
+    pEllipseObj->setObjRect(rect);
     QPointF p = rect.center();
     pEllipseObj->setOX(p.x());
     pEllipseObj->setOY(p.y());
