@@ -9,31 +9,26 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconPieItem::HIconPieItem(HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent)
+HIconPieItem::HIconPieItem(HIconRectItem *parent)
+    :HIconRectItem(parent)
 {
 
 }
 
-HIconPieItem::HIconPieItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),rectF(rectF)
+HIconPieItem::HIconPieItem(const QRectF &rectF, HIconRectItem *parent)
+    :HIconGraphicsItem(rectF,parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pPieObj = NULL;
-    bSelected = false;
 }
 
 QRectF HIconPieItem::boundingRect() const
 {
-    return shape().controlPointRect();
+    return pPieObj->boundingRect();
 }
 
 bool HIconPieItem::contains(const QPointF &point) const
 {
-    return shape().boundingRect().contains(point);
+    return pPieObj->contains(point);
 }
 
 void HIconPieItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -51,8 +46,7 @@ int HIconPieItem::type() const
     return enumPie;
 }
 
-
-
+/*
 void HIconPieItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
@@ -60,6 +54,7 @@ void HIconPieItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     bSelected = true;
     HIconGraphicsItem::mousePressEvent(event);
 }
+*/
 
 void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -111,7 +106,7 @@ void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-
+/*
 void HIconPieItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     //bSelected = false;
@@ -160,6 +155,7 @@ void HIconPieItem::keyPressEvent(QKeyEvent *event)
     QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
     setRect(newRect);
 }
+*/
 
 void HIconPieItem::setRect(const QRectF& rect)
 {
@@ -188,6 +184,7 @@ HBaseObj* HIconPieItem::getItemObj()
     return NULL;
 }
 
+/*
 void HIconPieItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
@@ -203,6 +200,7 @@ void HIconPieItem::resizeItem(const QPolygonF& polygonF)
     QRectF newRectF(polygonF.at(0),polygonF.at(1));
     setRect(newRectF);
 }
+*/
 
 void HIconPieItem::refreshBaseObj(const QRectF& rect)
 {
@@ -213,6 +211,7 @@ void HIconPieItem::refreshBaseObj(const QRectF& rect)
     pPieObj->setModify(true);
 }
 
+/*
 void HIconPieItem::setItemCursor(int location)
 {
     if(location == 1 || location == 4)
@@ -249,3 +248,4 @@ ushort HIconPieItem::pointInRect(QPointF& point)
         location = 0;
     return location;
 }
+*/

@@ -9,30 +9,26 @@
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 #include <QFont>
-HIconTextItem::HIconTextItem(HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent)
+HIconTextItem::HIconTextItem(HIconRectItem *parent)
+    :HIconRectItem(parent)
 {
 
 }
 
-HIconTextItem::HIconTextItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),rectF(rectF)
+HIconTextItem::HIconTextItem(const QRectF &rectF, HIconRectItem *parent)
+    :HIconRectItem(rectF,parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pTextObj =  NULL;
 }
 
 QRectF HIconTextItem::boundingRect() const
 {
-    return shape().controlPointRect();
+    return pTextObj->boundingRect();
 }
 
 bool HIconTextItem::contains(const QPointF &point) const
 {
-    return shape().boundingRect().contains(point);
+    return pTextObj->contains(point);
 }
 
 void HIconTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -50,12 +46,14 @@ int HIconTextItem::type() const
     return enumText;
 }
 
+/*
 void HIconTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
     pointLocation = pointInRect(pointStart);
     HIconGraphicsItem::mousePressEvent(event);
 }
+*/
 
 void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -99,16 +97,12 @@ void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pTextObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp(pTextObj->getTopLeftPoint(),QSize(pTextObj->getRectWidth(),pTextObj->getRectHeight()));
-        //recttemp.setTopLeft(pArcObj->topLeft);
-        //recttemp.setWidth(pArcObj->rectWidth);
-        //recttemp.setHeight(pArcObj->rectHeight);
+        QRectF recttemp = pTextObj->getObjRect();//(pTextObj->getTopLeftPoint(),QSize(pTextObj->getRectWidth(),pTextObj->getRectHeight()));
         setRect(recttemp.normalized());
-        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
-
+/*
 void HIconTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
@@ -155,6 +149,7 @@ void HIconTextItem::keyPressEvent(QKeyEvent *event)
     QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
     setRect(newRect);
 }
+*/
 
 void HIconTextItem::setRect(const QRectF& rect)
 {
@@ -183,6 +178,7 @@ HBaseObj* HIconTextItem::getItemObj()
     return NULL;
 }
 
+/*
 void HIconTextItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
@@ -198,18 +194,18 @@ void HIconTextItem::resizeItem(const QPolygonF& polygonF)
     QRectF newRectF(polygonF.at(0),polygonF.at(1));
     setRect(newRectF);
 }
+*/
 
 void HIconTextItem::refreshBaseObj(const QRectF& rect)
 {
-    pTextObj->setTopLeftPoint(rect.topLeft());
-    pTextObj->setRectWidth(rect.width());
-    pTextObj->setRectHeight(rect.height());
+    pTextObj->setObjRect(rect);
     QPointF p = rect.center();
     pTextObj->setOX(p.x());
     pTextObj->setOY(p.y());
     pTextObj->setModify(true);
 }
 
+/*
 void HIconTextItem::setItemCursor(int location)
 {
     if(location == 1 || location == 4)
@@ -246,3 +242,4 @@ ushort HIconTextItem::pointInRect(QPointF& point)
         location = 0;
     return location;
 }
+*/

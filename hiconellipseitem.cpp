@@ -8,30 +8,26 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconEllipseItem::HIconEllipseItem(HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent)
+HIconEllipseItem::HIconEllipseItem(HIconRectItem *parent)
+    :HIconRectItem(parent)
 {
 
 }
 
-HIconEllipseItem::HIconEllipseItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),rectF(rectF)
+HIconEllipseItem::HIconEllipseItem(const QRectF &rectF, HIconRectItem *parent)
+    :HIconRectItem(rectF,parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pEllipseObj = NULL;
 }
 
 QRectF HIconEllipseItem::boundingRect() const
 {
-    return shape().controlPointRect();
+    return pEllipseObj->boundingRect();
 }
 
 bool HIconEllipseItem::contains(const QPointF &point) const
 {
-    return shape().boundingRect().contains(point);
+    return pEllipseObj->contains(point);
 }
 
 void HIconEllipseItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -42,7 +38,6 @@ void HIconEllipseItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 QPainterPath HIconEllipseItem::shape() const
 {
     return pEllipseObj->shape();
-
 }
 
 int HIconEllipseItem::type() const
@@ -50,13 +45,14 @@ int HIconEllipseItem::type() const
     return enumEllipse;
 }
 
-
+/*
 void HIconEllipseItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
     pointLocation = pointInRect(pointStart);
     HIconGraphicsItem::mousePressEvent(event);
 }
+*/
 
 void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -109,7 +105,7 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-
+/*
 void HIconEllipseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
@@ -156,6 +152,7 @@ void HIconEllipseItem::keyPressEvent(QKeyEvent *event)
     QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
     setRect(newRect);
 }
+*/
 
 void HIconEllipseItem::setRect(const QRectF& rect)
 {
@@ -185,6 +182,7 @@ HBaseObj* HIconEllipseItem::getItemObj()
     return NULL;
 }
 
+/*
 void HIconEllipseItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
@@ -200,7 +198,7 @@ void HIconEllipseItem::resizeItem(const QPolygonF& polygonF)
     QRectF newRectF(polygonF.at(0),polygonF.at(1));
     setRect(newRectF);
 }
-
+*/
 void HIconEllipseItem::refreshBaseObj(const QRectF& rect)
 {
     pEllipseObj->setObjRect(rect);
@@ -210,6 +208,7 @@ void HIconEllipseItem::refreshBaseObj(const QRectF& rect)
     pEllipseObj->setModify(true);
 }
 
+/*
 ushort HIconEllipseItem::pointInRect(QPointF& point)
 {
     qreal halfpw = 14.00;
@@ -246,3 +245,4 @@ void HIconEllipseItem::setItemCursor(int location)
     else
         setCursor(QCursor(Qt::ArrowCursor));
 }
+*/

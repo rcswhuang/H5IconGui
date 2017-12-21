@@ -8,30 +8,26 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconCircleItem::HIconCircleItem(HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent)
+HIconCircleItem::HIconCircleItem(HIconRectItem *parent)
+    :HIconRectItem(parent)
 {
 
 }
 
-HIconCircleItem::HIconCircleItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),rectF(rectF)
+HIconCircleItem::HIconCircleItem(const QRectF &rectF, HIconRectItem *parent)
+    :HIconGraphicsItem(rectF,parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pCircleObj = NULL;
 }
 
 QRectF HIconCircleItem::boundingRect() const
 {
-    return shape().controlPointRect();
+    return pCircleObj->boundingRect();
 }
 
 bool HIconCircleItem::contains(const QPointF &point) const
 {
-    return shape().boundingRect().contains(point);
+    return pCircleObj->contains(point);
 }
 
 void HIconCircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -42,7 +38,6 @@ void HIconCircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 QPainterPath HIconCircleItem::shape() const
 {
     return pCircleObj->shape();
-
 }
 
 int HIconCircleItem::type() const
@@ -50,13 +45,14 @@ int HIconCircleItem::type() const
     return enumCircle;
 }
 
+/*
 void HIconCircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
     pointLocation = pointInRect(pointStart);
     HIconGraphicsItem::mousePressEvent(event);
 }
-
+*/
 void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
@@ -103,15 +99,11 @@ void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         pCircleObj->moveBy(pt.x(),pt.y());
         QRectF recttemp = pCircleObj->getObjRect();
-        //recttemp.setTopLeft(pArcObj->topLeft);
-        //recttemp.setWidth(pArcObj->rectWidth);
-        //recttemp.setHeight(pArcObj->rectHeight);
         setRect(recttemp.normalized());
-        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
-
+/*
 void HIconCircleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
@@ -158,7 +150,7 @@ void HIconCircleItem::keyPressEvent(QKeyEvent *event)
     QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
     setRect(newRect);
 }
-
+*/
 void HIconCircleItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
@@ -186,6 +178,7 @@ HBaseObj* HIconCircleItem::getItemObj()
     return NULL;
 }
 
+/*
 void HIconCircleItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
@@ -200,6 +193,7 @@ void HIconCircleItem::resizeItem(const QPolygonF& polygonF)
     QRectF newRectF(polygonF.at(0),polygonF.at(1));
     setRect(newRectF);
 }
+*/
 
 void HIconCircleItem::refreshBaseObj(const QRectF& rect)
 {
@@ -210,6 +204,7 @@ void HIconCircleItem::refreshBaseObj(const QRectF& rect)
     pCircleObj->setModify(true);
 }
 
+/*
 ushort HIconCircleItem::pointInRect(QPointF& point)
 {
     qreal halfpw = 14.00;
@@ -246,5 +241,5 @@ void HIconCircleItem::setItemCursor(int location)
     else
         setCursor(QCursor(Qt::ArrowCursor));
 }
-
+*/
 
