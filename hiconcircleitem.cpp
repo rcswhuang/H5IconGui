@@ -15,7 +15,7 @@ HIconCircleItem::HIconCircleItem(HIconRectItem *parent)
 }
 
 HIconCircleItem::HIconCircleItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconGraphicsItem(rectF,parent)
+    :HIconRectItem(rectF,parent)
 {
     pCircleObj = NULL;
 }

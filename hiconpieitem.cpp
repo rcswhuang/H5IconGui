@@ -16,7 +16,7 @@ HIconPieItem::HIconPieItem(HIconRectItem *parent)
 }
 
 HIconPieItem::HIconPieItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconGraphicsItem(rectF,parent)
+    :HIconRectItem(rectF,parent)
 {
     pPieObj = NULL;
 }
