@@ -85,6 +85,12 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
         }
         rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
+
+        double w1 = rectNew.width()/rectF.width();
+        double h1 = rectNew.height()/rectF.height();
+        pGroupObj->resize(w1,h1);
+
+        rectNew = pGroupObj->getObjRect();
         setRect(rectNew.normalized());
     }
     else
@@ -147,9 +153,7 @@ void HIconItemGroup::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-    double w1 = rect.width()/rectF.width();
-    double h1 = rect.height()/rectF.height();
-    pGroupObj->resize(w1,h1);
+
     rectF = rect;
     refreshBaseObj(rect);
     update();
@@ -189,9 +193,10 @@ void HIconItemGroup::resizeItem(const QPolygonF& polygonF)
 
 void HIconItemGroup::refreshBaseObj(const QRectF& rect)
 {
-    pGroupObj->setTopLeft(QPointF(rect.x(),rect.y()));
-    pGroupObj->setGroupWidth(rect.width());
-    pGroupObj->setGroupHeight(rect.height());
+    //pGroupObj->setTopLeft(QPointF(rect.x(),rect.y()));
+    //pGroupObj->setGroupWidth(rect.width());
+    //pGroupObj->setGroupHeight(rect.height());
+    pGroupObj->setObjRect(rect);
     QPointF p = rect.center();
     pGroupObj->setOX(p.x());
     pGroupObj->setOY(p.y());

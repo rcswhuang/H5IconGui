@@ -318,6 +318,7 @@ void HRectObj::resetRectPoint(qreal dx, qreal dy)
     topLeft.setY(topLeft.y()+dy);
 }
 
+
 void HRectObj::setObjRect(const QRectF& rect)
 {
     topLeft = rect.topLeft();

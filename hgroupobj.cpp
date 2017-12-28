@@ -134,6 +134,8 @@ void HGroupObj::resetRectPoint(qreal dx, qreal dy)
 
 void HGroupObj::resize(double w,double h)
 {
+    rectWidth = rectWidth*w;
+    rectHeight = rectHeight*h;
     for(int i = 0; i < pObjList.count();i++)
     {
         HBaseObj* pObj = (HBaseObj*)pObjList[i];
@@ -142,8 +144,7 @@ void HGroupObj::resize(double w,double h)
 /*
     topLeft.setX(topLeft.x()*w);
     topLeft.setY(topLeft.y()*h);*/
-    rectWidth = rectWidth*w;
-    rectHeight = rectHeight*h;
+
 }
 
 QRectF HGroupObj::boundingRect() const
@@ -166,6 +167,23 @@ QPainterPath HGroupObj::shape() const
     boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
     return path;
+}
+
+void HGroupObj::setObjRect(const QRectF& rect)
+{
+    topLeft = rect.topLeft();
+    rectWidth = rect.width();
+    rectHeight = rect.height();
+}
+
+QRectF HGroupObj::getObjRect()
+{
+    return QRectF(topLeft,QSize(rectWidth,rectHeight));
+}
+
+void HGroupObj::setSubObjRect(qreal dx,qreal dy)
+{
+
 }
 
 void HGroupObj::setTopLeft(const QPointF &pointF)
