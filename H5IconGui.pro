@@ -66,6 +66,7 @@ HEADERS +=\
     ../include/H5IconGui/hbaseobj.h \
     ../include/H5IconGui/hgroupobj.h \
     ../include/H5IconGui/hiconitemgroup.h \
+    ../include/H5IconGui/hiconrectobj.h \
     ../include/H5IconGui/hiconrectobj.h
 
 win32{

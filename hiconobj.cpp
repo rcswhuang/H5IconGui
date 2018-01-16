@@ -12,7 +12,7 @@
 #include "H5IconGui/hiconpolylineitem.h"
 #include "H5IconGui/hicontextitem.h"
 #include "H5IconGui/hiconcomplexitem.h"
-#include <QDebug>
+
 HLineObj::HLineObj()
 {
     arrowHeight = 0;

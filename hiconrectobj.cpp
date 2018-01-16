@@ -1,4 +1,4 @@
-#include "H5IconGui/hiconrectobj.h"
+﻿#include "H5IconGui/hiconrectobj.h"
 #include "H5IconGui/hiconarcitem.h"
 #include "H5IconGui/hiconcircleitem.h"
 #include "H5IconGui/hiconellipseitem.h"
@@ -314,8 +314,11 @@ void HRectObj::resize(double w,double h)
 
 void HRectObj::resetRectPoint(qreal dx, qreal dy)
 {
-    topLeft.setX(topLeft.x()+dx);
-    topLeft.setY(topLeft.y()+dy);
+    //topLeft.setX(topLeft.x()+dx);
+    //topLeft.setY(topLeft.y()+dy);
+    //rectWidth -= dx;
+    //rectHeight -= dy;
+    setObjRect(getObjRect().adjusted(-dx,-dy,dx,dy));
 }
 
 

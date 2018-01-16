@@ -68,7 +68,7 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(pointLocation > 0)
     {
         QRectF rectNew;
-        if(pointLocation == 1)
+        /*if(pointLocation == 1)
         {
             pGroupObj->resetRectPoint(deltaX,deltaY);
         }
@@ -84,13 +84,15 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         {
             pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
         }
+        */
+        pGroupObj->resetRectPoint(deltaX,deltaY);
         rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
 
-        double w1 = rectNew.width()/rectF.width();
-        double h1 = rectNew.height()/rectF.height();
-        pGroupObj->resize(w1,h1);
+        //double w1 = rectNew.width()/rectF.width();
+        //double h1 = rectNew.height()/rectF.height();
+        //pGroupObj->resize(w1,h1);
 
-        rectNew = pGroupObj->getObjRect();
+        //rectNew = pGroupObj->getObjRect();
         setRect(rectNew.normalized());
     }
     else
