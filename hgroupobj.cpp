@@ -121,21 +121,21 @@ void HGroupObj::moveBy(qreal dx,qreal dy)
 }
 
 //需要设置4个点的位置
-void HGroupObj::resetRectPoint(qreal dx, qreal dy)
+void HGroupObj::resetRectPoint(QPointF pt1, QPointF pt2)
 {
     //topLeft.setX(topLeft.x()+dx);
     //topLeft.setY(topLeft.y()+dy);
     for(int i = 0; i < pObjList.count();i++)
     {
         HBaseObj* pObj = (HBaseObj*)pObjList[i];
-        pObj->resetRectPoint(dx,dy);
+        pObj->resetRectPoint(pt1,pt2);
     }
 }
 
 void HGroupObj::resize(double w,double h)
 {
-    rectWidth = rectWidth*w;
-    rectHeight = rectHeight*h;
+   // rectWidth = rectWidth*w;
+   // rectHeight = rectHeight*h;
     for(int i = 0; i < pObjList.count();i++)
     {
         HBaseObj* pObj = (HBaseObj*)pObjList[i];

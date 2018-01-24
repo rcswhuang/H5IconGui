@@ -10,6 +10,8 @@ HRectObj::HRectObj()
 {
     rectHeight = 0;
     rectWidth = 0;
+    w = 0;
+    h = 0;
 }
 
 HRectObj::~HRectObj()
@@ -308,17 +310,16 @@ void HRectObj::paint(QPainter* painter)
 
 void HRectObj::resize(double w,double h)
 {
+    this->w = w;
+    this->h = h;
     rectWidth = rectWidth*w;
     rectHeight = rectHeight*h;
 }
 
-void HRectObj::resetRectPoint(qreal dx, qreal dy)
+void HRectObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
-    //topLeft.setX(topLeft.x()+dx);
-    //topLeft.setY(topLeft.y()+dy);
-    //rectWidth -= dx;
-    //rectHeight -= dy;
-    setObjRect(getObjRect().adjusted(-dx,-dy,dx,dy));
+    topLeft.setX(pt1.x() + (topLeft.x() - pt2.x())*w);
+    topLeft.setY(pt1.y() + (topLeft.y() - pt2.y())*h);
 }
 
 

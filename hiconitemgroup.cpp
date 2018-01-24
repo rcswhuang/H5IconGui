@@ -68,29 +68,32 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(pointLocation > 0)
     {
         QRectF rectNew;
-        /*if(pointLocation == 1)
+        if(pointLocation == 1)
         {
-            pGroupObj->resetRectPoint(deltaX,deltaY);
+           //pGroupObj->resetRectPoint(deltaX,deltaY);
+            deltaX = -deltaX;
+            deltaY = -deltaY;
         }
         else if(pointLocation == 2)
         {
-            pGroupObj->resetRectPoint(-deltaX,deltaY);
+            //pGroupObj->resetRectPoint(-deltaX,deltaY);
+            deltaY = -deltaY;
         }
         else if(pointLocation == 3)
         {
-            pGroupObj->resetRectPoint(deltaX,-deltaY);
+            //pGroupObj->resetRectPoint(deltaX,-deltaY);
+            deltaX = -deltaX;
         }
         else if(pointLocation == 4)
         {
-            pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
+            //pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
         }
-        */
-        pGroupObj->resetRectPoint(deltaX,deltaY);
+
+
         rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
 
-        //double w1 = rectNew.width()/rectF.width();
-        //double h1 = rectNew.height()/rectF.height();
-        //pGroupObj->resize(w1,h1);
+
+        //pGroupObj->resetRectPoint(event->scenePos(),pointStart);
 
         //rectNew = pGroupObj->getObjRect();
         setRect(rectNew.normalized());
@@ -155,7 +158,9 @@ void HIconItemGroup::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-
+    double w1 = rect.width()/rectF.width();
+    double h1 = rect.height()/rectF.height();
+    pGroupObj->resize(w1,h1);
     rectF = rect;
     refreshBaseObj(rect);
     update();

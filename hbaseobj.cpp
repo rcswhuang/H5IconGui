@@ -631,7 +631,7 @@ void HBaseObj::resize(double w,double h)
 
 }
 
-void HBaseObj::resetRectPoint(qreal dx, qreal dy)
+void HBaseObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
 
 }
