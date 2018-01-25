@@ -121,7 +121,7 @@ void HGroupObj::moveBy(qreal dx,qreal dy)
 }
 
 //需要设置4个点的位置
-void HGroupObj::resetRectPoint(QPointF pt1, QPointF pt2)
+void HGroupObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
     //topLeft.setX(topLeft.x()+dx);
     //topLeft.setY(topLeft.y()+dy);
@@ -234,6 +234,7 @@ void HGroupObj::delObj(HBaseObj* pObj)
 
 void HGroupObj::paint(QPainter* painter)
 {
+    //还需要判断
     HIconItemGroup* pItem = qgraphicsitem_cast<HIconItemGroup*>(getIconGraphicsItem());
     painter->save(); 
     for(int i = 0; i < pObjList.count();i++)
@@ -248,9 +249,6 @@ void HGroupObj::paint(QPainter* painter)
     pen.setWidth(2);
     painter->setPen(pen);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    painter->drawRect(rect);
-
-    //QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);

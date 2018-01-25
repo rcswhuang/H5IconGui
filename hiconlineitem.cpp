@@ -10,7 +10,6 @@
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 
-
 HIconLineItem::HIconLineItem(HIconGraphicsItem *parent):HIconGraphicsItem(parent)
 {
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
@@ -32,18 +31,15 @@ QRectF HIconLineItem::boundingRect() const
     return shape().controlPointRect();
 }
 
-
 bool HIconLineItem::contains(const QPointF &point) const
 {
     return shape().boundingRect().contains(point);
 }
 
-
 void HIconLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     pLineObj->paint(painter); 
 }
-
 
 QPainterPath HIconLineItem::shape() const
 {
@@ -211,3 +207,9 @@ void HIconLineItem::setItemCursor(int position)
     else
         setCursor(QCursor(Qt::ArrowCursor));
 }
+
+QRectF HIconLineItem::rect() const
+{
+    return boundingRect();
+}
+

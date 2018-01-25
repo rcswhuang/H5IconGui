@@ -173,10 +173,10 @@ quint16 HLineObj::getArrowHeight()
 
 void HLineObj::resize(double w,double h)
 {
-    pfHeadPoint.setX(pfHeadPoint.x()*w);
-    pfHeadPoint.setY(pfHeadPoint.y()*h);
-    pfTailPoint.setX(pfTailPoint.x()*w);
-    pfTailPoint.setY(pfTailPoint.y()*h);
+    pfHeadPoint.setX(ptNew.x() + (pfHeadPoint.x() - ptOld.x())*w);
+    pfHeadPoint.setY(ptNew.y() + (pfHeadPoint.y() - ptOld.y())*h);
+    pfTailPoint.setX(ptNew.x() + (pfTailPoint.x() - ptOld.x())*w);
+    pfTailPoint.setY(ptNew.y() + (pfTailPoint.y() - ptOld.y())*h);
 
     if(arrowWidth > 0 && arrowHeight > 0)
     {
@@ -333,6 +333,12 @@ void HLineObj::paint(QPainter* painter)
     }
     painter->restore();
 
+}
+
+void HLineObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    ptNew = pt1;
+    ptOld = pt2;
 }
 
 ///////////////////////////////////////////////HPolygonObj//////////////////////////////////////
