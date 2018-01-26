@@ -49,6 +49,13 @@ int HIconItemGroup::type() const
     return enumGroup;
 }
 
+void HIconItemGroup::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    pointStart = event->scenePos();
+    pointLocation = pointInRect(pointStart);
+    HIconGraphicsItem::mousePressEvent(event);
+}
+
 void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - pointStart;
@@ -95,6 +102,53 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void HIconItemGroup::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    HIconGraphicsItem::mouseReleaseEvent(event);
+}
+
+void HIconItemGroup::keyPressEvent(QKeyEvent* event)
+{
+    int nStep = 5;
+    if(event->modifiers() == Qt::ShiftModifier)
+    {
+        nStep = 1;
+    }
+    int ndx = 0;
+    int ndy = 0;
+    switch(event->key())
+    {
+    case Qt::Key_Up:
+    {
+        ndx = 0;
+        ndy = -nStep;
+        break;
+    }
+    case Qt::Key_Down:
+    {
+        ndx = 0;
+        ndy = nStep;
+        break;
+    }
+    case Qt::Key_Left:
+    {
+        ndx = -nStep;
+        ndy = 0;
+        break;
+    }
+    case Qt::Key_Right:
+    {
+        ndx = nStep;
+        ndy = 0;
+        break;
+    }
+    }
+    if(ndx == 0 && ndy == 0)
+        return;
+
+    QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
+    setRect(newRect);
+}
 
 void HIconItemGroup::setRect(const QRectF& rect)
 {
@@ -131,7 +185,62 @@ void HIconItemGroup::refreshBaseObj(const QRectF& rect)
     pGroupObj->setModify(true);
 }
 
+//ok
+void HIconItemGroup::moveItemBy(qreal dx, qreal dy)
+{
+    QRectF newRectF;
+    newRectF = rect().translated(dx,dy);
+    setRect(newRectF);
+}
 
+//ok
+void HIconItemGroup::resizeItem(const QPolygonF& polygonF)
+{
+    if(polygonF.size() != 4)
+        return;
+    //topleft bottomright
+    QRectF newRectF(polygonF.at(0),polygonF.at(3));
+    setRect(newRectF);
+}
+
+//ok
+void HIconItemGroup::setItemCursor(int location)
+{
+    if(location == 1 || location == 4)
+        setCursor(QCursor(Qt::SizeFDiagCursor));
+    else if(location == 2 || location == 3)
+        setCursor(QCursor(Qt::SizeBDiagCursor));
+    else
+        setCursor(QCursor(Qt::ArrowCursor));
+}
+
+//ok
+ushort HIconItemGroup::pointInRect(QPointF& point)
+{
+    qreal halfpw = 14.00;
+    QRectF rect1,rect2,rect3,rect4;
+    rect1.setSize(QSizeF(halfpw,halfpw));
+    rect1.moveCenter(rect().topLeft());
+    rect2.setSize(QSizeF(halfpw,halfpw));
+    rect2.moveCenter(rect().topRight());
+    rect3.setSize(QSizeF(halfpw,halfpw));
+    rect3.moveCenter(rect().bottomLeft());
+    rect4.setSize(QSizeF(halfpw,halfpw));
+    rect4.moveCenter(rect().bottomRight());
+
+    ushort location = 0;
+    if(rect1.contains(point))
+        location = 1;
+    else if(rect2.contains(point))
+        location = 2;
+    else if(rect3.contains(point))
+        location = 3;
+    else if(rect4.contains(point))
+        location = 4;
+    else
+        location = 0;
+    return location;
+}
 
 
 

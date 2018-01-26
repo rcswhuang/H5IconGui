@@ -236,3 +236,7 @@ void HIconPolylineItem::resizeItem(const QPolygonF& polygonF)
     setPolygon(polygonF);
 }
 
+QRectF HIconPolylineItem::rect() const
+{
+    return boundingRect();
+}

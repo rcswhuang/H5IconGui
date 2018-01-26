@@ -242,3 +242,8 @@ void HIconPolygonItem::resizeItem(const QPolygonF& polygonF)
         return;
     setPolygon(polygonF);
 }
+
+QRectF HIconPolygonItem::rect() const
+{
+    return boundingRect();
+}

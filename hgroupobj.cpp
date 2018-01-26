@@ -123,8 +123,6 @@ void HGroupObj::moveBy(qreal dx,qreal dy)
 //需要设置4个点的位置
 void HGroupObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
-    //topLeft.setX(topLeft.x()+dx);
-    //topLeft.setY(topLeft.y()+dy);
     for(int i = 0; i < pObjList.count();i++)
     {
         HBaseObj* pObj = (HBaseObj*)pObjList[i];
@@ -231,6 +229,17 @@ void HGroupObj::delObj(HBaseObj* pObj)
     delete pObj;
     pObj = NULL;
 }
+
+HBaseObj* HGroupObj::takeFirst()
+{
+    return pObjList.takeFirst();
+}
+
+bool HGroupObj::isEmpty()
+{
+    return pObjList.isEmpty();
+}
+
 
 void HGroupObj::paint(QPainter* painter)
 {

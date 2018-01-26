@@ -77,7 +77,7 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pLineObj->moveBy(pt.x(),pt.y());
-        QLineF lineF(pLineObj->pfHeadPoint,pLineObj->pfTailPoint);
+        QLineF lineF(pLineObj->getHeadPoint(),pLineObj->getTailPoint());
         setLine(lineF);
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -168,8 +168,8 @@ void HIconLineItem::moveItemBy(qreal dx, qreal dy)
 
 void HIconLineItem::refreshBaseObj()
 {
-    pLineObj->pfHeadPoint = line().p1();
-    pLineObj->pfTailPoint =  line().p2();
+    pLineObj->setHeadPoint(line().p1());
+    pLineObj->setTailPoint(line().p2());
     pLineObj->setModify(true);
 }
 

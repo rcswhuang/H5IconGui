@@ -19,6 +19,7 @@ HLineObj::HLineObj()
     arrowWidth = 0;
     arrowStart = 0;
     arrowEnd = 0;
+    ptOld = ptNew = QPointF(0,0);
 }
 
 HLineObj::~HLineObj()
@@ -345,6 +346,7 @@ void HLineObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 HPolygonObj::HPolygonObj()
 {
     pylist.clear();
+    ptOld = ptNew = QPointF(0,0);
 }
 
 HPolygonObj::~HPolygonObj()
@@ -663,16 +665,22 @@ void HPolygonObj::resize(double w,double h)
     for(int i = 0; i < pylist.count();i++)
     {
         QPointF pt = pylist[i];
-        pt.setX(pt.x()*w);
-        pt.setY(pt.y()*h);
+        pt.setX(ptNew.x() + (pt.x() - ptOld.x())*w);
+        pt.setY(ptNew.y() + (pt.y() - ptOld.y())*h);
         pylist[i] = pt;
     }
 }
 
+void HPolygonObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    ptNew = pt1;
+    ptOld = pt2;
+}
 ///////////////////////////////////////////////HPolylineObj//////////////////////////////////////
 HPolylineObj::HPolylineObj()
 {
     pylist.clear();
+    ptOld = ptNew = QPointF(0,0);
 }
 
 HPolylineObj::~HPolylineObj()
@@ -976,13 +984,17 @@ void HPolylineObj::resize(double w,double h)
     for(int i = 0; i < pylist.count();i++)
     {
         QPointF pt = pylist[i];
-        pt.setX(pt.x()*w);
-        pt.setY(pt.y()*h);
+        pt.setX(ptNew.x() + (pt.x() - ptOld.x())*w);
+        pt.setY(ptNew.y() + (pt.y() - ptOld.y())*h);
         pylist[i] = pt;
     }
 }
 
-
+void HPolylineObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    ptNew = pt1;
+    ptOld = pt2;
+}
 /*************************************图符类**********************************/
 /*
  * 图符类只用于drawgrph和在线系统上面，所以保存的信息和基本图元是不一致的。
