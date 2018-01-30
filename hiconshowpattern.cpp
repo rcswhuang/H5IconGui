@@ -1,6 +1,7 @@
 ﻿#include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hiconobj.h"
 #include "H5IconGui/hiconrectobj.h"
+#include "H5IconGui/hgroupobj.h"
 HIconShowPattern::HIconShowPattern(HIconSymbol* symbol):pSymbol(symbol)
 {
 
@@ -144,6 +145,12 @@ void HIconShowPattern::copyTo(HIconShowPattern* sp)
             pObj->clone(pTextObj);
             sp->addObj(pTextObj);
         }
+        else if(pObj->getShapeType() == enumGroup)
+        {
+            HGroupObj* pGroupObj = new HGroupObj(pSymbol);
+            pObj->clone(pGroupObj);
+            sp->addObj(pGroupObj);
+        }
     }
 }
 
@@ -170,6 +177,3 @@ void HIconShowPattern::resize(double w,double h)
         pObj->resize(w,h);
     }
 }
-
-
-

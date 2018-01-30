@@ -6,8 +6,7 @@
 #include <QIcon>
 #include <QSizeF>
 #include <QImage>
-#include "H5IconGui/hbaseobj.h"
-#include "H5IconGui/hiconobj.h"
+
 HIconTemplate::HIconTemplate(const QUuid& uuid,QObject* parent)
     :uUid(uuid)
 {

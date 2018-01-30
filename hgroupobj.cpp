@@ -4,12 +4,19 @@
 HGroupObj::HGroupObj(HIconSymbol* symbol)
     :pIconSymbol(symbol)
 {
-
+    clear();
 }
 
 HGroupObj::~HGroupObj()
 {
+    clear();
+}
 
+void HGroupObj::clear()
+{
+    while(!pObjList.isEmpty())
+        delete pObjList.takeFirst();
+    pObjList.clear();
 }
 
 //二进制读写
@@ -51,8 +58,8 @@ void HGroupObj::readXml(QDomElement* dom)
         QString strTagName = e.tagName();
         HBaseObj* pObj = pIconSymbol->newObj(strTagName);
         if(!pObj) continue;
-        pObjList.append(pObj);
         pObj->readXml(&e);
+        pObjList.append(pObj);
     }
 }
 
@@ -94,6 +101,64 @@ void HGroupObj::copyTo(HBaseObj* obj)
     ob->setTopLeft(topLeft);
     ob->setGroupWidth(rectWidth);
     ob->setGroupHeight(rectHeight);
+    for(int i = 0; i < pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)pObjList[i];
+        if(pObj->getShapeType() == enumLine)
+        {
+            HLineObj* lineObj = new HLineObj;
+            pObj->copyTo(lineObj);
+            ob->pObjList.append(lineObj);
+        }
+        else if(pObj->getShapeType() == enumRectangle)
+        {
+            HRectObj* pRectObj = new HRectObj;
+            pObj->clone(pRectObj);
+            ob->pObjList.append(pRectObj);
+        }
+        else if(pObj->getShapeType() == enumEllipse)
+        {
+            HEllipseObj* pEllipseObj = new HEllipseObj;
+            pObj->clone(pEllipseObj);
+            ob->pObjList.append(pEllipseObj);
+        }
+        else if(pObj->getShapeType() == enumCircle)
+        {
+            HCircleObj* pCircleObj = new HCircleObj;
+            pObj->clone(pCircleObj);
+            ob->pObjList.append(pCircleObj);
+        }
+        else if(pObj->getShapeType() == enumPolyline)
+        {
+            HPolylineObj* pPolylineObj = new HPolylineObj;
+            pObj->clone(pPolylineObj);
+            ob->pObjList.append(pPolylineObj);
+        }
+        else if(pObj->getShapeType() == enumPolygon)
+        {
+            HPolygonObj* pPolygonObj = new HPolygonObj;
+            pObj->clone(pPolygonObj);
+            ob->pObjList.append(pPolygonObj);
+        }
+        else if(pObj->getShapeType() == enumPie)
+        {
+            HPieObj* pPieObj = new HPieObj;
+            pObj->clone(pPieObj);
+            ob->pObjList.append(pPieObj);
+        }
+        else if(pObj->getShapeType() == enumArc)
+        {
+            HArcObj* pArcObj = new HArcObj;
+            pObj->clone(pArcObj);
+            ob->pObjList.append(pArcObj);
+        }
+        else if(pObj->getShapeType() == enumText)
+        {
+            HTextObj* pTextObj = new HTextObj;
+            pObj->clone(pTextObj);
+            ob->pObjList.append(pTextObj);
+        }
+    }
 }
 
 void HGroupObj::clone(HBaseObj* obj)
