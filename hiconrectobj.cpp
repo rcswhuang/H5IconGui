@@ -5,6 +5,7 @@
 #include "H5IconGui/hiconpieitem.h"
 #include "H5IconGui/hiconrectitem.h"
 #include "H5IconGui/hicontextitem.h"
+#include "H5IconGui/hiconshowpattern.h"
 /////////////////////////////////////HRectObj//////////////////////////////////////
 HRectObj::HRectObj()
 {
@@ -359,7 +360,7 @@ void HRectObj::setRectHeight(double height)
     rectHeight = height;
 }
 
-double HRectObj::getRectHeigth()
+double HRectObj::getRectHeight()
 {
     return rectHeight;
 }
@@ -1160,5 +1161,310 @@ void HTextObj::paint(QPainter* painter)
         painter->drawRect(rect3);
         painter->drawRect(rect4);
         painter->restore();
+    }
+}
+
+
+/*************************************图符类**********************************/
+/*
+ * 图符类只用于drawgrph和在线系统上面，所以保存的信息和基本图元是不一致的。
+*/
+HIconComplexObj::HIconComplexObj()
+{
+    //去掉本身所有的边框颜色设置，这些都是不需要的
+    pDynamicObj = new HDynamicObj;
+    bFrameSee = false;
+}
+
+HIconComplexObj::HIconComplexObj(HIconTemplate* it)
+    :pIconTemplate(it)
+{
+    pDynamicObj = new HDynamicObj;
+    pIconSymbol = new HIconSymbol(it);
+    initIconTemplate();
+
+    bFrameSee = false;
+}
+
+HIconComplexObj::~HIconComplexObj()
+{
+    if(pDynamicObj)
+        delete pDynamicObj;
+    if(pIconSymbol)
+        delete pIconSymbol;
+    if(pIconTemplate)
+        delete pIconTemplate;
+}
+
+//二进制读写
+void HIconComplexObj::readData(QDataStream* data)
+{
+    if(!data) return;
+    HRectObj::readData(data);
+    QString s;
+    *data>>s;
+    catalogName = s;
+    int n;
+    *data>>n;
+    catalogType = n;
+    *data>>s;
+    uuid = s;
+    *data>>s;
+    symbolName = s;
+    *data>>n;
+    symbolType = n;
+
+    //还有动态数据
+    if(pDynamicObj)
+        pDynamicObj->readData(data);
+}
+
+void HIconComplexObj::writeData(QDataStream* data)
+{
+    if(!data) return;
+    HRectObj::writeData(data);
+    *data<<catalogName;
+    *data<<catalogType;
+    *data<<uuid;
+    *data<<symbolName;
+    *data<<symbolType;
+    //动态数据
+    if(pDynamicObj)
+        pDynamicObj->writeData(data);
+}
+
+//xml文件读写
+void HIconComplexObj::readXml(QDomElement* dom)
+{
+    if(!dom) return;
+    HRectObj::readXml(dom);
+    catalogName = dom->attribute("CatalogName");
+    catalogType = dom->attribute("CatalogType").toInt();
+    uuid = dom->attribute("Uuid");
+    symbolName = dom->attribute("SymbolName");
+    symbolType = dom->attribute("SymbolType").toInt();
+    //topLeft.setX(dom->attribute("topLeftx").toDouble());
+    //topLeft.setY(dom->attribute("topLefty").toDouble());
+    //rectWidth = dom->attribute("rectWidth").toInt();
+    //rectHeight = dom->attribute("rectHeight").toInt();
+
+    //动态数据
+    QDomElement RelationDom = dom->namedItem("Relation").toElement();
+    if(pDynamicObj)
+        pDynamicObj->readXml(&RelationDom);
+
+}
+
+void HIconComplexObj::writeXml(QDomElement* dom)
+{
+    if(!dom)return;
+    HRectObj::writeXml(dom);
+    dom->setAttribute("CatalogName",catalogName);
+    dom->setAttribute("CatalogType",catalogType);
+    dom->setAttribute("Uuid",uuid);
+    dom->setAttribute("SymbolName",symbolName);
+    dom->setAttribute("SymbolType",symbolType);
+    //dom->setAttribute("topLeftx",topLeft.x());
+    //dom->setAttribute("topLefty",topLeft.y());
+    //dom->setAttribute("rectWidth",rectWidth);
+    //dom->setAttribute("rectHeight",rectHeight);
+
+    //动态数据
+    QDomElement RelationDom = dom->ownerDocument().createElement("Relation");
+    dom->appendChild(RelationDom);
+    if(pDynamicObj)
+        pDynamicObj->writeXml(&RelationDom);
+}
+
+
+QString HIconComplexObj::TagName()
+{
+    return "ComplexObj";
+}
+
+//拷贝克隆
+void HIconComplexObj::copyTo(HBaseObj* obj)
+{
+    HIconComplexObj* ob = (HIconComplexObj*)obj;
+    ob->topLeft = topLeft;
+    ob->rectWidth = rectWidth;
+    ob->rectHeight = rectHeight;
+    ob->catalogName = catalogName;
+    ob->catalogType = catalogType;
+    ob->symbolName = symbolName;
+    ob->symbolType = symbolType;
+
+    //模板数据
+    if(pIconSymbol && ob->pIconSymbol)
+    {
+        pIconSymbol->copyTo(ob->pIconSymbol);
+    }
+
+    //动态数据
+    if(pDynamicObj && ob->pDynamicObj)
+    {
+        pDynamicObj->copyTo(ob->pDynamicObj);
+    }
+}
+
+void HIconComplexObj::clone(HBaseObj* obj)
+{
+    if(!obj) return;
+    HBaseObj::clone(obj);
+    copyTo(obj);
+}
+
+DRAWSHAPE HIconComplexObj::getShapeType()
+{
+    return enumComplex;
+}
+
+void HIconComplexObj::moveBy(qreal dx,qreal dy)
+{
+    topLeft.setX(topLeft.x() + dx);
+    topLeft.setY(topLeft.y() + dy);
+    if(!getIconSymbol() && !getIconSymbol()->getCurrentPatternPtr())
+        return;
+    HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
+    for(int i = 0; i < pattern->pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)(pattern->pObjList[i]);
+        if(pObj)
+        {
+           pObj->moveBy(dx,dy);
+        }
+    }
+    bModify = true;
+}
+
+void HIconComplexObj::paint(QPainter* painter)
+{
+    //HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
+    painter->save();
+    if(!getIconSymbol() && !getIconSymbol()->findPatternById(0))
+        return;
+    HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
+    for(int i = 0; i < pattern->pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)(pattern->pObjList[i]);
+        if(pObj)
+        {
+           pObj->paint(painter);
+        }
+    }
+    //painter->drawRect(boundingRect());
+
+    /*
+    if(pItem->isSelected())
+    {
+        QPen pen1 = QPen(Qt::green);
+        pen1.setWidth(1);
+        painter->setPen(pen1);
+        qreal halfpw = 14.00;
+        QRectF rect1,rect2,rect3,rect4;
+        rect1.setSize(QSizeF(halfpw,halfpw));
+        QPointF pt21,pt22,pt23,pt24;
+        pt21 = pItem->rect().topLeft();
+        pt22 = pItem->rect().topRight();
+        pt23 = pItem->rect().bottomLeft();
+        pt24 = pItem->rect().bottomRight();
+        rect1.moveCenter(pItem->rect().topLeft());
+        rect2.setSize(QSizeF(halfpw,halfpw));
+        rect2.moveCenter(pItem->rect().topRight());
+        rect3.setSize(QSizeF(halfpw,halfpw));
+        rect3.moveCenter(pItem->rect().bottomLeft());
+        rect4.setSize(QSizeF(halfpw,halfpw));
+        rect4.moveCenter(pItem->rect().bottomRight());
+
+        painter->drawRect(rect1);
+        painter->drawRect(rect2);
+        painter->drawRect(rect3);
+        painter->drawRect(rect4);
+    }*/
+    painter->restore();
+}
+
+void HIconComplexObj::resize(qreal w,qreal h)
+{
+    if(pIconSymbol)
+        pIconSymbol->resize(w,h);
+}
+
+QRectF HIconComplexObj::boundingRect() const
+{
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x());
+    boundingRect.setY(topLeft.y());
+    boundingRect.setWidth(rectWidth );
+    boundingRect.setHeight(rectHeight);
+    return boundingRect;
+}
+
+bool HIconComplexObj::contains(const QPointF &point) const
+{
+    return shape().contains(point);
+}
+
+QPainterPath HIconComplexObj::shape() const
+{
+    QPainterPath path;
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x());
+    boundingRect.setY(topLeft.y());
+    boundingRect.setWidth(rectWidth );
+    boundingRect.setHeight(rectHeight);
+    path.addRect(boundingRect);
+
+    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
+    path.addRect(shapeRect);
+    return path;
+}
+
+void HIconComplexObj::setUuid(const QString& uuid)
+{
+    this->uuid = uuid;
+}
+
+QString HIconComplexObj::getUuid()
+{
+    return uuid;
+}
+
+void HIconComplexObj::initIconTemplate()
+{
+    pIconTemplate->getSymbol()->copyTo(pIconSymbol);
+}
+
+void HIconComplexObj::setIconTemplate(HIconTemplate* t)
+{
+    pIconTemplate = t;
+    if(!pIconSymbol)
+    {
+        pIconSymbol = new HIconSymbol(t);
+        initIconTemplate();
+    }
+}
+
+HIconTemplate* HIconComplexObj::iconTemplate()
+{
+    return pIconTemplate;
+}
+
+HIconSymbol* HIconComplexObj::getIconSymbol()
+{
+    return pIconSymbol;
+}
+
+void HIconComplexObj::initDynamicData()
+{
+    clearDynamicData();
+}
+
+void HIconComplexObj::clearDynamicData()
+{
+    if(pDynamicObj)
+    {
+        delete pDynamicObj;
+        pDynamicObj = NULL;
     }
 }

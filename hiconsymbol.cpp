@@ -1,7 +1,6 @@
 ﻿#include "H5IconGui/hiconsymbol.h"
 #include "H5IconGui/hiconshowpattern.h"
 #include "H5IconGui/hicontemplate.h"
-
 #include <QVariant>
 HIconSymbol::HIconSymbol(HIconTemplate* t):pIconTemplate(t)
 {
@@ -188,6 +187,10 @@ HBaseObj* HIconSymbol::newObj(int nObjType)
     else if(nObjType == enumGroup)
     {
         pObj = new HGroupObj(this);
+    }
+    else if(nObjType == enumComplex)
+    {
+        pObj = new HIconComplexObj(pIconTemplate);
     }
     pObj->setShapeType((DRAWSHAPE)nObjType);
     if(pObj)
