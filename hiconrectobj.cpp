@@ -1409,14 +1409,15 @@ QPainterPath HIconComplexObj::shape() const
 {
     QPainterPath path;
     QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
+    boundingRect.setX(topLeft.x()-10);
+    boundingRect.setY(topLeft.y()-10);
+    boundingRect.setWidth(rectWidth +20);
+    boundingRect.setHeight(rectHeight+20);
     path.addRect(boundingRect);
 
-    QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-    path.addRect(shapeRect);
+
+   // QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
+  //  path.addRect(shapeRect);
     return path;
 }
 

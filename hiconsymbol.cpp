@@ -142,6 +142,8 @@ HBaseObj* HIconSymbol::newObj(QString tagName)
         drawShape = enumPolygon;
     else if(tagName == "Group")
         drawShape = enumGroup;
+    else if(tagName == "ComplexObj")
+        drawShape = enumComplex;
     return newObj(drawShape);
 }
 
@@ -449,12 +451,9 @@ HIconShowPattern* HIconSymbol::getCurrentPatternPtr()
 
 void HIconSymbol::resize(double w,double h)
 {
-    QSizeF pt = pIconTemplate->getDefaultSize();
-    double w1 = w/(pt.width()*20);
-    double h1 = h/(pt.height()*20);
     for(int i = 0; i < pShowPatternVector.count();i++)
     {
         HIconShowPattern* pattern = (HIconShowPattern*)(pShowPatternVector[i]);
-        pattern->resize(w1,h1);
+        pattern->resize(w,h);
     }
 }
