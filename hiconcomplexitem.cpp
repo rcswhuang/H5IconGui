@@ -109,8 +109,11 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
+        //pIconComplexObj->moveBy(pt.x(),pt.y());
+        //HIconGraphicsItem::mouseMoveEvent(event);
         pIconComplexObj->moveBy(pt.x(),pt.y());
-        HIconGraphicsItem::mouseMoveEvent(event);
+        QRectF recttemp = pIconComplexObj->getObjRect();
+        setRect(recttemp.normalized());
     }
 }
 

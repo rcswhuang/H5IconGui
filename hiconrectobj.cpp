@@ -5,6 +5,7 @@
 #include "H5IconGui/hiconpieitem.h"
 #include "H5IconGui/hiconrectitem.h"
 #include "H5IconGui/hicontextitem.h"
+#include "H5IconGui/hiconcomplexitem.h"
 #include "H5IconGui/hiconshowpattern.h"
 /////////////////////////////////////HRectObj//////////////////////////////////////
 HRectObj::HRectObj()
@@ -255,18 +256,18 @@ void HRectObj::paint(QPainter* painter)
     int nYAxis = getYAxis();
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    QPointF centerPoint = boundingRect().center();
+    //QPointF centerPoint = boundingRect().center();
     painter->save();
     if(pItem)
     {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
+        //pItem->setTransformOriginPoint(centerPoint);
+        //QTransform transform;
+        //transform.rotate(fRotateAngle);
+        //pItem->setTransform(transform);
     }
     else
     {
-        painter->rotate(fRotateAngle);
+        //painter->rotate(fRotateAngle);
     }
 
 
@@ -1192,8 +1193,16 @@ HIconComplexObj::~HIconComplexObj()
         delete pDynamicObj;
     if(pIconSymbol)
         delete pIconSymbol;
-    if(pIconTemplate)
-        delete pIconTemplate;
+    //if(pIconTemplate)
+    //    delete pIconTemplate;
+}
+
+void HIconComplexObj::initIconTemplate()
+{
+    catalogName = pIconTemplate->getCatalogName();
+    catalogType = pIconTemplate->getCatalogType();
+    uuid = pIconTemplate->getUuid().toString();
+    pIconTemplate->getSymbol()->copyTo(pIconSymbol);
 }
 
 //二进制读写
@@ -1248,6 +1257,7 @@ void HIconComplexObj::readXml(QDomElement* dom)
     //rectWidth = dom->attribute("rectWidth").toInt();
     //rectHeight = dom->attribute("rectHeight").toInt();
 
+    //这里读取symbol信息不能用symbol对象来读取
     //动态数据
     QDomElement RelationDom = dom->namedItem("Relation").toElement();
     if(pDynamicObj)
@@ -1339,7 +1349,7 @@ void HIconComplexObj::moveBy(qreal dx,qreal dy)
 
 void HIconComplexObj::paint(QPainter* painter)
 {
-    //HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
+    HIconComplexItem* pItem = qgraphicsitem_cast<HIconComplexItem*>(getIconGraphicsItem());
     painter->save();
     if(!getIconSymbol() && !getIconSymbol()->findPatternById(0))
         return;
@@ -1352,36 +1362,39 @@ void HIconComplexObj::paint(QPainter* painter)
            pObj->paint(painter);
         }
     }
-    //painter->drawRect(boundingRect());
+    QPen pen(Qt::red);
+    painter->setPen(pen);
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    //painter->drawRect(rect);
 
-    /*
-    if(pItem->isSelected())
+    if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
         painter->setPen(pen1);
-        qreal halfpw = 14.00;
+        qreal halfpw = 8.00;
         QRectF rect1,rect2,rect3,rect4;
         rect1.setSize(QSizeF(halfpw,halfpw));
-        QPointF pt21,pt22,pt23,pt24;
-        pt21 = pItem->rect().topLeft();
-        pt22 = pItem->rect().topRight();
-        pt23 = pItem->rect().bottomLeft();
-        pt24 = pItem->rect().bottomRight();
-        rect1.moveCenter(pItem->rect().topLeft());
+        rect1.moveCenter(rect.topLeft());
         rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(pItem->rect().topRight());
+        rect2.moveCenter(rect.topRight());
         rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(pItem->rect().bottomLeft());
+        rect3.moveCenter(rect.bottomLeft());
         rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(pItem->rect().bottomRight());
+        rect4.moveCenter(rect.bottomRight());
 
         painter->drawRect(rect1);
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
-    }*/
+    }
     painter->restore();
+}
+
+void HIconComplexObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    if(pIconSymbol)
+        pIconSymbol->resetRectPoint(pt1,pt2);
 }
 
 void HIconComplexObj::resize(qreal w,qreal h)
@@ -1392,12 +1405,7 @@ void HIconComplexObj::resize(qreal w,qreal h)
 
 QRectF HIconComplexObj::boundingRect() const
 {
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x());
-    boundingRect.setY(topLeft.y());
-    boundingRect.setWidth(rectWidth );
-    boundingRect.setHeight(rectHeight);
-    return boundingRect;
+   return shape().controlPointRect();
 }
 
 bool HIconComplexObj::contains(const QPointF &point) const
@@ -1429,11 +1437,6 @@ void HIconComplexObj::setUuid(const QString& uuid)
 QString HIconComplexObj::getUuid()
 {
     return uuid;
-}
-
-void HIconComplexObj::initIconTemplate()
-{
-    pIconTemplate->getSymbol()->copyTo(pIconSymbol);
 }
 
 void HIconComplexObj::setIconTemplate(HIconTemplate* t)

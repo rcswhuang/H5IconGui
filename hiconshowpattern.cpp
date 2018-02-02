@@ -4,7 +4,6 @@
 #include "H5IconGui/hgroupobj.h"
 HIconShowPattern::HIconShowPattern(HIconSymbol* symbol):pSymbol(symbol)
 {
-
 }
 
 HIconShowPattern::~HIconShowPattern()
@@ -169,6 +168,16 @@ void HIconShowPattern::clear()
     pObjList.clear();
 }
 
+void HIconShowPattern::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    for(int i = 0; i < pObjList.size();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)pObjList[i];
+        pObj->resetRectPoint(pt1,pt2);
+    }
+}
+
+
 void HIconShowPattern::resize(double w,double h)
 {
     for(int i = 0; i < pObjList.size();i++)
@@ -177,3 +186,8 @@ void HIconShowPattern::resize(double w,double h)
         pObj->resize(w,h);
     }
 }
+
+
+
+
+

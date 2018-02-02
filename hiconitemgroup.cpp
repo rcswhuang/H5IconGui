@@ -89,8 +89,8 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
         double w1 = rectNew.width()/rectF.width();
         double h1 = rectNew.height()/rectF.height();
-        pGroupObj->resize(w1,h1);
         pGroupObj->resetRectPoint(rectNew.topLeft(),rectF.topLeft());
+        pGroupObj->resize(w1,h1);
         setRect(rectNew.normalized());
     }
     else

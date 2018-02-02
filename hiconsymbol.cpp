@@ -142,8 +142,6 @@ HBaseObj* HIconSymbol::newObj(QString tagName)
         drawShape = enumPolygon;
     else if(tagName == "Group")
         drawShape = enumGroup;
-    else if(tagName == "ComplexObj")
-        drawShape = enumComplex;
     return newObj(drawShape);
 }
 
@@ -189,10 +187,6 @@ HBaseObj* HIconSymbol::newObj(int nObjType)
     else if(nObjType == enumGroup)
     {
         pObj = new HGroupObj(this);
-    }
-    else if(nObjType == enumComplex)
-    {
-        pObj = new HIconComplexObj(pIconTemplate);
     }
     pObj->setShapeType((DRAWSHAPE)nObjType);
     if(pObj)
@@ -447,6 +441,15 @@ void HIconSymbol::setCurrentPatternPtr(HIconShowPattern* sp)
 HIconShowPattern* HIconSymbol::getCurrentPatternPtr()
 {
     return pCurPattern;
+}
+
+void HIconSymbol::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    for(int i = 0; i < pShowPatternVector.count();i++)
+    {
+        HIconShowPattern* pattern = (HIconShowPattern*)(pShowPatternVector[i]);
+        pattern->resetRectPoint(pt1,pt2);
+    }
 }
 
 void HIconSymbol::resize(double w,double h)
