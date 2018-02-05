@@ -1365,7 +1365,7 @@ void HIconComplexObj::paint(QPainter* painter)
     QPen pen(Qt::red);
     painter->setPen(pen);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    //painter->drawRect(rect);
+    painter->drawRect(rect);
 
     if(pItem && pItem->isSelected())
     {

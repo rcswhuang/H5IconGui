@@ -154,7 +154,6 @@ void HIconItemGroup::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-
     rectF = rect;
     refreshBaseObj(rect);
     update();

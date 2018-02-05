@@ -65,55 +65,56 @@ void HIconComplexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     //每次移动或者改变大小 都要刷新到里面的所有部分
-    qreal fRotateAngle = pIconComplexObj->getRotateAngle();
+    /*qreal fRotateAngle = pIconComplexObj->getRotateAngle();
     QTransform transform;
     transform.rotate(-fRotateAngle);
     QPointF pt = transform.map(event->scenePos()) - transform.map(pointStart);
-    transform.rotate(fRotateAngle);
+    transform.rotate(fRotateAngle);*/
 
-
+    QPointF pt = event->scenePos() - pointStart;
     qreal deltaX =pt.x();
     qreal deltaY = pt.y();
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
         bShift = true;
-    if(pointLocation == 1)
+    if(pointLocation > 0)
     {
         QRectF rectNew;
-        rectNew.setTopLeft(QPointF(rect().left() + deltaX,rect().top() + deltaY));
-        rectNew.setBottomRight(rect().bottomRight());
-        setRect(rectNew.normalized());
+        if(pointLocation == 1)
+        {
+            deltaX = -deltaX;
+            deltaY = -deltaY;
+        }
+        else if(pointLocation == 2)
+        {
+            deltaY = -deltaY;
+        }
+        else if(pointLocation == 3)
+        {
+            deltaX = -deltaX;
+        }
+        else if(pointLocation == 4)
+        {
+            //pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
+        }
 
-    }
-    else if(pointLocation == 2)
-    {
-        QRectF rectNew;
-        rectNew.setTopRight(QPointF(rect().right() + deltaX,rect().top() + deltaY));
-        rectNew.setBottomLeft(rect().bottomLeft());
-        setRect(rectNew.normalized());
-    }
-    else if(pointLocation == 3)
-    {
-        QRectF rectNew;
-        rectNew.setBottomLeft(QPointF(rect().left() + deltaX,rect().bottom() + deltaY));
-        rectNew.setTopRight(rect().topRight());
-        setRect(rectNew.normalized());
-    }
-    else if(pointLocation == 4)
-    {
-        QRectF rectNew;
-        rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
-        rectNew.setTopLeft(rect().topLeft());
-        setRect(rectNew.normalized());
+        rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
+        rectNew = rectNew.normalized();
+        double w1 = rectNew.width()/rectF.width();
+        if(w1 < 0.000001)
+            w1 = 1;
+        double h1 = rectNew.height()/rectF.height();
+        pIconComplexObj->resetRectPoint(rectNew.topLeft(),rectF.topLeft());
+        pIconComplexObj->resize(w1,h1);
+        setRect(rectNew);
     }
     else
     {
-        //pIconComplexObj->moveBy(pt.x(),pt.y());
-        //HIconGraphicsItem::mouseMoveEvent(event);
         pIconComplexObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pIconComplexObj->getObjRect();
+        QRectF recttemp(pIconComplexObj->getObjRect());
         setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
