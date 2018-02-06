@@ -100,14 +100,15 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
 
         rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
-        rectNew = rectNew.normalized();
+        if(rectNew.width() < 1 || rectNew.height() < 1)
+            return;
+
         double w1 = rectNew.width()/rectF.width();
-        if(w1 < 0.000001)
-            w1 = 1;
         double h1 = rectNew.height()/rectF.height();
         pIconComplexObj->resetRectPoint(rectNew.topLeft(),rectF.topLeft());
         pIconComplexObj->resize(w1,h1);
-        setRect(rectNew);
+        setRect(rectNew.normalized());
+
     }
     else
     {

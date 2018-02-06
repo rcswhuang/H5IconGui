@@ -1252,12 +1252,8 @@ void HIconComplexObj::readXml(QDomElement* dom)
     uuid = dom->attribute("Uuid");
     symbolName = dom->attribute("SymbolName");
     symbolType = dom->attribute("SymbolType").toInt();
-    //topLeft.setX(dom->attribute("topLeftx").toDouble());
-    //topLeft.setY(dom->attribute("topLefty").toDouble());
-    //rectWidth = dom->attribute("rectWidth").toInt();
-    //rectHeight = dom->attribute("rectHeight").toInt();
 
-    //这里读取symbol信息不能用symbol对象来读取
+    //pIconSymbol对象需不需要保存?不需要！每次新建complexObj就可以从templates里面导入进来copy过来一个pSymbol对象即可
     //动态数据
     QDomElement RelationDom = dom->namedItem("Relation").toElement();
     if(pDynamicObj)
@@ -1274,11 +1270,6 @@ void HIconComplexObj::writeXml(QDomElement* dom)
     dom->setAttribute("Uuid",uuid);
     dom->setAttribute("SymbolName",symbolName);
     dom->setAttribute("SymbolType",symbolType);
-    //dom->setAttribute("topLeftx",topLeft.x());
-    //dom->setAttribute("topLefty",topLeft.y());
-    //dom->setAttribute("rectWidth",rectWidth);
-    //dom->setAttribute("rectHeight",rectHeight);
-
     //动态数据
     QDomElement RelationDom = dom->ownerDocument().createElement("Relation");
     dom->appendChild(RelationDom);
@@ -1304,7 +1295,6 @@ void HIconComplexObj::copyTo(HBaseObj* obj)
     ob->symbolName = symbolName;
     ob->symbolType = symbolType;
 
-    //模板数据
     if(pIconSymbol && ob->pIconSymbol)
     {
         pIconSymbol->copyTo(ob->pIconSymbol);
