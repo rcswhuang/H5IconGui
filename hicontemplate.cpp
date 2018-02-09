@@ -227,6 +227,7 @@ bool HIconTemplate::getModify()
     return pIconSymbol->getModify();
 }
 
+//huangw ?????
 QIcon HIconTemplate::getIcon()
 {
     QSizeF sizeF = sDefaultSize;

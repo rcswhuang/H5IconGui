@@ -49,6 +49,7 @@ void HBaseObj::init()
     bDeleted = false;//是否删除
     nStackOrder = 0;
 
+    nPattern = 0;
     bRound = false;
     nxAxis = 0;
     nyAxis = 0;
@@ -483,6 +484,18 @@ QColor HBaseObj::getTextColor()
 {
     return QColor();
 }
+
+
+void HBaseObj::setPattern(quint8 pattern)
+{
+    nPattern = pattern;
+}
+
+quint8 HBaseObj::getPattern()
+{
+    return nPattern;
+}
+
 
 void HBaseObj::setRound(bool bcheck)
 {

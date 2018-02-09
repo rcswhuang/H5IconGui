@@ -1195,6 +1195,7 @@ HIconComplexObj::~HIconComplexObj()
         delete pIconSymbol;
     //if(pIconTemplate)
     //    delete pIconTemplate;
+    pIconTemplate = NULL;
 }
 
 void HIconComplexObj::initIconTemplate()
@@ -1341,7 +1342,7 @@ void HIconComplexObj::paint(QPainter* painter)
 {
     HIconComplexItem* pItem = qgraphicsitem_cast<HIconComplexItem*>(getIconGraphicsItem());
     painter->save();
-    if(!getIconSymbol() && !getIconSymbol()->findPatternById(0))
+    if(!getIconSymbol() && !getIconSymbol()->getCurrentPatternPtr())
         return;
     HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
     for(int i = 0; i < pattern->pObjList.count();i++)
@@ -1429,6 +1430,16 @@ QString HIconComplexObj::getUuid()
     return uuid;
 }
 
+void HIconComplexObj::setCatalogName(const QString& strCatalogName)
+{
+    catalogName = strCatalogName;
+}
+
+QString HIconComplexObj::getCatalogName()
+{
+    return catalogName;
+}
+
 void HIconComplexObj::setIconTemplate(HIconTemplate* t)
 {
     pIconTemplate = t;
@@ -1447,6 +1458,11 @@ HIconTemplate* HIconComplexObj::iconTemplate()
 HIconSymbol* HIconComplexObj::getIconSymbol()
 {
     return pIconSymbol;
+}
+
+HDynamicObj* HIconComplexObj::getDynamicObj()
+{
+    return pDynamicObj;
 }
 
 void HIconComplexObj::initDynamicData()
