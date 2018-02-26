@@ -460,3 +460,21 @@ void HIconSymbol::resize(double w,double h)
         pattern->resize(w,h);
     }
 }
+
+HTextObj* HIconSymbol::getFirstTextObj()
+{
+    HTextObj* pTextObj = NULL;
+    HIconShowPattern* curPattern = (HIconShowPattern*)findPatternById(0);
+    if(curPattern)
+    {
+        for(int i = 0; i < curPattern->pObjList.count();i++)
+        {
+            HBaseObj* pObj = curPattern->pObjList.at(i);
+            if(pObj->isDeleted() || !pObj || pObj->getShapeType() != enumText)
+                continue;
+            pTextObj = (HTextObj*)pObj;
+            break;
+        }
+    }
+    return pTextObj;
+}
