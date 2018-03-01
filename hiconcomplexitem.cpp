@@ -1,5 +1,6 @@
 ﻿#include "H5IconGui/hiconcomplexitem.h"
 #include "H5IconGui/hiconobj.h"
+#include "H5IconGui/hiconcomplexobj.h"
 #include "H5IconGui/hiconshowpattern.h"
 #include <qmath.h>
 #include <QObject>

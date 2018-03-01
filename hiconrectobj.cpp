@@ -1072,6 +1072,36 @@ double HTextObj::getRectHeight()
     return rectHeight;
 }
 
+void HTextObj::setTextFormat(uchar btType)
+{
+    btFormat = btType;
+}
+
+uchar HTextObj::getTextFormat()
+{
+    return btFormat;
+}
+
+void HTextObj::setTextPrefix(const QString& strPrefix)
+{
+    this->strPrefix = strPrefix;
+}
+
+QString HTextObj::getTextPrefix()
+{
+    return this->strPrefix;
+}
+
+void HTextObj::setTextSuffix(const QString& strSuffix)
+{
+    this->strSuffix = strSuffix;
+}
+
+QString HTextObj::getTextSuffix()
+{
+    return this->strSuffix;
+}
+
 void HTextObj::paint(QPainter* painter)
 {
     //if(!painter) return;

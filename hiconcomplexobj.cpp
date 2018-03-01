@@ -35,9 +35,9 @@ HIconComplexObj::~HIconComplexObj()
 
 void HIconComplexObj::initIconTemplate()
 {
-    catalogName = pIconTemplate->getCatalogName();
-    catalogType = pIconTemplate->getCatalogType();
-    uuid = pIconTemplate->getUuid().toString();
+    strCatalogName = pIconTemplate->getCatalogName();
+    nCatalogType = pIconTemplate->getCatalogType();
+    strUuid = pIconTemplate->getUuid().toString();
     pIconTemplate->getSymbol()->copyTo(pIconSymbol);
 }
 
@@ -48,16 +48,16 @@ void HIconComplexObj::readData(QDataStream* data)
     HRectObj::readData(data);
     QString s;
     *data>>s;
-    catalogName = s;
+    strCatalogName = s;
     int n;
     *data>>n;
-    catalogType = n;
+    nCatalogType = n;
     *data>>s;
-    uuid = s;
+    strUuid = s;
     *data>>s;
-    symbolName = s;
+    strSymbolName = s;
     *data>>n;
-    symbolType = n;
+    nSymbolType = n;
 
     //还有动态数据
     if(pDynamicObj)
@@ -68,11 +68,11 @@ void HIconComplexObj::writeData(QDataStream* data)
 {
     if(!data) return;
     HRectObj::writeData(data);
-    *data<<catalogName;
-    *data<<catalogType;
-    *data<<uuid;
-    *data<<symbolName;
-    *data<<symbolType;
+    *data<<strCatalogName;
+    *data<<nCatalogType;
+    *data<<strUuid;
+    *data<<strSymbolName;
+    *data<<nSymbolType;
     //动态数据
     if(pDynamicObj)
         pDynamicObj->writeData(data);
@@ -83,11 +83,11 @@ void HIconComplexObj::readXml(QDomElement* dom)
 {
     if(!dom) return;
     HRectObj::readXml(dom);
-    catalogName = dom->attribute("CatalogName");
-    catalogType = dom->attribute("CatalogType").toInt();
-    uuid = dom->attribute("Uuid");
-    symbolName = dom->attribute("SymbolName");
-    symbolType = dom->attribute("SymbolType").toInt();
+    strCatalogName = dom->attribute("CatalogName");
+    nCatalogType = dom->attribute("CatalogType").toInt();
+    strUuid = dom->attribute("Uuid");
+    strSymbolName = dom->attribute("SymbolName");
+    nSymbolType = dom->attribute("SymbolType").toInt();
 
     //pIconSymbol对象需不需要保存?不需要！每次新建complexObj就可以从templates里面导入进来copy过来一个pSymbol对象即可
     //动态数据
@@ -100,11 +100,11 @@ void HIconComplexObj::writeXml(QDomElement* dom)
 {
     if(!dom)return;
     HRectObj::writeXml(dom);
-    dom->setAttribute("CatalogName",catalogName);
-    dom->setAttribute("CatalogType",catalogType);
-    dom->setAttribute("Uuid",uuid);
-    dom->setAttribute("SymbolName",symbolName);
-    dom->setAttribute("SymbolType",symbolType);
+    dom->setAttribute("CatalogName",strCatalogName);
+    dom->setAttribute("CatalogType",nCatalogType);
+    dom->setAttribute("Uuid",strUuid);
+    dom->setAttribute("SymbolName",strSymbolName);
+    dom->setAttribute("SymbolType",nSymbolType);
     //动态数据
     QDomElement RelationDom = dom->ownerDocument().createElement("Relation");
     dom->appendChild(RelationDom);
@@ -125,10 +125,10 @@ void HIconComplexObj::copyTo(HBaseObj* obj)
     ob->topLeft = topLeft;
     ob->rectWidth = rectWidth;
     ob->rectHeight = rectHeight;
-    ob->catalogName = catalogName;
-    ob->catalogType = catalogType;
-    ob->symbolName = symbolName;
-    ob->symbolType = symbolType;
+    ob->strCatalogName = strCatalogName;
+    ob->nCatalogType = nCatalogType;
+    ob->strSymbolName = strSymbolName;
+    ob->nSymbolType = nSymbolType;
 
     if(pIconSymbol && ob->pIconSymbol)
     {
@@ -256,22 +256,82 @@ QPainterPath HIconComplexObj::shape() const
 
 void HIconComplexObj::setUuid(const QString& uuid)
 {
-    this->uuid = uuid;
+    this->strUuid = uuid;
 }
 
 QString HIconComplexObj::getUuid()
 {
-    return uuid;
+    return strUuid;
 }
 
-void HIconComplexObj::setCatalogName(const QString& strCatalogName)
+void HIconComplexObj::setCatalogName(const QString& catalogName)
 {
-    catalogName = strCatalogName;
+    strCatalogName = catalogName;
 }
 
 QString HIconComplexObj::getCatalogName()
 {
-    return catalogName;
+    return strCatalogName;
+}
+
+void HIconComplexObj::setObjType( uchar catalogType)
+{
+    nCatalogType = catalogType;
+}
+
+int HIconComplexObj::getObjType()
+{
+    return nCatalogType;
+}
+
+void HIconComplexObj::setSymbolName(const QString& symbolName)
+{
+    strSymbolName = symbolName;
+}
+
+QString HIconComplexObj::getSymbolName()
+{
+    return strSymbolName;
+}
+
+void HIconComplexObj::setSymbolType(int symbolType)
+{
+    nSymbolType = symbolType;
+}
+
+int HIconComplexObj::getSymbolType()
+{
+    return nSymbolType;
+}
+
+void HIconComplexObj::setGraphID(int graphID)
+{
+    nGraphID = graphID;
+}
+
+int HIconComplexObj::getGraphID()
+{
+    return nGraphID;
+}
+
+void HIconComplexObj::setGraphOperator(uchar graphOperator)
+{
+    btGraphOperator = graphOperator;
+}
+
+uchar HIconComplexObj::getGraphOpeartor()
+{
+    return btGraphOperator;
+}
+
+void HIconComplexObj::setGraphComfirm(uchar graphComfirm)
+{
+    btGraphComfirm = graphComfirm;
+}
+
+uchar HIconComplexObj::getGraphComfirm()
+{
+    return btGraphComfirm;
 }
 
 void HIconComplexObj::setIconTemplate(HIconTemplate* t)
