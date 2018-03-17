@@ -1,7 +1,7 @@
-﻿#include "H5IconGui/hiconpolygonitem.h"
-#include "H5IconGui/hiconobj.h"
+﻿#include "hiconpolygonitem.h"
+#include "hpolygon.h"
 #include <math.h>
-#include <QObject>
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -184,7 +184,7 @@ void HIconPolygonItem::setItemCursor(int location)
 
 void HIconPolygonItem::setPolygon(const QPolygonF & polygon)
 {
-    if(polygon.size() == 0) return;
+    if(pyVector == polygon) return;
     prepareGeometryChange();
     pyVector = polygon;
     refreshBaseObj();
@@ -211,7 +211,7 @@ void HIconPolygonItem::refreshBaseObj()
 
 void HIconPolygonItem::setItemObj(HBaseObj* pObj)
 {
-    pPolygonObj = (HPolygonObj*)pObj;
+    pPolygonObj = (HPolygon*)pObj;
     pPolygonObj->setIconGraphicsItem(this);
     if(pPolygonObj)
         setPolygon(pyVector);

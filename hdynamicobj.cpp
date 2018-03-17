@@ -1,4 +1,4 @@
-﻿#include "H5IconGui/hdynamicobj.h"
+﻿#include "hdynamicobj.h"
 
 HDynamicObj::HDynamicObj()
 {

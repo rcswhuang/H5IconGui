@@ -1,997 +1,395 @@
-﻿#include "H5IconGui/hiconobj.h"
-#include <QVariant>
-#include <math.h>
-#include "H5IconGui/hiconshowpattern.h"
-#include "H5IconGui/hiconlineitem.h"
-#include "H5IconGui/hiconrectitem.h"
-#include "H5IconGui/hiconellipseitem.h"
-#include "H5IconGui/hiconcircleitem.h"
-#include "H5IconGui/hiconarcitem.h"
-#include "H5IconGui/hiconpieitem.h"
-#include "H5IconGui/hiconpolygonitem.h"
-#include "H5IconGui/hiconpolylineitem.h"
-#include "H5IconGui/hicontextitem.h"
-#include "H5IconGui/hiconcomplexitem.h"
-
-HLineObj::HLineObj()
+﻿#include "hiconobj.h"
+#include "hiconcomplexitem.h"
+#include "hiconshowpattern.h"
+/*************************************图符类**********************************/
+/*
+ * 图符类只用于drawgrph和在线系统上面，所以保存的信息和基本图元是不一致的。
+*/
+HIconObj::HIconObj()
 {
-    arrowHeight = 0;
-    arrowWidth = 0;
-    arrowStart = 0;
-    arrowEnd = 0;
-    ptOld = ptNew = QPointF(0,0);
+    //去掉本身所有的边框颜色设置，这些都是不需要的
+    pDynamicObj = new HDynamicObj;
+    bFrameSee = false;
+    nGraphID = (int)-1;
+    btGraphOperator = MODE_OPEN_GRAPH;
+    btGraphComfirm = COMFIRM_MODE_GRAPH;
 }
 
-HLineObj::~HLineObj()
+HIconObj::HIconObj(HIconTemplate* it)
+    :pIconTemplate(it)
 {
-  // pLineItem = NULL;
+    pDynamicObj = new HDynamicObj;
+    pIconSymbol = new HIconSymbol(it);
+    initIconTemplate();
+
+    bFrameSee = false;
 }
 
-void HLineObj::readData(QDataStream *data)
+HIconObj::~HIconObj()
 {
-    if(!data)return;
-    HBaseObj::readData(data);
-    qreal qr;
-    *data>>qr;
-    pfHeadPoint.setX(qr);
-    *data>>qr;
-    pfHeadPoint.setY(qr);
-    *data>>qr;
-    pfTailPoint.setX(qr);
-    *data>>qr;
-    pfTailPoint.setY(qr);
-    quint8 n8;
-    *data>>n8;
-    arrowStart = n8;
-    *data>>n8;
-    arrowEnd = n8;
-    quint16 n16;
-    *data>>n16;
-    arrowWidth = n16;
-    *data>>n16;
-    arrowHeight = n16;
+    if(pDynamicObj)
+        delete pDynamicObj;
+    if(pIconSymbol)
+        delete pIconSymbol;
+    //if(pIconTemplate)
+    //    delete pIconTemplate;
+    pIconTemplate = NULL;
 }
 
-void HLineObj::writeData(QDataStream *data)
+void HIconObj::initIconTemplate()
+{
+    strCatalogName = pIconTemplate->getCatalogName();
+    nCatalogType = pIconTemplate->getCatalogType();
+    strUuid = pIconTemplate->getUuid().toString();
+    pIconTemplate->getSymbol()->copyTo(pIconSymbol);
+}
+
+//二进制读写
+void HIconObj::readData(QDataStream* data)
 {
     if(!data) return;
-    HBaseObj::writeData(data);
-    *data<<(qreal)pfHeadPoint.x();
-    *data<<(qreal)pfHeadPoint.y();
-    *data<<(qreal)pfTailPoint.x();
-    *data<<(qreal)pfTailPoint.y();
-    *data<<(quint8)arrowStart;
-    *data<<(quint8)arrowEnd;
-    *data<<(quint16)arrowWidth;
-    *data<<(quint16)arrowHeight;
+    HRectangle::readData(data);
+    QString s;
+    *data>>s;
+    strCatalogName = s;
+    int n;
+    *data>>n;
+    nCatalogType = n;
+    *data>>s;
+    strUuid = s;
+    *data>>s;
+    strSymbolName = s;
+    *data>>n;
+    nSymbolType = n;
+    *data>>n;
+    nGraphID = n;
+    uchar bt;
+    *data>>bt;
+    btGraphOperator = bt;
+    *data>>bt;
+    btGraphComfirm = bt;
+    //还有动态数据
+    if(pDynamicObj)
+        pDynamicObj->readData(data);
 }
 
-void HLineObj::readXml(QDomElement* dom)
+void HIconObj::writeData(QDataStream* data)
+{
+    if(!data) return;
+    HRectangle::writeData(data);
+    *data<<strCatalogName;
+    *data<<nCatalogType;
+    *data<<strUuid;
+    *data<<strSymbolName;
+    *data<<nSymbolType;
+    *data<<nGraphID;
+    *data<<btGraphOperator;
+    *data<<btGraphComfirm;
+    //动态数据
+    if(pDynamicObj)
+        pDynamicObj->writeData(data);
+}
+
+//xml文件读写
+void HIconObj::readXml(QDomElement* dom)
 {
     if(!dom) return;
-    HBaseObj::readXml(dom);
-    pfHeadPoint.setX(dom->attribute("pfHeadPointx").toDouble());
-    pfHeadPoint.setY(dom->attribute("pfHeadPointy").toDouble());
-    pfTailPoint.setX(dom->attribute("pfTailPointx").toDouble());
-    pfTailPoint.setY(dom->attribute("pfTailPointy").toDouble());
-    arrowStart = dom->attribute("arrowStart").toUInt();
-    arrowEnd = dom->attribute("arrowEnd").toUInt();
-    arrowWidth = dom->attribute("arrowWidth").toDouble();
-    arrowHeight = dom->attribute("arrowHeight").toDouble();
+    HRectangle::readXml(dom);
+    strCatalogName = dom->attribute("CatalogName");
+    nCatalogType = dom->attribute("CatalogType").toInt();
+    strUuid = dom->attribute("Uuid");
+    strSymbolName = dom->attribute("SymbolName");
+    nSymbolType = dom->attribute("SymbolType").toInt();
+    nGraphID = dom->attribute("graphID").toInt();
+    btGraphOperator = dom->attribute("graphOperator").toUInt();
+    btGraphComfirm = dom->attribute("graphComfirm").toUInt();
+
+    //pIconSymbol对象需不需要保存?不需要！每次新建complexObj就可以从templates里面导入进来copy过来一个pSymbol对象即可
+    //动态数据
+    QDomElement RelationDom = dom->namedItem("Relation").toElement();
+    if(pDynamicObj)
+        pDynamicObj->readXml(&RelationDom);
 }
 
-void HLineObj::writeXml(QDomElement* dom)
+void HIconObj::writeXml(QDomElement* dom)
 {
     if(!dom)return;
-    HBaseObj::writeXml(dom);
-    dom->setAttribute("pfHeadPointx",pfHeadPoint.x());
-    dom->setAttribute("pfHeadPointy",pfHeadPoint.y());
-    dom->setAttribute("pfTailPointx",pfTailPoint.x());
-    dom->setAttribute("pfTailPointy",pfTailPoint.y());
-    dom->setAttribute("arrowStart",arrowStart);
-    dom->setAttribute("arrowEnd",arrowEnd);
-    dom->setAttribute("arrowWidth",arrowWidth);
-    dom->setAttribute("arrowHeight",arrowHeight);
+    HRectangle::writeXml(dom);
+    dom->setAttribute("CatalogName",strCatalogName);
+    dom->setAttribute("CatalogType",nCatalogType);
+    dom->setAttribute("Uuid",strUuid);
+    dom->setAttribute("SymbolName",strSymbolName);
+    dom->setAttribute("SymbolType",nSymbolType);
+    dom->setAttribute("graphID",nGraphID);
+    dom->setAttribute("graphOperator",btGraphOperator);
+    dom->setAttribute("graphComfirm",btGraphComfirm);
+    //动态数据
+    QDomElement RelationDom = dom->ownerDocument().createElement("Relation");
+    dom->appendChild(RelationDom);
+    if(pDynamicObj)
+        pDynamicObj->writeXml(&RelationDom);
 }
 
-QString HLineObj::TagName()
+
+QString HIconObj::TagName()
 {
-    return "Line";
+    return "ComplexObj";
 }
 
 //拷贝克隆
-void HLineObj::copyTo(HBaseObj* obj)
+void HIconObj::copyTo(HBaseObj* obj)
 {
-    HLineObj* ob = (HLineObj*)obj;
-    ob->setArrowStart(arrowStart);
-    ob->setArrowEnd(arrowEnd);
-    ob->setArrowWidth(arrowWidth);
-    ob->setArrowHeight(arrowHeight);
-    ob->pfHeadPoint = pfHeadPoint;
-    ob->pfTailPoint = pfTailPoint;
+    HIconObj* ob = (HIconObj*)obj;
+    ob->topLeft = topLeft;
+    ob->rectWidth = rectWidth;
+    ob->rectHeight = rectHeight;
+    ob->strCatalogName = strCatalogName;
+    ob->nCatalogType = nCatalogType;
+    ob->strSymbolName = strSymbolName;
+    ob->nSymbolType = nSymbolType;
+    ob->nGraphID = nGraphID;
+    ob->btGraphOperator = btGraphOperator;
+    ob->btGraphComfirm = btGraphComfirm;
+
+    if(pIconSymbol && ob->pIconSymbol)
+    {
+        pIconSymbol->copyTo(ob->pIconSymbol);
+    }
+
+    //动态数据
+    if(pDynamicObj && ob->pDynamicObj)
+    {
+        pDynamicObj->copyTo(ob->pDynamicObj);
+    }
 }
 
-void HLineObj::clone(HBaseObj* obj)
+void HIconObj::clone(HBaseObj* obj)
 {
     if(!obj) return;
     HBaseObj::clone(obj);
     copyTo(obj);
 }
 
-DRAWSHAPE HLineObj::getShapeType()
+DRAWSHAPE HIconObj::getShapeType()
 {
-    return enumLine;
+    return enumComplex;
 }
 
-void HLineObj::moveBy(qreal dx, qreal dy)
+void HIconObj::moveBy(qreal dx,qreal dy)
 {
-    pfHeadPoint.setX(pfHeadPoint.x() + dx);
-    pfHeadPoint.setY(pfHeadPoint.y() + dy);
-    pfTailPoint.setX(pfTailPoint.x() + dx);
-    pfTailPoint.setY(pfTailPoint.y() + dy);
+    topLeft.setX(topLeft.x() + dx);
+    topLeft.setY(topLeft.y() + dy);
+    if(!getIconSymbol() && !getIconSymbol()->getCurrentPatternPtr())
+        return;
+    HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
+    for(int i = 0; i < pattern->pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)(pattern->pObjList[i]);
+        if(pObj)
+        {
+           pObj->moveBy(dx,dy);
+        }
+    }
     bModify = true;
 }
 
-void HLineObj::setArrowStart(quint8 start)
+void HIconObj::paint(QPainter* painter)
 {
-    arrowStart = start;
-}
-
-quint8 HLineObj::getArrowStart()
-{
-    return arrowStart;
-}
-
-void HLineObj::setArrowEnd(quint8 end)
-{
-    arrowEnd = end;
-}
-
-quint8 HLineObj::getArrowEnd()
-{
-    return arrowEnd;
-}
-
-void HLineObj::setArrowWidth(quint16 width)
-{
-    arrowWidth = width;
-}
-
-quint16 HLineObj::getArrowWidth()
-{
-    return arrowWidth;
-}
-
-void HLineObj::setArrowHeight(quint16 height)
-{
-    arrowHeight = height;
-}
-
-quint16 HLineObj::getArrowHeight()
-{
-    return arrowHeight;
-}
-
-void HLineObj::resize(double w,double h)
-{
-    pfHeadPoint.setX(ptNew.x() + (pfHeadPoint.x() - ptOld.x())*w);
-    pfHeadPoint.setY(ptNew.y() + (pfHeadPoint.y() - ptOld.y())*h);
-    pfTailPoint.setX(ptNew.x() + (pfTailPoint.x() - ptOld.x())*w);
-    pfTailPoint.setY(ptNew.y() + (pfTailPoint.y() - ptOld.y())*h);
-
-    if(arrowWidth > 0 && arrowHeight > 0)
-    {
-        arrowWidth = arrowWidth*w;
-        arrowHeight = arrowHeight*h;
-    }
-}
-
-QRectF HLineObj::boundingRect() const
-{
-   return shape().controlPointRect();
-}
-
-bool HLineObj::contains(const QPointF &point) const
-{
-    return shape().contains(point);
-}
-
-QPainterPath HLineObj::shape() const
-{
-    QPainterPath path;
-    QPainterPathStroker ps;
-    int w = arrowWidth;
-    int h = arrowHeight;
-    quint16 arrowLength = sqrt(w*w+h*h);
-    int pen = (int)(arrowLength*sin(PI/3))*2+1;
-    if(pen <= 20)
-        pen = 20;
-    ps.setWidth(pen);
-    path.moveTo(pfHeadPoint);
-    path.lineTo(pfTailPoint);
-    return ps.createStroke(path);
-}
-
-void HLineObj::paint(QPainter* painter)
-{
-    HIconLineItem* pItem = qgraphicsitem_cast<HIconLineItem*>(getIconGraphicsItem());
-    QColor penClr = QColor(getLineColorName());
-    int penWidth = getLineWidth();
-    Qt::PenStyle penStyle = getLineStyle();
-    Qt::PenCapStyle capStyle = getLineCapStyle();
-
+    HIconComplexItem* pItem = qgraphicsitem_cast<HIconComplexItem*>(getIconGraphicsItem());
     painter->save();
-    QPen pen = QPen(penClr);
-    pen.setStyle(penStyle);
-    pen.setWidth(penWidth);
-    pen.setCapStyle(capStyle);
+    if(!getIconSymbol() && !getIconSymbol()->getCurrentPatternPtr())
+        return;
+    HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();
+    for(int i = 0; i < pattern->pObjList.count();i++)
+    {
+        HBaseObj* pObj = (HBaseObj*)(pattern->pObjList[i]);
+        if(pObj)
+        {
+           pObj->paint(painter);
+        }
+    }
+    QPen pen(Qt::red);
     painter->setPen(pen);
-    QPointF ptS = pfHeadPoint;
-    QPointF ptE = pfTailPoint;
-    QLineF line = QLineF(ptS,ptE);
-    //画箭头
-    if(getArrowWidth() > 0 && getArrowHeight() > 0)
-    {
-        double angle = ::acos(line.dx() / line.length());
-        if(line.dy() >= 0)
-            angle = (PI*2) - angle;
-        int w = getArrowWidth();
-        int h = getArrowHeight();
-        quint16 arrowLength = sqrt(w*w+h*h);
-        quint8 arrowS = getArrowStart();
-        quint8 arrowE = getArrowEnd();
-        QPointF arrowP1;
-        QPointF arrowP2;
-        if(arrowS == 1)
-        {
-            arrowP1 = ptS + QPointF(sin(angle+PI/3)*arrowLength,cos(angle+PI/3)*arrowLength);
-            arrowP2 = ptS + QPointF(sin(angle+PI - PI/3)*arrowLength,cos(angle+PI-PI/3)*arrowLength);
-            painter->drawLine(arrowP1,ptS);
-            painter->drawLine(arrowP2,ptS);
-        }
-        else if(arrowS == 2)
-        {
-            arrowP1 = ptS + QPointF(sin(angle+PI/3)*arrowLength,cos(angle+PI/3)*arrowLength);
-            arrowP2 = ptS + QPointF(sin(angle+PI - PI/3)*arrowLength,cos(angle+PI-PI/3)*arrowLength);
-            QPolygonF arrowHead;
-            arrowHead<<arrowP1<<ptS<<arrowP2;
-            QPainterPath path;
-            path.addPolygon(arrowHead);
-            path.closeSubpath();
-            painter->drawPath(path);
-
-            double fh = sin(PI/3)*arrowLength/line.length();
-            QPointF pt = line.pointAt(fh);
-            ptS = pt;
-
-        }
-        else if(arrowS == 3)
-        {
-            arrowP1 = ptS + QPointF(sin(angle+PI/3)*arrowLength,cos(angle+PI/3)*arrowLength);
-            arrowP2 = ptS + QPointF(sin(angle+PI - PI/3)*arrowLength,cos(angle+PI-PI/3)*arrowLength);
-            QPolygonF arrowHead;
-            arrowHead<<ptS<<arrowP1<<arrowP2;
-            painter->save();
-            painter->setBrush(QColor(penClr));
-            painter->drawPolygon(arrowHead);
-            painter->restore();
-        }
-
-        if(arrowE == 1)
-        {
-            arrowP1 = ptE + QPointF(sin(angle-PI/3)*arrowLength,cos(angle-PI/3)*arrowLength);
-            arrowP2 = ptE + QPointF(sin(angle-PI + PI/3)*arrowLength,cos(angle-PI+PI/3)*arrowLength);
-            painter->drawLine(arrowP1,ptE);
-            painter->drawLine(arrowP2,ptE);
-        }
-        else if(arrowE == 2)
-        {
-            arrowP1 = ptE + QPointF(sin(angle-PI/3)*arrowLength,cos(angle-PI/3)*arrowLength);
-            arrowP2 = ptE + QPointF(sin(angle-PI + PI/3)*arrowLength,cos(angle-PI+PI/3)*arrowLength);
-            QPolygonF arrowHead;
-            arrowHead<<arrowP1<<ptE<<arrowP2;
-            QPainterPath path;
-            path.addPolygon(arrowHead);
-            path.closeSubpath();
-            painter->drawPath(path);
-
-            double fh = sin(PI/3)*arrowLength/line.length();
-            QPointF pt = QLineF(ptE,ptS).pointAt(fh);
-            ptE = pt;
-        }
-        else if(arrowE == 3)
-        {
-            arrowP1 = ptE + QPointF(sin(angle-PI/3)*arrowLength,cos(angle-PI/3)*arrowLength);
-            arrowP2 = ptE + QPointF(sin(angle-PI + PI/3)*arrowLength,cos(angle-PI+PI/3)*arrowLength);
-            QPolygonF arrowHead;
-            arrowHead<<ptE<<arrowP1<<arrowP2;
-            painter->save();
-            painter->setBrush(QColor(penClr));
-            painter->drawPolygon(arrowHead);
-            painter->restore();
-        }
-    }
-
-    painter->drawLine(QLineF(ptS,ptE));
-
-
-    if(pItem && pItem->isSelected())
-    {
-        QPen pen1 = QPen(penClr,penWidth,penStyle);
-        painter->setPen(pen1);
-        QPointF p1 = line.p1();
-        QPointF p2 = line.p2();
-        pen1.setStyle(Qt::SolidLine);
-        painter->setPen(pen1);
-        QRectF rectF1;
-        rectF1.setSize(QSizeF(14,14));
-        rectF1.moveCenter(p1);
-        QRectF rectF2;
-        rectF2.setSize(QSize(14,14));
-        rectF2.moveCenter(p2);
-        painter->drawRect(rectF1);
-        painter->drawRect(rectF2);
-    }
-    painter->restore();
-
-}
-
-void HLineObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
-{
-    ptNew = pt1;
-    ptOld = pt2;
-}
-
-///////////////////////////////////////////////HPolygonObj//////////////////////////////////////
-HPolygonObj::HPolygonObj()
-{
-    pylist.clear();
-    ptOld = ptNew = QPointF(0,0);
-}
-
-HPolygonObj::~HPolygonObj()
-{
-
-}
-
-void HPolygonObj::readData(QDataStream* data)
-{
-    if(!data) return;
-    HBaseObj::readData(data);
-    quint8 n = (quint8)pylist.count();
-    *data>>n;
-    qreal delta = 0.0;
-    for(int i = 0; i < n;i++)
-    {
-        QPointF pt;
-        *data>>delta;
-        pt.setX(delta);
-        *data>>delta;
-        pt.setY(delta);
-        pylist.append(pt);
-    }
-}
-
-void HPolygonObj::writeData(QDataStream* data)
-{
-    if(!data) return;
-    HBaseObj::writeData(data);
-    *data<<(quint8)pylist.count();
-    qreal delta = 0.0;
-    for(int i = 0; i < pylist.count();i++)
-    {
-        QPointF pt = pylist.at(i);
-        delta = pt.x();
-        *data<<delta;
-        delta = pt.y();
-        *data<<delta;
-    }
-}
-
-void HPolygonObj::readXml(QDomElement* dom)
-{
-    if(!dom) return;
-    HBaseObj::readXml(dom);
-    for(QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling())
-    {
-        QDomElement pointDom = n.toElement();
-        QPointF pt;
-        pt.setX(pointDom.attribute("PosX").toDouble());
-        pt.setY(pointDom.attribute("PosY").toDouble());
-        pylist.append(pt);
-    }
-}
-
-void HPolygonObj::writeXml(QDomElement* dom)
-{
-    if(!dom)return;
-    HBaseObj::writeXml(dom);
-    for(int i = 0; i < pylist.count();i++)
-    {
-        QDomElement Pointdom = dom->ownerDocument().createElement("Point");
-        dom->appendChild(Pointdom);
-        QPointF pt = pylist.at(i);
-        Pointdom.setAttribute("PosX",pt.x());
-        Pointdom.setAttribute("PosY",pt.y());
-    }
-}
-
-QString HPolygonObj::TagName()
-{
-    return "Polygon";
-}
-
-//拷贝克隆
-void HPolygonObj::copyTo(HBaseObj* obj)
-{
-    HPolygonObj* ob = (HPolygonObj*)obj;
-    ob->pylist.clear();
-    for(int i = 0;i<pylist.count();i++)
-    {
-        ob->pylist.append(pylist.at(i));
-    }
-}
-
-void HPolygonObj::clone(HBaseObj *obj)
-{
-    if(!obj) return;
-    HBaseObj::clone(obj);
-    copyTo(obj);
-}
-
-DRAWSHAPE HPolygonObj::getShapeType()
-{
-    return enumPolygon;
-}
-
-void HPolygonObj::moveBy(qreal dx, qreal dy)
-{
-    for(int i = 0; i < pylist.count();i++)
-    {
-        QPointF pt = pylist[i];
-        pt.setX(pt.x()+dx);
-        pt.setY(pt.y()+dy);
-        pylist[i] = pt;
-    }
-}
-
-QRectF HPolygonObj::boundingRect() const
-{
-   return shape().controlPointRect();
-}
-
-bool HPolygonObj::contains(const QPointF &point) const
-{
-    return shape().contains(point);
-}
-
-QPainterPath HPolygonObj::shape() const
-{
-    QPainterPath path;
-    path.addPolygon(pylist);
-    QPainterPathStroker ps;
-    int pen = 10;
-    ps.setWidth(pen);
-    QPainterPath p = ps.createStroke(path);
-    p.addPath(path);
-    return p;
-}
-
-
-void HPolygonObj::paint(QPainter* painter)
-{
-    HIconPolygonItem* pItem = qgraphicsitem_cast<HIconPolygonItem*>(getIconGraphicsItem());
-    QColor penClr = QColor(getLineColorName()); //线条颜色
-    int penWidth = getLineWidth();//线条宽度
-    Qt::PenStyle penStyle = getLineStyle(); //线条形状
-    Qt::PenCapStyle capStyle = getLineCapStyle(); //线条角度
-
-    bool bFrameSee = getFrameSee();//边框可见
-    quint8 nFillWay = getFillWay();//填充选择
-    quint8 nFillStyle = getFillStyle(); //填充风格
-    quint8 nTransparency = getTransparency(); //透明度
-    quint8 nFillDir = getFillDirection();//填充方向
-    QColor fillClr = QColor(getFillColorName());//填充颜色
-    //quint8 nFillPercentage = getFillPercentage(); //填充比例
-    qreal fRotateAngle = getRotateAngle();
-
-    if(pylist.count() == 0) return;
-    QRectF rect = QPolygonF(pylist).boundingRect();
-    QPointF centerPoint = boundingRect().center();
-    painter->save();
-
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
-
-    QPen pen = QPen(penClr);
-    pen.setStyle(penStyle);
-    pen.setWidth(penWidth);
-    pen.setCapStyle(capStyle);
-    if(bFrameSee)
-        painter->setPen(pen);
-    else
-        painter->setPen(Qt::NoPen);
-
-    QPolygonF polygon(pylist);
-    QPainterPath path;
-    if(polygon.isClosed())
-    {
-        path.setFillRule(Qt::WindingFill);
-        path.addPolygon(polygon);
-        painter->drawPath(path);
-    }
-    else
-    {
-        path.moveTo(polygon.at(0));
-        for(int i = 1; i < polygon.size();i++)
-            path.lineTo(polygon.at(i));
-        painter->drawPath(path);
-    }
-
-    QBrush brush;
-    if(nFillWay >= 1)
-    {
-        painter->setOpacity(1-(qreal)nTransparency/100.00);
-        if(nFillStyle == Qt::LinearGradientPattern)
-        {
-            QPointF ps1,ps2;
-            switch(nFillDir)
-            {
-                case DIRECT_BOTTOM_TO_TOP:
-                {
-                    ps2 = rect.topLeft();
-                    ps1 = rect.bottomLeft();
-                    break;
-                }
-                case DIRECT_TOP_TO_BOTTOM: //有顶到底
-                {
-                    ps1 = rect.topLeft();
-                    ps2 = rect.bottomLeft();
-                    break;
-                }
-                case DIRECT_LEFT_TO_RIGHT: //由左到右
-                {
-                    ps1 = rect.topLeft();
-                    ps2 = rect.topRight();
-                    break;
-                }
-                case DIRECT_RIGHT_TO_LEFT: //由右到左
-                {
-                    ps1 = rect.topRight();
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_VER_TO_OUT: //垂直到外
-                {
-                    ps1 = QPointF(rect.center().x(),rect.top());
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_HORi_TO_OUT: //水平向外
-                {
-                    ps1 = QPointF(rect.left(),rect.center().y());
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_VER_TO_IN: //垂直向里
-                {
-                    ps2 = QPointF(rect.center().x(),rect.top());
-                    ps1 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_HORI_TO_IN: //垂直向里
-                {
-                    ps2 = QPointF(rect.left(),rect.center().y());
-                    ps1 = rect.topLeft();
-                    break;
-                }
-            }
-            QLinearGradient lgrd(ps1,ps2);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.lighter(150));
-            lgrd.setColorAt(1.0,fillClr.lighter(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else if(nFillStyle == Qt::RadialGradientPattern)
-        {
-            QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.dark(150));
-            lgrd.setColorAt(1.0,fillClr.dark(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else if(nFillStyle == Qt::ConicalGradientPattern)
-        {
-            QConicalGradient lgrd(rect.center(),270);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.lighter(150));
-            lgrd.setColorAt(1.0,fillClr.lighter(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else
-        {
-            Qt::BrushStyle bs = (Qt::BrushStyle)nFillStyle;
-            QBrush brush1(fillClr,bs);
-            brush = brush1;
-        }
-    }
-    if(polygon.isClosed())
-    {
-        painter->setBrush(brush);
-        path.setFillRule(Qt::WindingFill);
-        painter->drawPath(path);
-    }
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    //painter->drawRect(rect);
 
     if(pItem && pItem->isSelected())
     {
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
         painter->setPen(pen1);
-        qreal halfpw = 14.00;
-        int nRect = pItem->polygon().size();
-        QRectF *pRect = new QRectF[nRect];
-        for(int i = 0 ; i < nRect; i++)
-        {
-            pRect[i].setSize(QSizeF(halfpw,halfpw));
-            pRect[i].moveCenter(pItem->polygon().at(i));
-            painter->drawRect(pRect[i]);
-        }
-        if(pRect)
-        {
-            delete[] pRect;
-            pRect = NULL;
-        }
+        qreal halfpw = 8.00;
+        QRectF rect1,rect2,rect3,rect4;
+        rect1.setSize(QSizeF(halfpw,halfpw));
+        rect1.moveCenter(rect.topLeft());
+        rect2.setSize(QSizeF(halfpw,halfpw));
+        rect2.moveCenter(rect.topRight());
+        rect3.setSize(QSizeF(halfpw,halfpw));
+        rect3.moveCenter(rect.bottomLeft());
+        rect4.setSize(QSizeF(halfpw,halfpw));
+        rect4.moveCenter(rect.bottomRight());
+
+        painter->drawRect(rect1);
+        painter->drawRect(rect2);
+        painter->drawRect(rect3);
+        painter->drawRect(rect4);
     }
     painter->restore();
 }
 
-void HPolygonObj::resize(double w,double h)
+void HIconObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
-    for(int i = 0; i < pylist.count();i++)
-    {
-        QPointF pt = pylist[i];
-        pt.setX(ptNew.x() + (pt.x() - ptOld.x())*w);
-        pt.setY(ptNew.y() + (pt.y() - ptOld.y())*h);
-        pylist[i] = pt;
-    }
+    if(pIconSymbol)
+        pIconSymbol->resetRectPoint(pt1,pt2);
 }
 
-void HPolygonObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+void HIconObj::resize(qreal w,qreal h)
 {
-    ptNew = pt1;
-    ptOld = pt2;
-}
-///////////////////////////////////////////////HPolylineObj//////////////////////////////////////
-HPolylineObj::HPolylineObj()
-{
-    pylist.clear();
-    ptOld = ptNew = QPointF(0,0);
+    if(pIconSymbol)
+        pIconSymbol->resize(w,h);
 }
 
-HPolylineObj::~HPolylineObj()
-{
-
-}
-
-void HPolylineObj::readData(QDataStream* data)
-{
-    if(!data) return;
-    HBaseObj::readData(data);
-    quint8 n = pylist.count();
-    *data>>n;
-    qreal delta = 0.0;
-    for(int i = 0; i < n;i++)
-    {
-        QPointF pt;
-        *data>>delta;
-        pt.setX(delta);
-        *data>>delta;
-        pt.setY(delta);
-        pylist.append(pt);
-    }
-}
-
-void HPolylineObj::writeData(QDataStream* data)
-{
-    if(!data) return;
-    HBaseObj::writeData(data);
-    *data<<(quint8)pylist.count();
-    qreal delta = 0.0;
-    for(int i = 0; i < pylist.count();i++)
-    {
-        QPointF pt = pylist.at(i);
-        delta = pt.x();
-        *data<<delta;
-        delta = pt.y();
-        *data<<delta;
-    }
-}
-
-void HPolylineObj::readXml(QDomElement* dom)
-{
-    if(!dom) return;
-    HBaseObj::readXml(dom);
-    for(QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling())
-    {
-        QDomElement pointDom = n.toElement();
-        QPointF pt;
-        pt.setX(pointDom.attribute("PosX").toDouble());
-        pt.setY(pointDom.attribute("PosY").toDouble());
-        pylist.append(pt);
-    }
-}
-
-void HPolylineObj::writeXml(QDomElement* dom)
-{
-    if(!dom)return;
-    HBaseObj::writeXml(dom);
-    for(int i = 0; i < pylist.count();i++)
-    {
-        QDomElement Pointdom = dom->ownerDocument().createElement("Point");
-        dom->appendChild(Pointdom);
-        QPointF pt = pylist.at(i);
-        Pointdom.setAttribute("PosX",pt.x());
-        Pointdom.setAttribute("PosY",pt.y());
-    }
-}
-
-QString HPolylineObj::TagName()
-{
-    return "Polyline";
-}
-
-//拷贝克隆
-void HPolylineObj::copyTo(HBaseObj* obj)
-{
-    HPolylineObj* ob = (HPolylineObj*)obj;
-    ob->pylist.clear();
-    for(int i = 0;i<pylist.count();i++)
-    {
-        ob->pylist.append(pylist.at(i));
-    }
-}
-
-void HPolylineObj::clone(HBaseObj *obj)
-{
-    if(!obj) return;
-    HBaseObj::clone(obj);
-    copyTo(obj);
-}
-
-DRAWSHAPE HPolylineObj::getShapeType()
-{
-    return enumPolyline;
-}
-
-void HPolylineObj::moveBy(qreal dx, qreal dy)
-{
-   for(int i = 0; i < pylist.count();i++)
-   {
-       QPointF pt = pylist[i];
-       pt.setX(pt.x()+dx);
-       pt.setY(pt.y()+dy);
-       pylist[i] = pt;
-   }
-}
-
-QRectF HPolylineObj::boundingRect() const
+QRectF HIconObj::boundingRect() const
 {
    return shape().controlPointRect();
 }
 
-bool HPolylineObj::contains(const QPointF &point) const
+bool HIconObj::contains(const QPointF &point) const
 {
     return shape().contains(point);
 }
 
-QPainterPath HPolylineObj::shape() const
+QPainterPath HIconObj::shape() const
 {
     QPainterPath path;
-    path.addPolygon(pylist);
-    QPainterPathStroker ps;
-    int pen = 10;
-    ps.setWidth(pen);
-    QPainterPath p = ps.createStroke(path);
-    p.addPath(path);
-    return p;
+    QRectF boundingRect;
+    boundingRect.setX(topLeft.x()-5);
+    boundingRect.setY(topLeft.y()-5);
+    boundingRect.setWidth(rectWidth +10);
+    boundingRect.setHeight(rectHeight+10);
+    path.addRect(boundingRect);
+
+
+   // QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
+  //  path.addRect(shapeRect);
+    return path;
 }
 
-
-void HPolylineObj::paint(QPainter* painter)
+void HIconObj::setUuid(const QString& uuid)
 {
-    HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
-    QColor penClr = QColor(getLineColorName()); //线条颜色
-    int penWidth = getLineWidth();//线条宽度
-    Qt::PenStyle penStyle = getLineStyle(); //线条形状
-    Qt::PenCapStyle capStyle = getLineCapStyle(); //线条角度
-
-    bool bFrameSee = getFrameSee();//边框可见
-    quint8 nFillWay = getFillWay();//填充选择
-    quint8 nFillStyle = getFillStyle(); //填充风格
-    quint8 nTransparency = getTransparency(); //透明度
-    quint8 nFillDir = getFillDirection();//填充方向
-    QColor fillClr = QColor(getFillColorName());//填充颜色
-    //quint8 nFillPercentage = getFillPercentage(); //填充比例
-    qreal fRotateAngle = getRotateAngle();
-
-    if(pylist.count() == 0) return;
-    QRectF rect = QPolygonF(pylist).boundingRect();
-    QPointF centerPoint = boundingRect().center();
-    painter->save();
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
-
-    QPen pen = QPen(penClr);
-    pen.setStyle(penStyle);
-    pen.setWidth(penWidth);
-    pen.setCapStyle(capStyle);
-    if(bFrameSee)
-        painter->setPen(pen);
-    else
-        painter->setPen(Qt::NoPen);
-
-    QPolygonF polygon(pylist);
-    QPainterPath path;
-    path.moveTo(polygon.at(0));
-    for(int i = 1; i < polygon.size();i++)
-        path.lineTo(polygon.at(i));
-    painter->drawPath(path);
-
-
-    QBrush brush;
-    if(nFillWay >= 1)
-    {
-        painter->setOpacity(1-(qreal)nTransparency/100.00);
-        if(nFillStyle == Qt::LinearGradientPattern)
-        {
-            QPointF ps1,ps2;
-            switch(nFillDir)
-            {
-                case DIRECT_BOTTOM_TO_TOP:
-                {
-                    ps2 = rect.topLeft();
-                    ps1 = rect.bottomLeft();
-                    break;
-                }
-                case DIRECT_TOP_TO_BOTTOM: //有顶到底
-                {
-                    ps1 = rect.topLeft();
-                    ps2 = rect.bottomLeft();
-                    break;
-                }
-                case DIRECT_LEFT_TO_RIGHT: //由左到右
-                {
-                    ps1 = rect.topLeft();
-                    ps2 = rect.topRight();
-                    break;
-                }
-                case DIRECT_RIGHT_TO_LEFT: //由右到左
-                {
-                    ps1 = rect.topRight();
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_VER_TO_OUT: //垂直到外
-                {
-                    ps1 = QPointF(rect.center().x(),rect.top());
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_HORi_TO_OUT: //水平向外
-                {
-                    ps1 = QPointF(rect.left(),rect.center().y());
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_VER_TO_IN: //垂直向里
-                {
-                    ps2 = QPointF(rect.center().x(),rect.top());
-                    ps1 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_HORI_TO_IN: //垂直向里
-                {
-                    ps2 = QPointF(rect.left(),rect.center().y());
-                    ps1 = rect.topLeft();
-                    break;
-                }
-            }
-            QLinearGradient lgrd(ps1,ps2);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.lighter(150));
-            lgrd.setColorAt(1.0,fillClr.lighter(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else if(nFillStyle == Qt::RadialGradientPattern)
-        {
-            QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.dark(150));
-            lgrd.setColorAt(1.0,fillClr.dark(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else if(nFillStyle == Qt::ConicalGradientPattern)
-        {
-            QConicalGradient lgrd(rect.center(),270);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.lighter(150));
-            lgrd.setColorAt(1.0,fillClr.lighter(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else
-        {
-            Qt::BrushStyle bs = (Qt::BrushStyle)nFillStyle;
-            QBrush brush1(fillClr,bs);
-            brush = brush1;
-        }
-    }
-
-    if(pItem && pItem->isSelected())
-    {
-        QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 14.00;
-        int nRect = pItem->polygon().size();
-        QRectF *pRect = new QRectF[nRect];
-        for(int i = 0 ; i < nRect; i++)
-        {
-            pRect[i].setSize(QSizeF(halfpw,halfpw));
-            pRect[i].moveCenter(pItem->polygon().at(i));
-            painter->drawRect(pRect[i]);
-        }
-        if(pRect)
-        {
-            delete[] pRect;
-            pRect = NULL;
-        }
-    }
-    painter->restore();
+    this->strUuid = uuid;
 }
 
-void HPolylineObj::resize(double w,double h)
+QString HIconObj::getUuid()
 {
-    for(int i = 0; i < pylist.count();i++)
+    return strUuid;
+}
+
+void HIconObj::setCatalogName(const QString& catalogName)
+{
+    strCatalogName = catalogName;
+}
+
+QString HIconObj::getCatalogName()
+{
+    return strCatalogName;
+}
+
+void HIconObj::setObjType( uchar catalogType)
+{
+    nCatalogType = catalogType;
+}
+
+int HIconObj::getObjType()
+{
+    return nCatalogType;
+}
+
+void HIconObj::setSymbolName(const QString& symbolName)
+{
+    strSymbolName = symbolName;
+}
+
+QString HIconObj::getSymbolName()
+{
+    return strSymbolName;
+}
+
+void HIconObj::setSymbolType(int symbolType)
+{
+    nSymbolType = symbolType;
+}
+
+int HIconObj::getSymbolType()
+{
+    return nSymbolType;
+}
+
+void HIconObj::setGraphID(int graphID)
+{
+    nGraphID = graphID;
+}
+
+int HIconObj::getGraphID()
+{
+    return nGraphID;
+}
+
+void HIconObj::setGraphOperator(uchar graphOperator)
+{
+    btGraphOperator = graphOperator;
+}
+
+uchar HIconObj::getGraphOpeartor()
+{
+    return btGraphOperator;
+}
+
+void HIconObj::setGraphComfirm(uchar graphComfirm)
+{
+    btGraphComfirm = graphComfirm;
+}
+
+uchar HIconObj::getGraphComfirm()
+{
+    return btGraphComfirm;
+}
+
+void HIconObj::setIconTemplate(HIconTemplate* t)
+{
+    pIconTemplate = t;
+    if(!pIconSymbol)
     {
-        QPointF pt = pylist[i];
-        pt.setX(ptNew.x() + (pt.x() - ptOld.x())*w);
-        pt.setY(ptNew.y() + (pt.y() - ptOld.y())*h);
-        pylist[i] = pt;
+        pIconSymbol = new HIconSymbol(t);
+        initIconTemplate();
     }
 }
 
-void HPolylineObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
+HIconTemplate* HIconObj::iconTemplate()
 {
-    ptNew = pt1;
-    ptOld = pt2;
+    return pIconTemplate;
+}
+
+HIconSymbol* HIconObj::getIconSymbol()
+{
+    return pIconSymbol;
+}
+
+HDynamicObj* HIconObj::getDynamicObj()
+{
+    return pDynamicObj;
+}
+
+void HIconObj::initDynamicData()
+{
+    clearDynamicData();
+}
+
+void HIconObj::clearDynamicData()
+{
+    if(pDynamicObj)
+    {
+        delete pDynamicObj;
+        pDynamicObj = NULL;
+    }
 }

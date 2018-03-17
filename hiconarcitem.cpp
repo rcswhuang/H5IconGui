@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hiconarcitem.h"
-#include "H5IconGui/hiconrectobj.h"
-#include <QObject>
+﻿#include "hiconarcitem.h"
+#include "harc.h"
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -177,7 +177,7 @@ QRectF HIconArcItem::rect()const
 
 void HIconArcItem::setItemObj(HBaseObj *pObj)
 {
-    pArcObj = (HArcObj*)pObj;
+    pArcObj = (HArc*)pObj;
     pArcObj->setIconGraphicsItem(this);
 }
 

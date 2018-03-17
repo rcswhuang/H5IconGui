@@ -1,7 +1,7 @@
-﻿#include "H5IconGui/hiconrectitem.h"
-#include "H5IconGui/hiconrectobj.h"
+﻿#include "hiconrectitem.h"
+#include "hrectangle.h"
 #include <qmath.h>
-#include <QObject>
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -179,7 +179,7 @@ QRectF HIconRectItem::rect() const
 
 void HIconRectItem::setItemObj(HBaseObj *pObj)
 {
-    pRectObj = (HRectObj*)pObj;
+    pRectObj = (HRectangle*)pObj;
     pRectObj->setIconGraphicsItem(this);
 }
 

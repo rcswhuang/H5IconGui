@@ -1,4 +1,4 @@
-﻿#include "H5IconGui/hicontemplate.h"
+﻿#include "hicontemplate.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDomProcessingInstruction>
@@ -234,7 +234,7 @@ QIcon HIconTemplate::getIcon()
     QImage image(sizeF.width()+1,sizeF.height(),QImage::Format_ARGB32);
     image.fill(Qt::transparent);
     QPainter painter(&image);
-    HIconComplexObj* pObj = new HIconComplexObj(this);
+    HIconObj* pObj = new HIconObj(this);
     QPolygonF pf;
     pf<<QPointF(0,0)<<QPointF(sizeF.width(),sizeF.height());
     QRectF rectF = pf.boundingRect();

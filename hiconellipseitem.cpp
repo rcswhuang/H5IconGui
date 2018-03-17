@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hiconellipseitem.h"
-#include "H5IconGui/hiconrectobj.h"
-#include <QObject>
+﻿#include "hiconellipseitem.h"
+#include "hellipse.h"
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -170,7 +170,7 @@ QRectF HIconEllipseItem::rect()const
 
 void HIconEllipseItem::setItemObj(HBaseObj *pObj)
 {
-    pEllipseObj = (HEllipseObj*)pObj;
+    pEllipseObj = (HEllipse*)pObj;
     pEllipseObj->setIconGraphicsItem(this);
 
 }

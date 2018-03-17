@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hiconsymbol.h"
-#include "H5IconGui/hiconshowpattern.h"
-#include "H5IconGui/hicontemplate.h"
+﻿#include "hiconsymbol.h"
+#include "hiconshowpattern.h"
+#include "hicontemplate.h"
 #include <QVariant>
 HIconSymbol::HIconSymbol(HIconTemplate* t):pIconTemplate(t)
 {
@@ -150,39 +150,39 @@ HBaseObj* HIconSymbol::newObj(int nObjType)
     HBaseObj* pObj = NULL;
     if(nObjType == enumLine)
     {
-        pObj = new HLineObj();
+        pObj = new HLine();
     }
     else if(nObjType == enumRectangle)
     {
-        pObj = new HRectObj();
+        pObj = new HRectangle();
     }
     else if(nObjType == enumEllipse)
     {
-        pObj = new HEllipseObj();
+        pObj = new HEllipse();
     }
     else if(nObjType == enumCircle)
     {
-        pObj = new HCircleObj();
+        pObj = new HCircle();
     }
     else if(nObjType == enumPolygon)
     {
-        pObj = new HPolygonObj();
+        pObj = new HPolygon();
     }
     else if(nObjType == enumPolyline)
     {
-        pObj = new HPolylineObj();
+        pObj = new HPolyline();
     }
     else if(nObjType == enumArc)
     {
-        pObj = new HArcObj();
+        pObj = new HArc();
     }
     else if(nObjType == enumPie)
     {
-        pObj = new HPieObj();
+        pObj = new HPie();
     }
     else if(nObjType == enumText)
     {
-        pObj = new HTextObj();
+        pObj = new HText();
     }
     else if(nObjType == enumGroup)
     {
@@ -461,9 +461,9 @@ void HIconSymbol::resize(double w,double h)
     }
 }
 
-HTextObj* HIconSymbol::getFirstTextObj()
+HText* HIconSymbol::getFirstTextObj()
 {
-    HTextObj* pTextObj = NULL;
+    HText* pTextObj = NULL;
     HIconShowPattern* curPattern = (HIconShowPattern*)findPatternById(0);
     if(curPattern)
     {
@@ -472,7 +472,7 @@ HTextObj* HIconSymbol::getFirstTextObj()
             HBaseObj* pObj = curPattern->pObjList.at(i);
             if(pObj->isDeleted() || !pObj || pObj->getShapeType() != enumText)
                 continue;
-            pTextObj = (HTextObj*)pObj;
+            pTextObj = (HText*)pObj;
             break;
         }
     }

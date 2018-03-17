@@ -1,4 +1,4 @@
-﻿#include "H5IconGui/hbaseobj.h"
+﻿#include "hbaseobj.h"
 #include <QVariant>
 
 HBaseObj::HBaseObj(QObject *parent) : QObject(parent)

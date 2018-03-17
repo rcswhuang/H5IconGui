@@ -1,7 +1,7 @@
 ﻿#include "H5IconGui/hiconitemgroup.h"
 #include "H5IconGui/hgroupobj.h"
 #include <qmath.h>
-#include <QObject>
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>

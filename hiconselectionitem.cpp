@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hiconselectionitem.h"
-#include "H5IconGui/hiconobj.h"
-#include <QObject>
+﻿#include "hiconselectionitem.h"
+//#include "H5IconGui/hiconobj.h"
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>

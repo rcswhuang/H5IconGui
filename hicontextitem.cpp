@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hicontextitem.h"
-#include "H5IconGui/hiconrectobj.h"
-#include <QObject>
+﻿#include "hicontextitem.h"
+#include "htext.h"
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -167,7 +167,7 @@ QRectF HIconTextItem::rect()const
 
 void HIconTextItem::setItemObj(HBaseObj *pObj)
 {
-    pTextObj = (HTextObj*)pObj;
+    pTextObj = (HText*)pObj;
     pTextObj->setIconGraphicsItem(this);
 }
 

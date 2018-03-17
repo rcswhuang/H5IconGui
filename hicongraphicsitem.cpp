@@ -1,5 +1,5 @@
-﻿#include "H5IconGui/hicongraphicsitem.h"
-#include "H5IconGui/hiconobj.h"
+﻿#include "hicongraphicsitem.h"
+#include "hiconobj.h"
 #include <QRectF>
 HIconGraphicsItem::HIconGraphicsItem(QGraphicsItem* parent):QGraphicsItem(parent)
 {

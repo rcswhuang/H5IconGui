@@ -1,7 +1,7 @@
-﻿#include "H5IconGui/hiconlineitem.h"
-#include "H5IconGui/hiconobj.h"
+﻿#include "hiconlineitem.h"
+#include "hline.h"
 #include <math.h>
-#include <QObject>
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -148,7 +148,7 @@ void HIconLineItem::setLine(const QLineF &line)
 
 void HIconLineItem::setItemObj(HBaseObj *pObj)
 {
-    pLineObj = (HLineObj*)pObj;
+    pLineObj = (HLine*)pObj;
     pLineObj->setIconGraphicsItem(this);
 }
 

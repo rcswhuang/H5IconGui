@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hgroupobj.h"
-#include "H5IconGui/hiconsymbol.h"
-#include "H5IconGui/hiconitemgroup.h"
+﻿#include "hgroupobj.h"
+#include "hiconsymbol.h"
+#include "hiconitemgroup.h"
 HGroupObj::HGroupObj(HIconSymbol* symbol)
     :pIconSymbol(symbol)
 {
@@ -106,55 +106,55 @@ void HGroupObj::copyTo(HBaseObj* obj)
         HBaseObj* pObj = (HBaseObj*)pObjList[i];
         if(pObj->getShapeType() == enumLine)
         {
-            HLineObj* lineObj = new HLineObj;
+            HLine* lineObj = new HLine;
             pObj->copyTo(lineObj);
             ob->pObjList.append(lineObj);
         }
         else if(pObj->getShapeType() == enumRectangle)
         {
-            HRectObj* pRectObj = new HRectObj;
+            HRectangle* pRectObj = new HRectangle;
             pObj->clone(pRectObj);
             ob->pObjList.append(pRectObj);
         }
         else if(pObj->getShapeType() == enumEllipse)
         {
-            HEllipseObj* pEllipseObj = new HEllipseObj;
+            HEllipse* pEllipseObj = new HEllipse;
             pObj->clone(pEllipseObj);
             ob->pObjList.append(pEllipseObj);
         }
         else if(pObj->getShapeType() == enumCircle)
         {
-            HCircleObj* pCircleObj = new HCircleObj;
+            HCircle* pCircleObj = new HCircle;
             pObj->clone(pCircleObj);
             ob->pObjList.append(pCircleObj);
         }
         else if(pObj->getShapeType() == enumPolyline)
         {
-            HPolylineObj* pPolylineObj = new HPolylineObj;
+            HPolyline* pPolylineObj = new HPolyline;
             pObj->clone(pPolylineObj);
             ob->pObjList.append(pPolylineObj);
         }
         else if(pObj->getShapeType() == enumPolygon)
         {
-            HPolygonObj* pPolygonObj = new HPolygonObj;
+            HPolygon* pPolygonObj = new HPolygon;
             pObj->clone(pPolygonObj);
             ob->pObjList.append(pPolygonObj);
         }
         else if(pObj->getShapeType() == enumPie)
         {
-            HPieObj* pPieObj = new HPieObj;
+            HPie* pPieObj = new HPie;
             pObj->clone(pPieObj);
             ob->pObjList.append(pPieObj);
         }
         else if(pObj->getShapeType() == enumArc)
         {
-            HArcObj* pArcObj = new HArcObj;
+            HArc* pArcObj = new HArc;
             pObj->clone(pArcObj);
             ob->pObjList.append(pArcObj);
         }
         else if(pObj->getShapeType() == enumText)
         {
-            HTextObj* pTextObj = new HTextObj;
+            HText* pTextObj = new HText;
             pObj->clone(pTextObj);
             ob->pObjList.append(pTextObj);
         }

@@ -1,7 +1,7 @@
-﻿#include "H5IconGui/hiconpieitem.h"
-#include "H5IconGui/hiconrectobj.h"
-#include "hiconapi.h"
-#include <QObject>
+﻿#include "hiconpieitem.h"
+#include "hpie.h"
+//#include "hiconapi.h"
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -173,7 +173,7 @@ QRectF HIconPieItem::rect()const
 
 void HIconPieItem::setItemObj(HBaseObj *pObj)
 {
-    pPieObj = (HPieObj*)pObj;
+    pPieObj = (HPie*)pObj;
     pPieObj->setIconGraphicsItem(this);
 }
 

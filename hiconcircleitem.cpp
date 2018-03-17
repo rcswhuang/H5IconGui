@@ -1,6 +1,6 @@
-﻿#include "H5IconGui/hiconcircleitem.h"
-#include "H5IconGui/hiconrectobj.h"
-#include <QObject>
+﻿#include "hiconcircleitem.h"
+#include "hcircle.h"
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -55,7 +55,6 @@ void HIconCircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 */
 void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-
     qreal fRotateAngle = pCircleObj->getRotateAngle();
     QTransform transform;
     transform.rotate(-fRotateAngle);
@@ -167,7 +166,7 @@ QRectF HIconCircleItem::rect()const
 
 void HIconCircleItem::setItemObj(HBaseObj *pObj)
 {
-    pCircleObj = (HCircleObj*)pObj;
+    pCircleObj = (HCircle*)pObj;
     pCircleObj->setIconGraphicsItem(this);
 }
 

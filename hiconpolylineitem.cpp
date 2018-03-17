@@ -1,7 +1,7 @@
-﻿#include "H5IconGui/hiconpolylineitem.h"
-#include "H5IconGui/hiconobj.h"
+﻿#include "hiconpolylineitem.h"
+#include "hpolyline.h"
 #include <math.h>
-#include <QObject>
+//#include <QObject>
 #include <QRectF>
 #include <QPainterPath>
 #include <QPointF>
@@ -177,7 +177,7 @@ void HIconPolylineItem::setItemCursor(int location)
 
 void HIconPolylineItem::setPolygon(const QPolygonF & polygon)
 {
-    if(pyVector == polygon || polygon.size() == 0) return;
+    if(pyVector == polygon) return;
     prepareGeometryChange();
     pyVector = polygon;
     refreshBaseObj();
@@ -204,7 +204,7 @@ void HIconPolylineItem::refreshBaseObj()
 
 void HIconPolylineItem::setItemObj(HBaseObj* pObj)
 {
-    pPolylineObj = (HPolylineObj*)pObj;
+    pPolylineObj = (HPolyline*)pObj;
     pPolylineObj->setIconGraphicsItem(this);
     if(pPolylineObj)
         setPolygon(pyVector);
