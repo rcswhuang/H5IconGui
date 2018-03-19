@@ -144,7 +144,7 @@ void HPie::paint(QPainter* painter)
     int startAngle = getStartAngle()*16;
     int spanAngle = getSpanAngle()*16;
     painter->drawPie(rect,startAngle,spanAngle);
-
+    painter->restore();
     if(pItem && pItem->isSelected())
     {
         painter->save();
@@ -166,6 +166,6 @@ void HPie::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
+        painter->restore();
     }
-    painter->restore();
 }

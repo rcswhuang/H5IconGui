@@ -105,7 +105,8 @@ bool HRectangle::contains(const QPointF &point) const
 QPainterPath HRectangle::shape() const
 {
     QPainterPath path;
-    if(nFillWay > 0 && nFillStyle > 0)
+    bool bImage = isValidImagePath();
+    if((nFillWay > 0 && nFillStyle > 0) || bImage)
     {
         QRectF boundingRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight)).adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
@@ -237,6 +238,39 @@ void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
             brush = brush1;
         }
         painter->setBrush(brush);
+
+        //图片部分
+        QString strImagePath = getImagePath();
+        if(!strImagePath.isEmpty() || !strImagePath.isNull())
+        {
+            QPixmap pix,pix1;
+            if(pix.load(strImagePath))
+            {
+                painter->setClipPath(getPath());
+                if(!bKeepImageRatio)
+                {
+                    pix1 = pix.scaled(rect.size().toSize());
+                    painter->drawPixmap(rect.x(),rect.y(),pix1);
+                }
+                else
+                {
+                    pix1 = pix.scaledToHeight(rect.height());
+                    QRectF rectF = rect;
+                    if(1 == nImageDirect)
+                    {
+                        double deltaX = (rect.width() - pix1.width())/2;
+                        rectF.setX(rect.x() + deltaX);
+                    }
+                    else if(2 == nImageDirect)
+                    {
+                        double deltaX = (rect.width() - pix1.width());
+                        rectF.setX(rect.x() + deltaX);
+                    }
+                    painter->drawPixmap(rectF.x(),rectF.y(),pix1);
+                }
+
+            }
+        }
     }
 }
 
@@ -244,42 +278,30 @@ void HRectangle::paint(QPainter* painter)
 {
     HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
     qreal fRotateAngle = getRotateAngle();
-    bool bRound = getRound();
-    int nXAxis = getXAxis();
-    int nYAxis = getYAxis();
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    //QPointF centerPoint = boundingRect().center();
+    QPointF centerPoint = boundingRect().center();
     painter->save();
     if(pItem)
     {
         //pItem->setTransformOriginPoint(centerPoint);
-        //QTransform transform;
-        //transform.rotate(fRotateAngle);
-        //pItem->setTransform(transform);
+       // QTransform transform;
+       // transform.rotate(fRotateAngle);
+       // pItem->setTransform(transform);
     }
     else
     {
-        //painter->rotate(fRotateAngle);
+       // painter->rotate(fRotateAngle);
     }
-
 
     setPainter(painter,rect);//设置Painter
-    QPainterPath path;
-    path.setFillRule(Qt::WindingFill);
-    if(!bRound)
-    {
-        path.addRect(rect);
-    }
-    else
-    {
-        path.addRoundedRect(rect,nXAxis,nYAxis);
-    }
+    QPainterPath path = getPath();
     painter->drawPath(path);
-
+    painter->restore();
 
     if(pItem && pItem->isSelected())
     {
+        painter->save();
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
         painter->setPen(pen1);
@@ -298,8 +320,9 @@ void HRectangle::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
+        painter->restore();
     }
-    painter->restore();
+
 }
 
 void HRectangle::resize(double w,double h)
@@ -357,4 +380,23 @@ void HRectangle::setRectHeight(double height)
 double HRectangle::getRectHeight()
 {
     return rectHeight;
+}
+
+QPainterPath HRectangle::getPath()
+{
+    bool bRound = getRound();
+    int nXAxis = getXAxis();
+    int nYAxis = getYAxis();
+    QPainterPath path;
+    //path.setFillRule(Qt::WindingFill);
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    if(!bRound)
+    {
+        path.addRect(rect);
+    }
+    else
+    {
+        path.addRoundedRect(rect,nXAxis,nYAxis);
+    }
+    return path;
 }

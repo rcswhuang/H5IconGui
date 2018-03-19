@@ -329,15 +329,15 @@ void HText::paint(QPainter* painter)
     }
 
     setPainter(painter,rect);
-    QPainterPath path;
-    if(!bRound)
+    QPainterPath path = getPath();
+    /*if(!bRound)
     {
         path.addRect(mainRectF);
     }
     else
     {
         path.addRoundedRect(mainRectF,nXAxis,nYAxis);
-    }
+    }*/
     painter->drawPath(path);
 
     //设置字体部分

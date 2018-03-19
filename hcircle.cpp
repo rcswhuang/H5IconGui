@@ -50,14 +50,14 @@ void HCircle::paint(QPainter* painter)
     }
 
     setPainter(painter,rect);//设置Painter
-    QPainterPath path;
-    path.setFillRule(Qt::WindingFill);
-    path.addEllipse(rect);
+    QPainterPath path = getPath();
+    //path.setFillRule(Qt::WindingFill);
+    //path.addEllipse(rect);
     painter->drawPath(path);
-
+    painter->restore();
     if(pItem && pItem->isSelected())
     {
-
+        painter->save();
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
         painter->setPen(pen1);
@@ -76,7 +76,7 @@ void HCircle::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
+        painter->restore();
 
     }
-    painter->restore();
 }

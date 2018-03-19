@@ -167,6 +167,7 @@ void HArc::paint(QPainter* painter)
         painter->drawChord(rect,startAngle,spanAngle);
     else
         painter->drawArc(rect,startAngle,spanAngle);
+    painter->restore();
 
     if(pItem && pItem->isSelected())
     {
@@ -188,7 +189,6 @@ void HArc::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
+        painter->restore();
     }
-
-    painter->restore();
 }

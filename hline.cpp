@@ -301,10 +301,11 @@ void HLine::paint(QPainter* painter)
     }
 
     painter->drawLine(QLineF(ptS,ptE));
-
+    painter->restore();
 
     if(pItem && pItem->isSelected())
     {
+        painter->save();
         QPen pen1 = QPen(penClr,penWidth,penStyle);
         painter->setPen(pen1);
         QPointF p1 = line.p1();
@@ -319,8 +320,9 @@ void HLine::paint(QPainter* painter)
         rectF2.moveCenter(p2);
         painter->drawRect(rectF1);
         painter->drawRect(rectF2);
+        painter->restore();
     }
-    painter->restore();
+
 
 }
 

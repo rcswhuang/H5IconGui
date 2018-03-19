@@ -42,9 +42,10 @@ bool HEllipse::contains(const QPointF &point) const
 
 QPainterPath HEllipse::shape() const
 {
-    QPainterPath path,p;
+    QPainterPath path;
     QRectF rect = QRectF(topLeft,QSizeF(rectWidth,rectHeight));
-    if(nFillWay > 0 && nFillStyle > 0)
+    bool bImage = isValidImagePath();
+    if((nFillWay > 0 && nFillStyle > 0) || bImage)
     {
         QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
@@ -78,10 +79,13 @@ void HEllipse::paint(QPainter* painter)
     }
 
     setPainter(painter,rect);//设置Painter
-    painter->drawEllipse(rect);
-
+    QPainterPath path = getPath();
+    painter->drawPath(path);
+    painter->restore();
     if(pItem && pItem->isSelected())
     {
+
+        painter->save();
         QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
         painter->setPen(pen1);
@@ -100,6 +104,14 @@ void HEllipse::paint(QPainter* painter)
         painter->drawRect(rect2);
         painter->drawRect(rect3);
         painter->drawRect(rect4);
+        painter->restore();
     }
-    painter->restore();
+}
+
+QPainterPath HEllipse::getPath()//只提供矩形，圆，椭圆，文字三种支持图片
+{
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    QPainterPath path;
+    path.addEllipse(rect);
+    return path;
 }

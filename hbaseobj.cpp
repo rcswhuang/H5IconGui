@@ -57,6 +57,11 @@ void HBaseObj::init()
     //父图符
     m_pParent = NULL;
 
+    //
+    strImagePath = "";
+    bKeepImageRatio = false;
+    nImageDirect = 0; //0 左 1中 1右
+
 }
 
 void HBaseObj::readData(QDataStream *data)
@@ -133,6 +138,12 @@ void HBaseObj::readData(QDataStream *data)
     nxAxis = n;
     *data>>n;
     nyAxis = n;
+    *data>>s;
+    strImagePath = s;
+    *data>>b;
+    bKeepImageRatio = b;
+    *data>>n8;
+    nImageDirect = n8;
 
 }
 
@@ -167,6 +178,10 @@ void HBaseObj::writeData(QDataStream *data)
     *data<<(bool)bRound;
     *data<<(int)nxAxis;
     *data<<(int)nyAxis;
+    *data<<(QString)strImagePath;
+    *data<<(bool)bKeepImageRatio;
+    *data<<(quint8)nImageDirect;
+
 }
 
 void HBaseObj::readXml(QDomElement* dom)
@@ -201,6 +216,9 @@ void HBaseObj::readXml(QDomElement* dom)
     bRound = dom->attribute("Round").toUInt();
     nxAxis = dom->attribute("xAxis").toUInt();
     nyAxis = dom->attribute("yAxis").toUInt();
+    strImagePath = dom->attribute("ImagePath");
+    bKeepImageRatio = dom->attribute("KeepImageRadio").toUInt();
+    nImageDirect = dom->attribute("ImageDirect").toUInt();
 }
 
 void HBaseObj::writeXml(QDomElement* dom)
@@ -233,6 +251,9 @@ void HBaseObj::writeXml(QDomElement* dom)
     dom->setAttribute("Round",bRound);
     dom->setAttribute("xAxis",nxAxis);
     dom->setAttribute("yAxis",nyAxis);
+    dom->setAttribute("ImagePath",strImagePath);
+    dom->setAttribute("KeepImageRadio",bKeepImageRatio);
+    dom->setAttribute("ImageDirect",nImageDirect);
 }
 
 //拷贝克隆
@@ -271,6 +292,9 @@ void HBaseObj::copyTo(HBaseObj* obj)
     obj->bRound = bRound;
     obj->nxAxis = nxAxis;
     obj->nyAxis = nyAxis;
+    obj->strImagePath = strImagePath;
+    obj->bKeepImageRatio = bKeepImageRatio;
+    obj->nImageDirect = nImageDirect;
 }
 
 void HBaseObj::clone(HBaseObj* ob)
@@ -653,6 +677,7 @@ QRectF HBaseObj::boundingRect() const
 {
     return QRectF();
 }
+
 bool HBaseObj::contains(const QPointF &point) const
 {
     return false;
@@ -664,4 +689,38 @@ QPainterPath HBaseObj::shape() const
 
 }
 
+void HBaseObj::setImagePath(const QString& path)
+{
+    strImagePath = path;
+}
+
+QString HBaseObj::getImagePath()
+{
+    return strImagePath;
+}
+
+bool HBaseObj::isValidImagePath() const
+{
+    return !strImagePath.isEmpty()||!strImagePath.isNull();
+}
+
+void HBaseObj::setKeepImageRatio(bool bcheck)
+{
+    bKeepImageRatio = bcheck;
+}
+
+bool HBaseObj::getKeepImageRatio()
+{
+    return bKeepImageRatio;
+}
+
+void HBaseObj::setImageDirect(quint8 direct)
+{
+    nImageDirect = direct;
+}
+
+quint8 HBaseObj::getImageDirect()
+{
+    return nImageDirect;
+}
 
