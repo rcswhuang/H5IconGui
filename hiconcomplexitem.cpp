@@ -123,7 +123,8 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void HIconComplexItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
-}
+}*/
+
 
 void HIconComplexItem::keyPressEvent(QKeyEvent *event)
 {
@@ -163,10 +164,11 @@ void HIconComplexItem::keyPressEvent(QKeyEvent *event)
     }
     if(ndx == 0 && ndy == 0)
         return;
+    pIconObj->moveBy(ndx,ndy);
     QRectF newRect = rect().adjusted(ndx,ndy,ndx,ndy);
     setRect(newRect);
 }
-*/
+
 void HIconComplexItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;

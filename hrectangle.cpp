@@ -125,6 +125,10 @@ QPainterPath HRectangle::shape() const
 
 void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
 {
+    if(!painter) return;
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状

@@ -157,6 +157,9 @@ void HPolyline::paint(QPainter* painter)
     QRectF rect = QPolygonF(pylist).boundingRect();
     QPointF centerPoint = boundingRect().center();
     painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     if(pItem)
     {
         pItem->setTransformOriginPoint(centerPoint);
