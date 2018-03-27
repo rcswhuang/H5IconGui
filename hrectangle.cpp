@@ -126,9 +126,9 @@ QPainterPath HRectangle::shape() const
 void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
 {
     if(!painter) return;
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->setRenderHint(QPainter::TextAntialiasing);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    //painter->setRenderHint(QPainter::Antialiasing);
+    //painter->setRenderHint(QPainter::TextAntialiasing);
+    //painter->setRenderHint(QPainter::SmoothPixmapTransform);
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -150,129 +150,132 @@ void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
     QColor fillClr = QColor(getFillColorName());//填充颜色
     //quint8 nFillPercentage = getFillPercentage(); //填充比例
     QBrush brush;//(Qt::NoBrush);
-    if(nFillWay >= 1)
+    if(nFillWay > 0)
     {
         painter->setOpacity(1-(qreal)nTransparency/100.00);
-        if(nFillStyle == Qt::LinearGradientPattern)
+        if(nFillWay == 1)
         {
-            QPointF ps1,ps2;
-            switch(nFillDir)
+            if(nFillStyle == Qt::LinearGradientPattern)
             {
-                case DIRECT_BOTTOM_TO_TOP:
+                QPointF ps1,ps2;
+                switch(nFillDir)
                 {
-                    ps2 = rect.topLeft();
-                    ps1 = rect.bottomLeft();
-                    break;
+                    case DIRECT_BOTTOM_TO_TOP:
+                    {
+                        ps2 = rect.topLeft();
+                        ps1 = rect.bottomLeft();
+                        break;
+                    }
+                    case DIRECT_TOP_TO_BOTTOM: //有顶到底
+                    {
+                        ps1 = rect.topLeft();
+                        ps2 = rect.bottomLeft();
+                        break;
+                    }
+                    case DIRECT_LEFT_TO_RIGHT: //由左到右
+                    {
+                        ps1 = rect.topLeft();
+                        ps2 = rect.topRight();
+                        break;
+                    }
+                    case DIRECT_RIGHT_TO_LEFT: //由右到左
+                    {
+                        ps1 = rect.topRight();
+                        ps2 = rect.topLeft();
+                        break;
+                    }
+                    case DIRECT_VER_TO_OUT: //垂直到外
+                    {
+                        ps1 = QPointF(rect.center().x(),rect.top());
+                        ps2 = rect.topLeft();
+                        break;
+                    }
+                    case DIRECT_HORi_TO_OUT: //水平向外
+                    {
+                        ps1 = QPointF(rect.left(),rect.center().y());
+                        ps2 = rect.topLeft();
+                        break;
+                    }
+                    case DIRECT_VER_TO_IN: //垂直向里
+                    {
+                        ps2 = QPointF(rect.center().x(),rect.top());
+                        ps1 = rect.topLeft();
+                        break;
+                    }
+                    case DIRECT_HORI_TO_IN: //垂直向里
+                    {
+                        ps2 = QPointF(rect.left(),rect.center().y());
+                        ps1 = rect.topLeft();
+                        break;
+                    }
                 }
-                case DIRECT_TOP_TO_BOTTOM: //有顶到底
-                {
-                    ps1 = rect.topLeft();
-                    ps2 = rect.bottomLeft();
-                    break;
-                }
-                case DIRECT_LEFT_TO_RIGHT: //由左到右
-                {
-                    ps1 = rect.topLeft();
-                    ps2 = rect.topRight();
-                    break;
-                }
-                case DIRECT_RIGHT_TO_LEFT: //由右到左
-                {
-                    ps1 = rect.topRight();
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_VER_TO_OUT: //垂直到外
-                {
-                    ps1 = QPointF(rect.center().x(),rect.top());
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_HORi_TO_OUT: //水平向外
-                {
-                    ps1 = QPointF(rect.left(),rect.center().y());
-                    ps2 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_VER_TO_IN: //垂直向里
-                {
-                    ps2 = QPointF(rect.center().x(),rect.top());
-                    ps1 = rect.topLeft();
-                    break;
-                }
-                case DIRECT_HORI_TO_IN: //垂直向里
-                {
-                    ps2 = QPointF(rect.left(),rect.center().y());
-                    ps1 = rect.topLeft();
-                    break;
-                }
+                QLinearGradient lgrd(ps1,ps2);
+                lgrd.setColorAt(0.0,fillClr);
+                lgrd.setColorAt(0.5,fillClr.lighter(150));
+                lgrd.setColorAt(1.0,fillClr.lighter(250));
+                lgrd.setSpread(QGradient::ReflectSpread);
+                QBrush brush2(lgrd);
+                brush = brush2;
             }
-            QLinearGradient lgrd(ps1,ps2);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.lighter(150));
-            lgrd.setColorAt(1.0,fillClr.lighter(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else if(nFillStyle == Qt::RadialGradientPattern)
-        {
-            QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.dark(150));
-            lgrd.setColorAt(1.0,fillClr.dark(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else if(nFillStyle == Qt::ConicalGradientPattern)
-        {
-            QConicalGradient lgrd(rect.center(),270);
-            lgrd.setColorAt(0.0,fillClr);
-            lgrd.setColorAt(0.5,fillClr.lighter(150));
-            lgrd.setColorAt(1.0,fillClr.lighter(250));
-            lgrd.setSpread(QGradient::ReflectSpread);
-            QBrush brush2(lgrd);
-            brush = brush2;
-        }
-        else
-        {
-            Qt::BrushStyle bs = (Qt::BrushStyle)nFillStyle;
-            QBrush brush1(fillClr,bs);
-            brush = brush1;
-        }
-        painter->setBrush(brush);
-
-        //图片部分
-        QString strImagePath = getImagePath();
-        if(!strImagePath.isEmpty() || !strImagePath.isNull())
-        {
-            QPixmap pix,pix1;
-            if(pix.load(strImagePath))
+            else if(nFillStyle == Qt::RadialGradientPattern)
             {
-                painter->setClipPath(getPath());
-                if(!bKeepImageRatio)
+                QRadialGradient lgrd(rect.center(),qMin(rect.width(),rect.height())/2);
+                lgrd.setColorAt(0.0,fillClr);
+                lgrd.setColorAt(0.5,fillClr.dark(150));
+                lgrd.setColorAt(1.0,fillClr.dark(250));
+                lgrd.setSpread(QGradient::ReflectSpread);
+                QBrush brush2(lgrd);
+                brush = brush2;
+            }
+            else if(nFillStyle == Qt::ConicalGradientPattern)
+            {
+                QConicalGradient lgrd(rect.center(),270);
+                lgrd.setColorAt(0.0,fillClr);
+                lgrd.setColorAt(0.5,fillClr.lighter(150));
+                lgrd.setColorAt(1.0,fillClr.lighter(250));
+                lgrd.setSpread(QGradient::ReflectSpread);
+                QBrush brush2(lgrd);
+                brush = brush2;
+            }
+            else
+            {
+                Qt::BrushStyle bs = (Qt::BrushStyle)nFillStyle;
+                QBrush brush1(fillClr,bs);
+                brush = brush1;
+            }
+            painter->setBrush(brush);
+        }
+        else if(nFillWay == 2)
+        {
+            QString strImagePath = getImagePath();//图片部分
+            if(!strImagePath.isEmpty() || !strImagePath.isNull())
+            {
+                QPixmap pix,pix1;
+                if(pix.load(strImagePath))
                 {
-                    pix1 = pix.scaled(rect.size().toSize());
-                    painter->drawPixmap(rect.x(),rect.y(),pix1);
-                }
-                else
-                {
-                    pix1 = pix.scaledToHeight(rect.height());
-                    QRectF rectF = rect;
-                    if(1 == nImageDirect)
+                    painter->setClipPath(getPath());
+                    if(!bKeepImageRatio)
                     {
-                        double deltaX = (rect.width() - pix1.width())/2;
-                        rectF.setX(rect.x() + deltaX);
+                        pix1 = pix.scaled(rect.size().toSize());
+                        painter->drawPixmap(rect.x(),rect.y(),pix1);
                     }
-                    else if(2 == nImageDirect)
+                    else
                     {
-                        double deltaX = (rect.width() - pix1.width());
-                        rectF.setX(rect.x() + deltaX);
+                        pix1 = pix.scaledToHeight(rect.height());
+                        QRectF rectF = rect;
+                        if(1 == nImageDirect)
+                        {
+                            double deltaX = (rect.width() - pix1.width())/2;
+                            rectF.setX(rect.x() + deltaX);
+                        }
+                        else if(2 == nImageDirect)
+                        {
+                            double deltaX = (rect.width() - pix1.width());
+                            rectF.setX(rect.x() + deltaX);
+                        }
+                        painter->drawPixmap(rectF.x(),rectF.y(),pix1);
                     }
-                    painter->drawPixmap(rectF.x(),rectF.y(),pix1);
                 }
-
             }
         }
     }

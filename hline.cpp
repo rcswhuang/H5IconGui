@@ -209,9 +209,9 @@ void HLine::paint(QPainter* painter)
     Qt::PenCapStyle capStyle = getLineCapStyle();
 
     painter->save();
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->setRenderHint(QPainter::TextAntialiasing);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    //painter->setRenderHint(QPainter::Antialiasing);
+    //painter->setRenderHint(QPainter::TextAntialiasing);
+    //painter->setRenderHint(QPainter::SmoothPixmapTransform);
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
     pen.setWidth(penWidth);
