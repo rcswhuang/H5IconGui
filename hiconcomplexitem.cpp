@@ -28,6 +28,13 @@ HIconComplexItem::HIconComplexItem(const QRectF &rectF, HIconGraphicsItem *paren
     pIconObj = NULL;
 }
 
+HIconComplexItem::~HIconComplexItem()
+{
+    int a = 0;
+    int test = 0;
+
+}
+
 QRectF HIconComplexItem::boundingRect() const
 { 
     return pIconObj->boundingRect();
