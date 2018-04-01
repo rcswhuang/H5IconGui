@@ -1,4 +1,4 @@
-﻿#include "hicontemplate.h"
+#include "hicontemplate.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDomProcessingInstruction>
@@ -228,6 +228,7 @@ bool HIconTemplate::getModify()
 }
 
 //huangw ?????
+/*
 QIcon HIconTemplate::getIcon()
 {
     QSizeF sizeF = sDefaultSize;
@@ -246,3 +247,4 @@ QIcon HIconTemplate::getIcon()
 
     return QIcon(QPixmap().fromImage(image));
 }
+*/

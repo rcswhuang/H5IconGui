@@ -1,4 +1,4 @@
-﻿#include "hiconarcitem.h"
+#include "hiconarcitem.h"
 #include "harc.h"
 //#include <QObject>
 #include <QRectF>
@@ -23,7 +23,11 @@ HIconArcItem::HIconArcItem(const QRectF &rectF, HIconRectItem *parent)
 
 HIconArcItem::~HIconArcItem()
 {
-
+    if(pArcObj)
+    {
+        delete pArcObj;
+        pArcObj = NULL;
+    }
 }
 
 

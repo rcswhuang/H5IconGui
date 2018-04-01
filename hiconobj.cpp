@@ -1,4 +1,4 @@
-﻿#include "hiconobj.h"
+#include "hiconobj.h"
 #include "hiconcomplexitem.h"
 #include "hiconshowpattern.h"
 /*************************************图符类**********************************/
@@ -41,6 +41,11 @@ HIconObj::~HIconObj()
     }
     //if(pIconTemplate)
     //    delete pIconTemplate;
+    if(pText)
+    {
+        delete pText;
+        pText = NULL;
+    }
     pIconTemplate = NULL;
 }
 
@@ -86,8 +91,8 @@ void HIconObj::readData(QDataStream* data)
     btGraphOperator = bt;
     *data>>bt;
     btGraphComfirm = bt;
-/*
-    if(pIconSymbol)
+
+    if(pconSymbol)
     {
         pIconSymbol->readData(0,data);
         if(TEMPLATE_TYPE_ANALOGUE == nCatalogType || TEMPLATE_TYPE_CONTROL == nCatalogType)
@@ -95,7 +100,7 @@ void HIconObj::readData(QDataStream* data)
             HText *pText = pIconSymbol->getFirstTextObj();
             pText->readData(data);
         }
-    }*/
+    }
     //动态数据
     if(pDynamicObj)
         pDynamicObj->readData(data);
@@ -114,7 +119,7 @@ void HIconObj::writeData(QDataStream* data)
     *data<<btGraphOperator;
     *data<<btGraphComfirm;
 
-   /* if(pIconSymbol)
+    if(pIconSymbol)
     {
         pIconSymbol->writeData(0,data);
         if(TEMPLATE_TYPE_ANALOGUE == nCatalogType || TEMPLATE_TYPE_CONTROL == nCatalogType)
@@ -122,7 +127,7 @@ void HIconObj::writeData(QDataStream* data)
             HText *pText = pIconSymbol->getFirstTextObj();
             pText->writeData(data);
         }
-    }*/
+    }
 
     //动态数据
     if(pDynamicObj)
@@ -398,22 +403,27 @@ int HIconObj::getObjType()
 void HIconObj::setSymbolName(const QString& symbolName)
 {
     //strSymbolName = symbolName;
+    if(pIconSymbol)
+        pIconSymbol->setSymbolName(symbolName);
 }
 
 QString HIconObj::getSymbolName()
 {
-    return "strSymbolName";
+    if(pIconSymbol)
+        pIconSymbol->getSymolName();
+    return "";
 }
 
 void HIconObj::setSymbolType(int symbolType)
 {
-
+    if(pIconSymbol)
+        pIconSymbol->setSymbolType(symbolType);
 }
 
 int HIconObj::getSymbolType()
 {
-    //if(pIconSymbol)
-   //    return pIconSymbol->getSymbolType();
+    if(pIconSymbol)
+       return pIconSymbol->getSymbolType();
     return (int)-1;
 }
 

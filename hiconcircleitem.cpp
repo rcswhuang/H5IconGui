@@ -1,4 +1,4 @@
-﻿#include "hiconcircleitem.h"
+#include "hiconcircleitem.h"
 #include "hcircle.h"
 //#include <QObject>
 #include <QRectF>
@@ -19,6 +19,16 @@ HIconCircleItem::HIconCircleItem(const QRectF &rectF, HIconRectItem *parent)
 {
     pCircleObj = NULL;
 }
+
+HIconCircleItem::~HIconCircleItem()
+{
+    if(pCircleObj)
+    {
+        delete pCircleObj;
+        pCircleObj = NULL;
+    }
+}
+
 
 QRectF HIconCircleItem::boundingRect() const
 {

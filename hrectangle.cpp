@@ -1,5 +1,5 @@
-﻿#include "H5IconGui/hrectangle.h"
-#include "H5IconGui/hiconrectitem.h"
+#include "hrectangle.h"
+#include "hiconrectitem.h"
 /////////////////////////////////////HRectObj//////////////////////////////////////
 HRectangle::HRectangle()
 {

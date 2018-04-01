@@ -1,4 +1,4 @@
-﻿#include "hiconpolylineitem.h"
+#include "hiconpolylineitem.h"
 #include "hpolyline.h"
 #include <math.h>
 //#include <QObject>
@@ -24,6 +24,15 @@ HIconPolylineItem::HIconPolylineItem(const QPolygonF &polygonF, HIconGraphicsIte
     setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
     setFlag(QGraphicsItem::ItemIsFocusable,true);
     pPolylineObj = NULL;
+}
+
+HIconPolylineItem::~HIconPolylineItem()
+{
+    if(pPolylineObj)
+    {
+        delete pPolylineObj;
+        pPolylineObj = NULL;
+    }
 }
 
 QRectF HIconPolylineItem::boundingRect() const

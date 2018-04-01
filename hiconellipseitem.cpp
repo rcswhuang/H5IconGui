@@ -1,4 +1,4 @@
-﻿#include "hiconellipseitem.h"
+#include "hiconellipseitem.h"
 #include "hellipse.h"
 //#include <QObject>
 #include <QRectF>
@@ -18,6 +18,15 @@ HIconEllipseItem::HIconEllipseItem(const QRectF &rectF, HIconRectItem *parent)
     :HIconRectItem(rectF,parent)
 {
     pEllipseObj = NULL;
+}
+
+HIconEllipseItem::HIconEllipseItem()
+{
+    if(pEllipseObj)
+    {
+        delete pEllipseObj;
+        pEllipseObj = NULL;
+    }
 }
 
 QRectF HIconEllipseItem::boundingRect() const

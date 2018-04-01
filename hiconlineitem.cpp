@@ -1,4 +1,4 @@
-﻿#include "hiconlineitem.h"
+#include "hiconlineitem.h"
 #include "hline.h"
 #include <math.h>
 //#include <QObject>
@@ -25,6 +25,14 @@ HIconLineItem::HIconLineItem(const QLineF &line, HIconGraphicsItem *parent):HIco
     pLineObj = NULL;
 }
 
+HIconLineItem::~HIconLineItem()
+{
+    if(pLineObj)
+    {
+        delete pLineObj;
+        pLineObj = NULL;
+    }
+}
 
 QRectF HIconLineItem::boundingRect() const
 {

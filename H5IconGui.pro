@@ -18,8 +18,10 @@ DESTDIR = /users/huangw/lib
 }
 DEFINES += H5ICONGUI_DLL
 
-INCLUDEPATH += D:\Project\include \
-               D:\Project\include\H5IconGui
+INCLUDEPATH += \
+               ../include \
+               ../include/H5IconGui
+
 CONFIG += qt thread all
 SOURCES += \
     hbaseobj.cpp \

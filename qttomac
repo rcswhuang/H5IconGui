@@ -1,0 +1,2 @@
+
+/applications/Qt5.10.0/5.10.0/clang_64/bin/qmake -spec macx-xcode  H5IconGui.pro

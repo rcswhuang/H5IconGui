@@ -1,4 +1,4 @@
-﻿#include "hiconrectitem.h"
+#include "hiconrectitem.h"
 #include "hrectangle.h"
 #include <qmath.h>
 //#include <QObject>
@@ -24,6 +24,15 @@ HIconRectItem::HIconRectItem(const QRectF &rectF, HIconGraphicsItem *parent)
     setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
     setFlag(QGraphicsItem::ItemIsFocusable,true);
     pRectObj = NULL;
+}
+
+HIconRectItem::~HIconRectItem()
+{
+    if(pRectObj)
+    {
+        delete pRectObj;
+        pRectObj = NULL;
+    }
 }
 
 QRectF HIconRectItem::boundingRect() const

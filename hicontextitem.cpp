@@ -1,4 +1,4 @@
-﻿#include "hicontextitem.h"
+#include "hicontextitem.h"
 #include "htext.h"
 //#include <QObject>
 #include <QRectF>
@@ -19,6 +19,15 @@ HIconTextItem::HIconTextItem(const QRectF &rectF, HIconRectItem *parent)
     :HIconRectItem(rectF,parent)
 {
     pTextObj =  NULL;
+}
+
+HIconTextItem::~HIconTextItem()
+{
+    if(pTextObj)
+    {
+        delete pTextObj;
+        pTextObj = NULL;
+    }
 }
 
 QRectF HIconTextItem::boundingRect() const

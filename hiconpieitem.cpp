@@ -1,4 +1,4 @@
-﻿#include "hiconpieitem.h"
+#include "hiconpieitem.h"
 #include "hpie.h"
 //#include "hiconapi.h"
 //#include <QObject>
@@ -19,6 +19,15 @@ HIconPieItem::HIconPieItem(const QRectF &rectF, HIconRectItem *parent)
     :HIconRectItem(rectF,parent)
 {
     pPieObj = NULL;
+}
+
+HIconPieItem::~HIconPieItem()
+{
+    if(pPieObj)
+    {
+        delete pPieObj;
+        pPieObj = NULL;
+    }
 }
 
 QRectF HIconPieItem::boundingRect() const

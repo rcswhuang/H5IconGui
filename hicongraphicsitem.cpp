@@ -1,15 +1,15 @@
-﻿#include "hicongraphicsitem.h"
+#include "hicongraphicsitem.h"
 #include "hiconobj.h"
 #include <QRectF>
 HIconGraphicsItem::HIconGraphicsItem(QGraphicsItem* parent):QGraphicsItem(parent)
 {
 
 }
-/*
+
 HIconGraphicsItem::~HIconGraphicsItem()
 {
 
-}*/
+}
 
 QRectF HIconGraphicsItem::boundingRect() const
 {
