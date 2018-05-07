@@ -23,6 +23,11 @@ HIconItemGroup::HIconItemGroup(const QRectF &rectF, HIconGraphicsItem *parent)
     pGroupObj = NULL;
 }
 
+HIconItemGroup::~HIconItemGroup()
+{
+
+}
+
 QRectF HIconItemGroup::boundingRect() const
 {
     return pGroupObj->boundingRect();

@@ -92,7 +92,7 @@ void HIconObj::readData(QDataStream* data)
     *data>>bt;
     btGraphComfirm = bt;
 
-    if(pconSymbol)
+    if(pIconSymbol)
     {
         pIconSymbol->readData(0,data);
         if(TEMPLATE_TYPE_ANALOGUE == nCatalogType || TEMPLATE_TYPE_CONTROL == nCatalogType)
@@ -416,14 +416,14 @@ QString HIconObj::getSymbolName()
 
 void HIconObj::setSymbolType(int symbolType)
 {
-    if(pIconSymbol)
-        pIconSymbol->setSymbolType(symbolType);
+    //if(pIconSymbol)
+     //   pIconSymbol->setSymbolType(symbolType);
 }
 
 int HIconObj::getSymbolType()
 {
-    if(pIconSymbol)
-       return pIconSymbol->getSymbolType();
+    //if(pIconSymbol)
+     //  return pIconSymbol->getSymbolType();
     return (int)-1;
 }
 

@@ -20,7 +20,7 @@ HIconEllipseItem::HIconEllipseItem(const QRectF &rectF, HIconRectItem *parent)
     pEllipseObj = NULL;
 }
 
-HIconEllipseItem::HIconEllipseItem()
+HIconEllipseItem::~HIconEllipseItem()
 {
     if(pEllipseObj)
     {
