@@ -5,7 +5,7 @@ HDynamicObj::HDynamicObj()
     wStation = (ushort)-1;
     wPoint = (ushort)-1;
     wAttrib = (ushort)-1;
-    btFiledType = (uchar)-1;
+    btFieldType = (uchar)-1;
     wFormula = (ushort)-1;
 }
 
@@ -27,7 +27,7 @@ void HDynamicObj::readData(QDataStream* data)
     wAttrib = temp;
     uchar btTemp;
     *data>>btTemp;
-    btFiledType = btTemp;
+    btFieldType = btTemp;
     *data>>temp;
     wFormula = temp;
 }
@@ -38,7 +38,7 @@ void HDynamicObj::writeData(QDataStream* data)
     *data<<(ushort)wStation;
     *data<<(ushort)wPoint;
     *data<<(ushort)wAttrib;
-    *data<<(uchar)btFiledType;
+    *data<<(uchar)btFieldType;
     *data<<(ushort)wFormula;
 }
 
@@ -50,7 +50,7 @@ void HDynamicObj::readXml(QDomElement* dom)
     wStation = dom->attribute("Station").toUShort();
     wPoint = dom->attribute("Point").toUShort();
     wAttrib = dom->attribute("Attrib").toUShort();
-    btFiledType = dom->attribute("FieldType").toUShort();
+    btFieldType = dom->attribute("FieldType").toUShort();
     wFormula = dom->attribute("Formula").toUShort();
 }
 
@@ -61,7 +61,7 @@ void HDynamicObj::writeXml(QDomElement* dom)
     dom->setAttribute("Station",wStation);
     dom->setAttribute("Point",wPoint);
     dom->setAttribute("Attrib",wAttrib);
-    dom->setAttribute("FiledType",btFiledType);
+    dom->setAttribute("FieldType",btFieldType);
     dom->setAttribute("Formula",wFormula);
 }
 
@@ -74,7 +74,7 @@ QString HDynamicObj::TagName()
 void HDynamicObj::copyTo(HDynamicObj* obj)
 {
 
-    obj->btFiledType = btFiledType;
+    obj->btFieldType = btFieldType;
     obj->wFormula = wFormula;
     obj->wStation = wStation;
     obj->wPoint = wPoint;
@@ -121,12 +121,12 @@ ushort HDynamicObj::getDBAttr()
 
 void HDynamicObj::setValueType(uchar btFt)
 {
-    btFiledType = btFt;
+    btFieldType = btFt;
 }
 
 uchar HDynamicObj::getValueType()
 {
-    return btFiledType;
+    return btFieldType;
 }
 
 void HDynamicObj::setFormula(ushort formula)
