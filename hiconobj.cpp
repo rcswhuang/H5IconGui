@@ -495,3 +495,14 @@ void HIconObj::clearDynamicData()
         pDynamicObj = NULL;
     }
 }
+
+void HIconObj::updateResize()
+{
+    if(!pIconTemplate)
+        return;
+    QSizeF pt = pIconTemplate->getDefaultSize();
+    double w1 = rectWidth/(pt.width()*20);
+    double h1 = rectHeight/(pt.height()*20);
+    resetRectPoint(topLeft,QPointF(-pt.width()*10,-pt.height()*10));
+    resize(w1,h1);
+}

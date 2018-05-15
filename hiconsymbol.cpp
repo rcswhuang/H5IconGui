@@ -230,6 +230,8 @@ void HIconSymbol::takeObj(HBaseObj* pObj)
 
 void HIconSymbol::copyTo(HIconSymbol *isymbol)
 {
+    if(!isymbol) return;
+    isymbol->clear();
     isymbol->strSymbolName = strSymbolName;
     isymbol->usSymbolType = usSymbolType;
     isymbol->nMaxPattern = nMaxPattern;
