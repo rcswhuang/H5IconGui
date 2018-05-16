@@ -80,3 +80,4 @@ void HCircle::paint(QPainter* painter)
 
     }
 }
+

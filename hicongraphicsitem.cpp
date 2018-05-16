@@ -3,7 +3,8 @@
 #include <QRectF>
 HIconGraphicsItem::HIconGraphicsItem(QGraphicsItem* parent):QGraphicsItem(parent)
 {
-
+    bMulSelect = false; //处于多选状态
+    bBenchmark = false; //基准Item
 }
 
 HIconGraphicsItem::~HIconGraphicsItem()

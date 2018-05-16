@@ -308,26 +308,11 @@ void HRectangle::paint(QPainter* painter)
 
     if(pItem && pItem->isSelected())
     {
-        painter->save();
-        QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 8.00;
-        QRectF rect1,rect2,rect3,rect4;
-        rect1.setSize(QSizeF(halfpw,halfpw));
-        rect1.moveCenter(rect.topLeft());
-        rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(rect.topRight());
-        rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(rect.bottomLeft());
-        rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(rect.bottomRight());
-
-        painter->drawRect(rect1);
-        painter->drawRect(rect2);
-        painter->drawRect(rect3);
-        painter->drawRect(rect4);
-        painter->restore();
+        test();
+        if(pItem->bMulSelect)
+            drawMulSelect(painter,pItem->bBenchmark);
+        else
+            drawSelect(painter);
     }
 
 }
@@ -389,13 +374,70 @@ double HRectangle::getRectHeight()
     return rectHeight;
 }
 
+void HRectangle::test()
+{
+    int a = rectHeight;
+}
+
+void HRectangle::drawSelect(QPainter* painter)
+{
+    painter->save();
+    QPen pen1 = QPen(Qt::black);
+    pen1.setWidth(1);
+    QBrush brush;
+    brush.setColor(Qt::green);
+    brush.setStyle(Qt::SolidPattern);
+    painter->setPen(pen1);
+    painter->setBrush(brush);
+
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+
+    qreal halfpw = 8.00;
+    QRectF rect1,rect2,rect3,rect4;
+    rect1.setSize(QSizeF(halfpw,halfpw));
+    rect1.moveCenter(rect.topLeft());
+    rect2.setSize(QSizeF(halfpw,halfpw));
+    rect2.moveCenter(rect.topRight());
+    rect3.setSize(QSizeF(halfpw,halfpw));
+    rect3.moveCenter(rect.bottomLeft());
+    rect4.setSize(QSizeF(halfpw,halfpw));
+    rect4.moveCenter(rect.bottomRight());
+
+
+    QRectF rectC1,rectC2,rectC3,rectC4; //上中，下中，左中，右中
+    rectC1.setSize(QSizeF(halfpw,halfpw));
+    rectC2.setSize(QSizeF(halfpw,halfpw));
+    rectC3.setSize(QSizeF(halfpw,halfpw));
+    rectC4.setSize(QSizeF(halfpw,halfpw));
+    QPointF ptC1 = QPointF((rect.topLeft().x()+rect.topRight().x())/2,rect.top());
+    QPointF ptC2 = QPointF((rect.bottomLeft().x()+rect.bottomRight().x())/2,rect.bottom());
+    QPointF ptC3 = QPointF(rect.left(),(rect.topLeft().y()+rect.bottomLeft().y())/2);
+    QPointF ptC4 = QPointF(rect.right(),(rect.topRight().y()+rect.bottomRight().y())/2);
+
+    rectC1.moveCenter(ptC1);
+    rectC2.moveCenter(ptC2);
+    rectC3.moveCenter(ptC3);
+    rectC4.moveCenter(ptC4);
+
+    painter->drawRect(rect1);
+    painter->drawRect(rect2);
+    painter->drawRect(rect3);
+    painter->drawRect(rect4);
+
+    painter->drawRect(rectC1);
+    painter->drawRect(rectC2);
+    painter->drawRect(rectC3);
+    painter->drawRect(rectC4);
+
+    painter->restore();
+}
+
 QPainterPath HRectangle::getPath()
 {
     bool bRound = getRound();
     int nXAxis = getXAxis();
     int nYAxis = getYAxis();
     QPainterPath path;
-    //path.setFillRule(Qt::WindingFill);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     if(!bRound)
     {
@@ -407,3 +449,19 @@ QPainterPath HRectangle::getPath()
     }
     return path;
 }
+
+void HRectangle::drawMulSelect(QPainter *painter,bool benchmark)
+{
+    //多选有两种情况1.不是标杆，2.是标杆
+    //是标杆的话 就要加持绘制
+    painter->save();
+    QPen pen1 = QPen(QColor("#FF00FF"));//粉色
+    pen1.setWidth(1);
+    painter->setPen(pen1);
+    if(benchmark)
+        pen1.setWidth(2);
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    painter->drawRect(rect);
+    painter->restore();
+}
+

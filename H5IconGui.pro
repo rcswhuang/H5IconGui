@@ -18,7 +18,7 @@ INCLUDEPATH += \
                ../include \
                ../include/H5IconGui
 
-CONFIG += qt thread all
+CONFIG += qt warn_off thread exceptions
 SOURCES += \
     hbaseobj.cpp \
     hiconarcitem.cpp \

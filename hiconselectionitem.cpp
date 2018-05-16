@@ -35,7 +35,6 @@ void HIconSelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setPen(pen);
     painter->drawRect(rect());
     painter->restore();
-
 }
 
 QPainterPath HIconSelectionItem::shape() const
