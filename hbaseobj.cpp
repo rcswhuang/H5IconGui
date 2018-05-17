@@ -701,7 +701,7 @@ QString HBaseObj::getImagePath()
 
 bool HBaseObj::isValidImagePath() const
 {
-    return !strImagePath.isEmpty()||!strImagePath.isNull();
+    return !strImagePath.isEmpty() && !strImagePath.isNull();
 }
 
 void HBaseObj::setKeepImageRatio(bool bcheck)

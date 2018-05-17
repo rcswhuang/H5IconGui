@@ -305,10 +305,13 @@ void HRectangle::paint(QPainter* painter)
     QPainterPath path = getPath();
     painter->drawPath(path);
     painter->restore();
-
+    bool bSelected;
+    if(pItem)
+    {
+        bSelected = pItem->isSelected();
+    }
     if(pItem && pItem->isSelected())
     {
-        test();
         if(pItem->bMulSelect)
             drawMulSelect(painter,pItem->bBenchmark);
         else
@@ -330,7 +333,6 @@ void HRectangle::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
    ptNew = pt1;
    ptOld = pt2;
 }
-
 
 void HRectangle::setObjRect(const QRectF& rect)
 {
@@ -374,15 +376,10 @@ double HRectangle::getRectHeight()
     return rectHeight;
 }
 
-void HRectangle::test()
-{
-    int a = rectHeight;
-}
-
 void HRectangle::drawSelect(QPainter* painter)
 {
     painter->save();
-    QPen pen1 = QPen(Qt::black);
+    QPen pen1 = QPen(Qt::red);
     pen1.setWidth(1);
     QBrush brush;
     brush.setColor(Qt::green);
