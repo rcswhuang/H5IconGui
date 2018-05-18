@@ -310,7 +310,7 @@ void HIconObj::paint(QPainter* painter)
 
     if(pItem && pItem->isSelected())
     {
-        QPen pen1 = QPen(Qt::green);
+        /*QPen pen1 = QPen(Qt::green);
         pen1.setWidth(1);
         painter->setPen(pen1);
         qreal halfpw = 8.00;
@@ -327,7 +327,11 @@ void HIconObj::paint(QPainter* painter)
         painter->drawRect(rect1);
         painter->drawRect(rect2);
         painter->drawRect(rect3);
-        painter->drawRect(rect4);
+        painter->drawRect(rect4);*/
+        if(pItem->bMulSelect)
+            drawMulSelect(painter,pItem->bBenchmark);
+        else
+            drawSelect(painter);
     }
     painter->restore();
 }

@@ -308,29 +308,63 @@ void HLine::paint(QPainter* painter)
 
     if(pItem && pItem->isSelected())
     {
-        painter->save();
-        QPen pen1 = QPen(penClr,penWidth,penStyle);
-        painter->setPen(pen1);
-        QPointF p1 = line.p1();
-        QPointF p2 = line.p2();
-        pen1.setStyle(Qt::SolidLine);
-        painter->setPen(pen1);
-        QRectF rectF1;
-        rectF1.setSize(QSizeF(8,8));
-        rectF1.moveCenter(p1);
-        QRectF rectF2;
-        rectF2.setSize(QSize(8,8));
-        rectF2.moveCenter(p2);
-        painter->drawRect(rectF1);
-        painter->drawRect(rectF2);
-        painter->restore();
+        if(pItem && pItem->isSelected())
+        {
+            if(pItem->bMulSelect)
+                drawMulSelect(painter,pItem->bBenchmark);
+            else
+                drawSelect(painter);
+        }
     }
-
-
 }
 
 void HLine::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
     ptNew = pt1;
     ptOld = pt2;
+}
+
+void HLine::drawSelect(QPainter* painter)
+{
+    painter->save();
+    QPen pen1 = QPen(Qt::green);
+    pen1.setWidth(1);
+    painter->setPen(pen1);
+
+    qreal halfpw = 6.00;
+    QPointF p1 = pfHeadPoint;
+    QPointF p2 = pfTailPoint;
+    pen1.setStyle(Qt::SolidLine);
+    painter->setPen(pen1);
+    QRectF rectF1;
+    rectF1.setSize(QSizeF(halfpw,halfpw));
+    rectF1.moveCenter(p1);
+    QRectF rectF2;
+    rectF2.setSize(QSize(halfpw,halfpw));
+    rectF2.moveCenter(p2);
+    painter->drawRect(rectF1);
+    painter->drawRect(rectF2);
+    painter->restore();
+}
+
+
+void HLine::drawMulSelect(QPainter *painter,bool benchmark)
+{
+    //多选有两种情况1.不是标杆，2.是标杆
+    //是标杆的话 就要加持绘制
+    painter->save();
+    QPen pen1;
+    pen1.setWidth(2);
+    if(benchmark)
+    {
+        pen1.setColor(QColor("#FF00FF"));
+    }
+    else
+    {
+        pen1.setColor(QColor("#EE82EE"));//粉色
+    }
+    painter->setPen(pen1);
+    QLineF lineF(pfHeadPoint,pfTailPoint);
+    painter->drawLine(lineF);
+    painter->restore();
 }

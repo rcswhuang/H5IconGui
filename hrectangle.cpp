@@ -305,11 +305,6 @@ void HRectangle::paint(QPainter* painter)
     QPainterPath path = getPath();
     painter->drawPath(path);
     painter->restore();
-    bool bSelected;
-    if(pItem)
-    {
-        bSelected = pItem->isSelected();
-    }
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -389,7 +384,7 @@ void HRectangle::drawSelect(QPainter* painter)
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
 
-    qreal halfpw = 8.00;
+    qreal halfpw = 6.00;
     QRectF rect1,rect2,rect3,rect4;
     rect1.setSize(QSizeF(halfpw,halfpw));
     rect1.moveCenter(rect.topLeft());
@@ -452,11 +447,17 @@ void HRectangle::drawMulSelect(QPainter *painter,bool benchmark)
     //多选有两种情况1.不是标杆，2.是标杆
     //是标杆的话 就要加持绘制
     painter->save();
-    QPen pen1 = QPen(QColor("#FF00FF"));//粉色
-    pen1.setWidth(1);
-    painter->setPen(pen1);
+    QPen pen1;
+    pen1.setWidth(2);
     if(benchmark)
-        pen1.setWidth(2);
+    {
+        pen1.setColor(QColor("#FF00FF"));
+    }
+    else
+    {
+        pen1.setColor(QColor("#EE82EE"));//粉色
+    }
+    painter->setPen(pen1);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     painter->drawRect(rect);
     painter->restore();

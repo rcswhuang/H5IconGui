@@ -19,10 +19,6 @@ HIconPolygonItem::HIconPolygonItem(HIconGraphicsItem *parent)
 HIconPolygonItem::HIconPolygonItem(const QPolygonF &polygonF, HIconGraphicsItem *parent)
     :HIconGraphicsItem(parent),pyVector(polygonF)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pPolygonObj = NULL;
 }
 

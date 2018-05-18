@@ -298,28 +298,15 @@ void HPolygon::paint(QPainter* painter)
         path.setFillRule(Qt::WindingFill);
         painter->drawPath(path);
     }
-
+    painter->restore();
     if(pItem && pItem->isSelected())
     {
-        QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 8.00;
-        int nRect = pItem->polygon().size();
-        QRectF *pRect = new QRectF[nRect];
-        for(int i = 0 ; i < nRect; i++)
-        {
-            pRect[i].setSize(QSizeF(halfpw,halfpw));
-            pRect[i].moveCenter(pItem->polygon().at(i));
-            painter->drawRect(pRect[i]);
-        }
-        if(pRect)
-        {
-            delete[] pRect;
-            pRect = NULL;
-        }
+        if(pItem->bMulSelect)
+            drawMulSelect(painter,pItem->bBenchmark);
+        else
+            drawSelect(painter);
     }
-    painter->restore();
+
 }
 
 void HPolygon::resize(double w,double h)
@@ -338,3 +325,48 @@ void HPolygon::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
     ptNew = pt1;
     ptOld = pt2;
 }
+
+void HPolygon::drawSelect(QPainter* painter)
+{
+    painter->save();
+    QPen pen1 = QPen(Qt::green);
+    pen1.setWidth(1);
+    painter->setPen(pen1);
+    qreal halfpw = 6.00;
+    int nRect = pylist.size();
+    QRectF *pRect = new QRectF[nRect];
+    for(int i = 0 ; i < nRect; i++)
+    {
+        pRect[i].setSize(QSizeF(halfpw,halfpw));
+        pRect[i].moveCenter(pylist.at(i));
+        painter->drawRect(pRect[i]);
+    }
+    if(pRect)
+    {
+        delete[] pRect;
+        pRect = NULL;
+    }
+    painter->restore();
+}
+
+void HPolygon::drawMulSelect(QPainter *painter,bool benchmark)
+{
+    //多选有两种情况1.不是标杆，2.是标杆
+    //是标杆的话 就要加持绘制
+    painter->save();
+    QPen pen1;
+    pen1.setWidth(2);
+    if(benchmark)
+    {
+        pen1.setColor(QColor("#FF00FF"));
+    }
+    else
+    {
+        pen1.setColor(QColor("#EE82EE"));//粉色
+    }
+    painter->setPen(pen1);
+    QPolygonF polygonF(pylist);
+    painter->drawPolygon(polygonF);
+    painter->restore();
+}
+

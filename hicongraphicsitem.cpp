@@ -5,6 +5,10 @@ HIconGraphicsItem::HIconGraphicsItem(QGraphicsItem* parent):QGraphicsItem(parent
 {
     bMulSelect = false; //处于多选状态
     bBenchmark = false; //基准Item
+    setFlag(QGraphicsItem::ItemIsMovable,true);
+    //setFlag(QGraphicsItem::ItemIsSelectable,true);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
+    setFlag(QGraphicsItem::ItemIsFocusable,true);
 }
 
 HIconGraphicsItem::~HIconGraphicsItem()

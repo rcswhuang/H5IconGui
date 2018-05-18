@@ -20,10 +20,6 @@ HIconSelectionItem::HIconSelectionItem(HIconGraphicsItem *parent)
 HIconSelectionItem::HIconSelectionItem(const QRectF &rectF, HIconGraphicsItem *parent)
     :HIconGraphicsItem(parent),rectF(rectF)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    //setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
 }
 
 HIconSelectionItem::~HIconSelectionItem()

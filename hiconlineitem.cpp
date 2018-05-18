@@ -18,10 +18,6 @@ HIconLineItem::HIconLineItem(HIconGraphicsItem *parent):HIconGraphicsItem(parent
 
 HIconLineItem::HIconLineItem(const QLineF &line, HIconGraphicsItem *parent):HIconGraphicsItem(parent),lineF(line)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     pLineObj = NULL;
 }
 

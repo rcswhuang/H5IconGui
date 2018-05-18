@@ -171,24 +171,9 @@ void HArc::paint(QPainter* painter)
 
     if(pItem && pItem->isSelected())
     {
-        QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 8.00;
-        QRectF rect1,rect2,rect3,rect4;
-        rect1.setSize(QSizeF(halfpw,halfpw));
-        rect1.moveCenter(rect.topLeft());
-        rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(rect.topRight());
-        rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(rect.bottomLeft());
-        rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(rect.bottomRight());
-
-        painter->drawRect(rect1);
-        painter->drawRect(rect2);
-        painter->drawRect(rect3);
-        painter->drawRect(rect4);
-        painter->restore();
+        if(pItem->bMulSelect)
+            drawMulSelect(painter,pItem->bBenchmark);
+        else
+            drawSelect(painter);
     }
 }

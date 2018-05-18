@@ -319,35 +319,88 @@ void HGroupObj::paint(QPainter* painter)
            pObj->paint(painter);
         }
     }
-    QPen pen(Qt::red);
-    pen.setWidth(2);
-    painter->setPen(pen);
-    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    painter->restore();
     if(pItem && pItem->isSelected())
     {
-        QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 14.00;
-        QRectF rect1,rect2,rect3,rect4;
-        rect1.setSize(QSizeF(halfpw,halfpw));
-        QPointF pt21,pt22,pt23,pt24;
-        pt21 = rect.topLeft();
-        pt22 = rect.topRight();
-        pt23 = rect.bottomLeft();
-        pt24 = rect.bottomRight();
-        rect1.moveCenter(rect.topLeft());
-        rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(rect.topRight());
-        rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(rect.bottomLeft());
-        rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(rect.bottomRight());
 
-        painter->drawRect(rect1);
-        painter->drawRect(rect2);
-        painter->drawRect(rect3);
-        painter->drawRect(rect4);
+        if(pItem->bMulSelect)
+            drawMulSelect(painter,pItem->bBenchmark);
+        else
+            drawSelect(painter);
     }
+
+}
+
+void HGroupObj::drawSelect(QPainter* painter)
+{
+    painter->save();
+    QPen pen1 = QPen(Qt::red);
+    pen1.setWidth(1);
+    QBrush brush;
+    brush.setColor(Qt::green);
+    brush.setStyle(Qt::SolidPattern);
+    painter->setPen(pen1);
+    painter->setBrush(brush);
+
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+
+    qreal halfpw = 6.00;
+    QRectF rect1,rect2,rect3,rect4;
+    rect1.setSize(QSizeF(halfpw,halfpw));
+    rect1.moveCenter(rect.topLeft());
+    rect2.setSize(QSizeF(halfpw,halfpw));
+    rect2.moveCenter(rect.topRight());
+    rect3.setSize(QSizeF(halfpw,halfpw));
+    rect3.moveCenter(rect.bottomLeft());
+    rect4.setSize(QSizeF(halfpw,halfpw));
+    rect4.moveCenter(rect.bottomRight());
+
+
+    QRectF rectC1,rectC2,rectC3,rectC4; //上中，下中，左中，右中
+    rectC1.setSize(QSizeF(halfpw,halfpw));
+    rectC2.setSize(QSizeF(halfpw,halfpw));
+    rectC3.setSize(QSizeF(halfpw,halfpw));
+    rectC4.setSize(QSizeF(halfpw,halfpw));
+    QPointF ptC1 = QPointF((rect.topLeft().x()+rect.topRight().x())/2,rect.top());
+    QPointF ptC2 = QPointF((rect.bottomLeft().x()+rect.bottomRight().x())/2,rect.bottom());
+    QPointF ptC3 = QPointF(rect.left(),(rect.topLeft().y()+rect.bottomLeft().y())/2);
+    QPointF ptC4 = QPointF(rect.right(),(rect.topRight().y()+rect.bottomRight().y())/2);
+
+    rectC1.moveCenter(ptC1);
+    rectC2.moveCenter(ptC2);
+    rectC3.moveCenter(ptC3);
+    rectC4.moveCenter(ptC4);
+
+    painter->drawRect(rect1);
+    painter->drawRect(rect2);
+    painter->drawRect(rect3);
+    painter->drawRect(rect4);
+
+    painter->drawRect(rectC1);
+    painter->drawRect(rectC2);
+    painter->drawRect(rectC3);
+    painter->drawRect(rectC4);
+
+    painter->restore();
+}
+
+void HGroupObj::drawMulSelect(QPainter *painter,bool benchmark)
+{
+    //多选有两种情况1.不是标杆，2.是标杆
+    //是标杆的话 就要加持绘制
+    painter->save();
+    QPen pen1;
+    pen1.setWidth(2);
+    if(benchmark)
+    {
+        pen1.setColor(QColor("#FF00FF"));
+    }
+    else
+    {
+        pen1.setColor(QColor("#EE82EE"));//粉色
+    }
+    painter->setPen(pen1);
+    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
+    painter->drawRect(rect);
     painter->restore();
 }

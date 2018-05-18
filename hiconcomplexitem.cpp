@@ -20,10 +20,6 @@ HIconComplexItem::HIconComplexItem(HIconGraphicsItem *parent)
 HIconComplexItem::HIconComplexItem(const QRectF &rectF, HIconGraphicsItem *parent)
     :HIconRectItem(rectF,parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable,true);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
-    setFlag(QGraphicsItem::ItemIsFocusable,true);
     setAcceptDrops(true);
     pIconObj = NULL;
 }
