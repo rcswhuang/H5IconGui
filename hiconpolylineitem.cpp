@@ -241,7 +241,20 @@ void HIconPolylineItem::resizeItem(const QPolygonF& polygonF)
     setPolygon(polygonF);
 }
 
+//对于polyline polygon的setRect就是move object
+void HIconPolylineItem::setRect(const QRectF& newRect)
+{
+    QRectF oldRect = rect();
+    if(oldRect == newRect)
+        return;
+    prepareGeometryChange();
+    qreal dx = newRect.center().x() - oldRect.center().x();
+    qreal dy = newRect.center().y() - oldRect.center().y();
+    moveItemBy(dx,dy);
+    //update();
+}
+
 QRectF HIconPolylineItem::rect() const
 {
-    return boundingRect();
+    return pyVector.boundingRect();
 }

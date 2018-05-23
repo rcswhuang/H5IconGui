@@ -374,13 +374,9 @@ double HRectangle::getRectHeight()
 void HRectangle::drawSelect(QPainter* painter)
 {
     painter->save();
-    QPen pen1 = QPen(Qt::red);
+    QPen pen1 = QPen(Qt::green);
     pen1.setWidth(1);
-    QBrush brush;
-    brush.setColor(Qt::green);
-    brush.setStyle(Qt::SolidPattern);
     painter->setPen(pen1);
-    painter->setBrush(brush);
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
 

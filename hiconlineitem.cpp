@@ -9,7 +9,7 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-
+#include <QDebug>
 HIconLineItem::HIconLineItem(HIconGraphicsItem *parent):HIconGraphicsItem(parent)
 {
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);

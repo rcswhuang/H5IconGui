@@ -21,6 +21,7 @@ HIconComplexItem::HIconComplexItem(const QRectF &rectF, HIconGraphicsItem *paren
     :HIconRectItem(rectF,parent)
 {
     setAcceptDrops(true);
+    setFlag(QGraphicsItem::ItemIsSelectable,true);
     pIconObj = NULL;
 }
 

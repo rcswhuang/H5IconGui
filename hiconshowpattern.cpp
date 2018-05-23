@@ -64,9 +64,11 @@ void HIconShowPattern::delObj(HBaseObj* pObj)
 {
     if(!pObj)
         return;
-    pObjList.removeOne(pObj);
-    delete pObj;
-    pObj = NULL;
+    if(pObjList.removeOne(pObj))
+    {
+        delete pObj;
+        pObj = NULL;
+    }
 }
 
 void HIconShowPattern::takeObj(HBaseObj* pObj)

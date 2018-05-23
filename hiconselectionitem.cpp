@@ -25,12 +25,16 @@ HIconSelectionItem::HIconSelectionItem(const QRectF &rectF, HIconGraphicsItem *p
 HIconSelectionItem::~HIconSelectionItem()
 {
     //清空，未删除
+    clear();
+}
+
+void HIconSelectionItem::clear()
+{
     pObjList.clear();
 }
 
 QRectF HIconSelectionItem::boundingRect() const
 {
-    bool bselected = isSelected();
     return shape().controlPointRect();
 }
 

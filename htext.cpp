@@ -298,7 +298,6 @@ QString HText::getTextSuffix()
     return this->strSuffix;
 }
 
-/*
 QRectF HText::boundingRect() const
 {
     return shape().controlPointRect();
@@ -315,7 +314,7 @@ QPainterPath HText::shape() const
     QRectF boundingRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight)).adjusted(-5,-5,5,5);
     path.addRect(boundingRect);
     return path;
-}*/
+}
 
 void HText::paint(QPainter* painter)
 {
