@@ -24,11 +24,12 @@ HIconPolylineItem::HIconPolylineItem(const QPolygonF &polygonF, HIconGraphicsIte
 
 HIconPolylineItem::~HIconPolylineItem()
 {
+    /*
     if(pPolylineObj)
     {
         delete pPolylineObj;
         pPolylineObj = NULL;
-    }
+    }*/
 }
 
 QRectF HIconPolylineItem::boundingRect() const

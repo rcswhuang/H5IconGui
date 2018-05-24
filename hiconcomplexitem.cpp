@@ -27,8 +27,6 @@ HIconComplexItem::HIconComplexItem(const QRectF &rectF, HIconGraphicsItem *paren
 
 HIconComplexItem::~HIconComplexItem()
 {
-    int a = 0;
-    int test = 0;
 
 }
 

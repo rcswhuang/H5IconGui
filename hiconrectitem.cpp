@@ -24,11 +24,12 @@ HIconRectItem::HIconRectItem(const QRectF &rectF, HIconGraphicsItem *parent)
 
 HIconRectItem::~HIconRectItem()
 {
+    /*
     if(pRectObj)
     {
         delete pRectObj;
         pRectObj = NULL;
-    }
+    }*/
 }
 
 QRectF HIconRectItem::boundingRect() const

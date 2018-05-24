@@ -23,11 +23,12 @@ HIconTextItem::HIconTextItem(const QRectF &rectF, HIconRectItem *parent)
 
 HIconTextItem::~HIconTextItem()
 {
+    /*
     if(pTextObj)
     {
         delete pTextObj;
         pTextObj = NULL;
-    }
+    }*/
 }
 
 QRectF HIconTextItem::boundingRect() const

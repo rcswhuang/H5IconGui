@@ -23,11 +23,12 @@ HIconArcItem::HIconArcItem(const QRectF &rectF, HIconRectItem *parent)
 
 HIconArcItem::~HIconArcItem()
 {
+    /*
     if(pArcObj)
     {
         delete pArcObj;
         pArcObj = NULL;
-    }
+    }*/
 }
 
 

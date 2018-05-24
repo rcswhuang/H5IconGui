@@ -23,11 +23,12 @@ HIconLineItem::HIconLineItem(const QLineF &line, HIconGraphicsItem *parent):HIco
 
 HIconLineItem::~HIconLineItem()
 {
+    /*
     if(pLineObj)
     {
         delete pLineObj;
         pLineObj = NULL;
-    }
+    }*/
 }
 
 QRectF HIconLineItem::boundingRect() const

@@ -48,6 +48,7 @@ SOURCES += \
     hpolygon.cpp \
     hpolyline.cpp \
     htext.cpp \
+    hgraph.cpp \
     hiconobj.cpp
 
 HEADERS +=\
@@ -81,7 +82,8 @@ HEADERS +=\
     ../include/H5IconGui/htext.h \
     ../include/H5IconGui/hline.h \
     ../include/H5IconGui/hpolygon.h \
-    ../include/H5IconGui/hpolyline.h
+    ../include/H5IconGui/hpolyline.h \
+    ../include/H5IconGui/hgraph.h
 
 win32{
     DEFINES += WIN32

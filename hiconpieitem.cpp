@@ -23,11 +23,12 @@ HIconPieItem::HIconPieItem(const QRectF &rectF, HIconRectItem *parent)
 
 HIconPieItem::~HIconPieItem()
 {
+    /*
     if(pPieObj)
     {
         delete pPieObj;
         pPieObj = NULL;
-    }
+    }*/
 }
 
 QRectF HIconPieItem::boundingRect() const

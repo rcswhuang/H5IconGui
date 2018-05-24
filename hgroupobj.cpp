@@ -1,9 +1,11 @@
 ﻿#include "hgroupobj.h"
 #include "hiconsymbol.h"
 #include "hiconitemgroup.h"
-HGroupObj::HGroupObj(HIconSymbol* symbol)
-    :pIconSymbol(symbol)
+#include "hgraph.h"
+HGroupObj::HGroupObj()
 {
+    m_pGraph = NULL;
+    m_strUuid = "";
     clear();
 }
 
@@ -56,7 +58,9 @@ void HGroupObj::readXml(QDomElement* dom)
     {
         QDomElement e = n.toElement();
         QString strTagName = e.tagName();
-        HBaseObj* pObj = pIconSymbol->newObj(strTagName);
+        if(strTagName == "WfPointObj")
+            m_strUuid = e.attribute("Uuid");
+        HBaseObj* pObj = newObj(strTagName);
         if(!pObj) continue;
         pObj->readXml(&e);
         pObjList.append(pObj);
@@ -158,7 +162,79 @@ void HGroupObj::copyTo(HBaseObj* obj)
             pObj->clone(pTextObj);
             ob->pObjList.append(pTextObj);
         }
+        else if(pObj->getShapeType() == enumComplex)
+        {
+            HIconObj* pObj1 = (HIconObj*)pObj;
+            HIconObj* pIconObj = new HIconObj(pObj1->iconTemplate());
+            pObj->clone(pIconObj);
+            ob->pObjList.append(pIconObj);
+        }
     }
+}
+
+
+HBaseObj* HGroupObj::newObj(QString tagName)
+{
+    HBaseObj* pObj = NULL;
+    quint8 nObjType = enumNo;
+    if(tagName == "Line")
+    {
+        pObj = new HLine();
+        nObjType = enumLine;
+    }
+    else if(tagName == "Rectangle")
+    {
+        pObj = new HRectangle();
+        nObjType = enumRectangle;
+    }
+    else if(tagName == "Ellipse")
+    {
+        pObj = new HEllipse();
+        nObjType = enumEllipse;
+    }
+    else if(tagName == "Circle")
+    {
+        pObj = new HCircle();
+        nObjType = enumCircle;
+    }
+    else if(tagName == "Polygon")
+    {
+        pObj = new HPolygon();
+        nObjType = enumPolygon;
+    }
+    else if(tagName == "Arc")
+    {
+        pObj = new HArc();
+        nObjType = enumArc;
+    }
+    else if(tagName == "Pie")
+    {
+        pObj = new HPie();
+        nObjType = enumPie;
+    }
+    else if(tagName == "Text")
+    {
+        pObj = new HText();
+        nObjType = enumText;
+    }
+    else if(tagName == "Polyline")
+    {
+        pObj = new HPolyline();
+        nObjType = enumPolyline;
+    }
+    else if(tagName == "WfPointObj")
+    {
+        //先获取icontemplate
+        if(!m_pGraph)
+            return NULL;
+        HIconTemplate* icontemp = m_pGraph->findIconTemplate(QUuid(m_strUuid));
+        if(!icontemp)
+            return NULL;
+        pObj = new HIconObj(icontemp);
+        nObjType = enumComplex;
+    }
+    pObj->setShapeType((DRAWSHAPE)nObjType);
+    return pObj;
 }
 
 void HGroupObj::clone(HBaseObj* obj)
@@ -166,6 +242,11 @@ void HGroupObj::clone(HBaseObj* obj)
     if(!obj) return;
     HBaseObj::clone(obj);
     copyTo(obj);
+}
+
+void HGroupObj::setGraph(HGraph* graph)
+{
+    m_pGraph = graph;
 }
 
 DRAWSHAPE HGroupObj::getShapeType()

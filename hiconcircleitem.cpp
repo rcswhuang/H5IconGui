@@ -22,11 +22,12 @@ HIconCircleItem::HIconCircleItem(const QRectF &rectF, HIconRectItem *parent)
 
 HIconCircleItem::~HIconCircleItem()
 {
+    /*
     if(pCircleObj)
     {
         delete pCircleObj;
         pCircleObj = NULL;
-    }
+    }*/
 }
 
 

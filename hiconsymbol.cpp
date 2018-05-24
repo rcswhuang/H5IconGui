@@ -186,7 +186,7 @@ HBaseObj* HIconSymbol::newObj(int nObjType)
     }
     else if(nObjType == enumGroup)
     {
-        pObj = new HGroupObj(this);
+        pObj = new HGroupObj();
     }
     pObj->setShapeType((DRAWSHAPE)nObjType);
     if(pObj)

@@ -22,11 +22,12 @@ HIconEllipseItem::HIconEllipseItem(const QRectF &rectF, HIconRectItem *parent)
 
 HIconEllipseItem::~HIconEllipseItem()
 {
+    /*
     if(pEllipseObj)
     {
         delete pEllipseObj;
         pEllipseObj = NULL;
-    }
+    }*/
 }
 
 QRectF HIconEllipseItem::boundingRect() const

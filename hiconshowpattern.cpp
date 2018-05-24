@@ -146,7 +146,7 @@ void HIconShowPattern::copyTo(HIconShowPattern* sp)
         }
         else if(pObj->getShapeType() == enumGroup)
         {
-            HGroupObj* pGroupObj = new HGroupObj(pSymbol);
+            HGroupObj* pGroupObj = new HGroupObj();
             pObj->clone(pGroupObj);
             sp->addObj(pGroupObj);
         }
