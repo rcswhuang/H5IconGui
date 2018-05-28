@@ -215,6 +215,9 @@ void HIconLineItem::setItemCursor(int position)
 
 QRectF HIconLineItem::rect() const
 {
-    return boundingRect();
+    QPainterPath p;
+    p.moveTo(line().p1());
+    p.lineTo(line().p2());
+    return p.boundingRect();
 }
 
