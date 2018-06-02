@@ -10,7 +10,7 @@ QT += widgets
 TARGET = H5IconGui
 TEMPLATE = lib
 
-DESTDIR = ../lib
+DESTDIR += ../lib
 
 DEFINES += H5ICONGUI_DLL
 

@@ -551,11 +551,51 @@ int HBaseObj::getYAxis()
     return nyAxis;
 }
 
-
-//是否旋转
-bool HBaseObj::isRotated(qint8 nFlag)
+//设置转换
+bool HBaseObj::getTransform(QTransform& transform,quint8 flag)
 {
+    bool bok = false;
+    quint8 nFlag = flag;
+
+    if(isTurned(nFlag))
+    {
+        if(bHorizonTurn)
+        {
+            transform = transform.scale(-1,1);
+            bok = true;
+        }
+        if(bVerticalTurn)
+        {
+            transform = transform.scale(1,-1);
+            bok = true;
+        }
+    }
+
+    if(isRotated())
+    {
+        transform = transform.rotate(fRotateAngle);
+        bok = true;
+    }
+
+    return bok;
+}
+
+bool HBaseObj::isZero(double value)
+{
+    if(value == 0.0)
+    {
+        return true;
+    }
+    if(((value>0.0) && (value<0.0001))||((value<0.0)&&(value>-0.0001)))
+    {
+        return true;
+    }
     return false;
+}
+
+bool HBaseObj::isRotated()
+{
+    return !isZero(fRotateAngle);
 }
 
 //旋转角度
@@ -572,19 +612,13 @@ float HBaseObj::getRotateAngle()
 //增加一个角度
 void HBaseObj::setRotateAdd(float fAngle)
 {
-
+    fRotateAngle += fAngle;
 }
 
 //翻转
 bool HBaseObj::isTurned(qint8 nFlag)
 {
-    return false;
-}
-
-//是否水平翻转
-bool HBaseObj::isTurn(bool bHorizonTurn)
-{
-    return false;
+    return (bHorizonTurn||bVerticalTurn);
 }
 
 void HBaseObj::setModify(bool modify)
@@ -597,11 +631,11 @@ bool HBaseObj::getModify()
     return bModify;
 }
 
-
 //设置翻转
 void HBaseObj::setTurn(bool bHorizon,bool bVertical)
 {
-
+    bHorizonTurn = bHorizon;
+    bVerticalTurn = bVertical;
 }
 
 //是否可见

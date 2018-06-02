@@ -126,9 +126,9 @@ QPainterPath HRectangle::shape() const
 void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
 {
     if(!painter) return;
-    //painter->setRenderHint(QPainter::Antialiasing);
-    //painter->setRenderHint(QPainter::TextAntialiasing);
-    //painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -284,27 +284,17 @@ void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
 void HRectangle::paint(QPainter* painter)
 {
     HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
-    qreal fRotateAngle = getRotateAngle();
-
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    QPointF centerPoint = boundingRect().center();
     painter->save();
-    if(pItem)
-    {
-        //pItem->setTransformOriginPoint(centerPoint);
-       // QTransform transform;
-       // transform.rotate(fRotateAngle);
-       // pItem->setTransform(transform);
-    }
-    else
-    {
-       // painter->rotate(fRotateAngle);
-    }
-
+    painter->translate(getOX(),getOY());
+    QTransform transform;
+    getTransform(transform,0);
+    painter->setTransform(transform,true);
+    painter->translate(-getOX(),-getOY());
     setPainter(painter,rect);//设置Painter
     QPainterPath path = getPath();
     painter->drawPath(path);
-    painter->restore();
+
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -312,6 +302,7 @@ void HRectangle::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+    painter->restore();
 
 }
 
@@ -373,7 +364,7 @@ double HRectangle::getRectHeight()
 
 void HRectangle::drawSelect(QPainter* painter)
 {
-    painter->save();
+    //painter->save();
     QPen pen1 = QPen(Qt::green);
     pen1.setWidth(1);
     painter->setPen(pen1);
@@ -417,7 +408,7 @@ void HRectangle::drawSelect(QPainter* painter)
     painter->drawRect(rectC3);
     painter->drawRect(rectC4);
 
-    painter->restore();
+    //painter->restore();
 }
 
 QPainterPath HRectangle::getPath()
@@ -442,7 +433,7 @@ void HRectangle::drawMulSelect(QPainter *painter,bool benchmark)
 {
     //多选有两种情况1.不是标杆，2.是标杆
     //是标杆的话 就要加持绘制
-    painter->save();
+    //painter->save();
     QPen pen1;
     pen1.setWidth(2);
     if(benchmark)
@@ -456,6 +447,6 @@ void HRectangle::drawMulSelect(QPainter *painter,bool benchmark)
     painter->setPen(pen1);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     painter->drawRect(rect);
-    painter->restore();
+    //painter->restore();
 }
 
