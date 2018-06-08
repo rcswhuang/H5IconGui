@@ -17,11 +17,24 @@ HIconItemGroup::HIconItemGroup(const QRectF &rectF, HIconGraphicsItem *parent)
 :HIconGraphicsItem(parent),rectF(rectF)
 {
     pGroupObj = NULL;
+    if(m_pGraphicsItemGroup)
+        m_pGraphicsItemGroup = new QGraphicsItemGroup(parent);
 }
 
 HIconItemGroup::~HIconItemGroup()
-{
-
+{/*
+    if(m_pGraphicsItemGroup)
+    {
+        for(int i = 0; i < pGroupObj->ge.count();i++)
+        {
+            HBaseObj* pObj = (HBaseObj*)pGroupObj->pObjList[i];
+            HIconGraphicsItem* item = pObj->getIconGraphicsItem();
+            if(item)
+                m_pGraphicsItemGroup->removeFromGroup(item);
+        }
+    }*/
+    delete m_pGraphicsItemGroup;
+    m_pGraphicsItemGroup = NULL;
 }
 
 QRectF HIconItemGroup::boundingRect() const
@@ -41,6 +54,9 @@ QPainterPath HIconItemGroup::shape() const
 
 void HIconItemGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QTransform transform;
+    pGroupObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pGroupObj->paint(painter);
 }
 
@@ -49,18 +65,38 @@ int HIconItemGroup::type() const
     return enumGroup;
 }
 
+void HIconItemGroup::addToGroup(HIconGraphicsItem* item)
+{
+    if(m_pGraphicsItemGroup && item)
+        m_pGraphicsItemGroup->addToGroup(item);
+}
+
+void HIconItemGroup::removeFromGroup(HIconGraphicsItem *item)
+{
+    if(m_pGraphicsItemGroup && item)
+        m_pGraphicsItemGroup->removeFromGroup(item);
+}
+
 void HIconItemGroup::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pGroupObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
 void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - pointStart;
-    qreal deltaX =pt.x();
-    qreal deltaY = pt.y();
+    bool bok;
+    QTransform trans;
+    pGroupObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos()) - trans.inverted(&bok).map(pointStart);
+    qreal deltaX = pt1.x();
+    qreal deltaY = pt1.y();
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
@@ -240,6 +276,3 @@ ushort HIconItemGroup::pointInRect(QPointF& point)
         location = 0;
     return location;
 }
-
-
-

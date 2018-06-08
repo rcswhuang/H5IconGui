@@ -44,6 +44,10 @@ bool HIconRectItem::contains(const QPointF &point) const
 
 void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    //transform在此考虑到后面group,iconobj的里面设置transform会重复
+    QTransform transform;
+    pRectObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pRectObj->paint(painter);
 }
 
@@ -61,25 +65,22 @@ int HIconRectItem::type() const
 void HIconRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pRectObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
 //ok
 void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qreal fRotateAngle = pRectObj->getRotateAngle();
     QPointF pt = event->scenePos() - pointStart;
-    //transform.rotate(fRotateAngle);
-  //  QTransform transform;
-  //  pRectObj->getTransform(transform,0);
- //   bool bok;
- //   transform = transform.inverted(&bok);
-  //  pt = transform.map(pt);
-
-    QPointF pt1 = event->scenePos() - pointStart;
-    qreal deltaX =pt.x();
-    qreal deltaY = pt.y();
+    bool bok;
+    QTransform trans;
+    pRectObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
@@ -87,28 +88,28 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(pointLocation == 1)
     {
         QRectF rectNew;
-        rectNew.setTopLeft(QPointF(rect().left() + deltaX,rect().top() + deltaY));
+        rectNew.setTopLeft(pt1);
         rectNew.setBottomRight(rect().bottomRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 2)
     {
         QRectF rectNew;
-        rectNew.setTopRight(QPointF(rect().right() + deltaX,rect().top() + deltaY));
+        rectNew.setTopRight(pt1);
         rectNew.setBottomLeft(rect().bottomLeft());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 3)
     {
         QRectF rectNew;
-        rectNew.setBottomLeft(QPointF(rect().left() + deltaX,rect().bottom() + deltaY));
+        rectNew.setBottomLeft(pt1);
         rectNew.setTopRight(rect().topRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 4)
     {
         QRectF rectNew;
-        rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
+        rectNew.setBottomRight(pt1);
         rectNew.setTopLeft(rect().topLeft());
         setRect(rectNew.normalized());
     }
@@ -117,7 +118,6 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pRectObj->moveBy(pt.x(),pt.y());
         QRectF recttemp = pRectObj->getObjRect();
         setRect(recttemp.normalized());
-        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -175,8 +175,8 @@ void HIconRectItem::setRect(const QRectF& rect)
 {
     if(rect == rectF) return;
     prepareGeometryChange();
-    rectF = rect;
     refreshBaseObj(rect);
+    rectF = rect;
     update();
 }
 
@@ -240,15 +240,16 @@ void HIconRectItem::setItemCursor(int location)
 ushort HIconRectItem::pointInRect(QPointF& point)
 {
     qreal halfpw = 14.00;
+    QTransform trans;
     QRectF rect1,rect2,rect3,rect4;
     rect1.setSize(QSizeF(halfpw,halfpw));
-    rect1.moveCenter(rect().topLeft());
+    rect1.moveCenter((rect().topLeft()));
     rect2.setSize(QSizeF(halfpw,halfpw));
-    rect2.moveCenter(rect().topRight());
+    rect2.moveCenter((rect().topRight()));
     rect3.setSize(QSizeF(halfpw,halfpw));
-    rect3.moveCenter(rect().bottomLeft());
+    rect3.moveCenter((rect().bottomLeft()));
     rect4.setSize(QSizeF(halfpw,halfpw));
-    rect4.moveCenter(rect().bottomRight());
+    rect4.moveCenter((rect().bottomRight()));
 
     ushort location = 0;
     if(rect1.contains(point))

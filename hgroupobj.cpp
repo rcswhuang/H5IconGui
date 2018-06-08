@@ -172,7 +172,6 @@ void HGroupObj::copyTo(HBaseObj* obj)
     }
 }
 
-
 HBaseObj* HGroupObj::newObj(QString tagName)
 {
     HBaseObj* pObj = NULL;
@@ -291,26 +290,25 @@ void HGroupObj::resize(double w,double h)
 
 }
 
-QRectF HGroupObj::boundingRect() const
+QRectF HGroupObj::boundingRect()
 {
     return shape().controlPointRect();
 }
 
-bool HGroupObj::contains(const QPointF &point) const
+bool HGroupObj::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HGroupObj::shape() const
+QPainterPath HGroupObj::shape()
 {
     QPainterPath path;
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x()-10);
-    boundingRect.setY(topLeft.y()-10);
-    boundingRect.setWidth(rectWidth+20);
-    boundingRect.setHeight(rectHeight+20);
-    path.addRect(boundingRect);
-    return path;
+    QPolygonF polygon = getRectLists();
+    path.addPolygon(polygon);
+    path.closeSubpath();
+    QPainterPathStroker ps;
+    ps.setWidth(10);
+    return ps.createStroke(path);
 }
 
 void HGroupObj::setObjRect(const QRectF& rect)
@@ -386,7 +384,6 @@ bool HGroupObj::isEmpty()
     return pObjList.isEmpty();
 }
 
-
 void HGroupObj::paint(QPainter* painter)
 {
     //还需要判断
@@ -400,7 +397,8 @@ void HGroupObj::paint(QPainter* painter)
            pObj->paint(painter);
         }
     }
-    painter->restore();
+
+    //
     if(pItem && pItem->isSelected())
     {
 
@@ -409,19 +407,28 @@ void HGroupObj::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+    painter->restore();
+}
 
+QPolygonF HGroupObj::getRectLists()
+{
+    QPolygonF pyList;
+    QRectF rectF(topLeft,QSizeF(rectWidth,rectHeight));
+    pyList<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
+    Maps(pyList,0);
+    return pyList;
 }
 
 void HGroupObj::drawSelect(QPainter* painter)
 {
-    painter->save();
-    QPen pen1 = QPen(Qt::red);
+    //painter->save();
+    QPen pen1 = QPen(Qt::green);
     pen1.setWidth(1);
-    QBrush brush;
-    brush.setColor(Qt::green);
-    brush.setStyle(Qt::SolidPattern);
+    //QBrush brush;
+    //brush.setColor(Qt::green);
+   // brush.setStyle(Qt::SolidPattern);
     painter->setPen(pen1);
-    painter->setBrush(brush);
+   // painter->setBrush(brush);
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
 
@@ -462,14 +469,14 @@ void HGroupObj::drawSelect(QPainter* painter)
     painter->drawRect(rectC3);
     painter->drawRect(rectC4);
 
-    painter->restore();
+    //painter->restore();
 }
 
 void HGroupObj::drawMulSelect(QPainter *painter,bool benchmark)
 {
     //多选有两种情况1.不是标杆，2.是标杆
     //是标杆的话 就要加持绘制
-    painter->save();
+    //painter->save();
     QPen pen1;
     pen1.setWidth(2);
     if(benchmark)
@@ -483,5 +490,5 @@ void HGroupObj::drawMulSelect(QPainter *painter,bool benchmark)
     painter->setPen(pen1);
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     painter->drawRect(rect);
-    painter->restore();
+    //painter->restore();
 }

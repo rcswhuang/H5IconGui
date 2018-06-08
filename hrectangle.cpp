@@ -92,31 +92,29 @@ void HRectangle::moveBy(qreal dx, qreal dy)
     bModify = true;
 }
 
-QRectF HRectangle::boundingRect() const
+QRectF HRectangle::boundingRect()
 {
     return shape().controlPointRect();
 }
 
-bool HRectangle::contains(const QPointF &point) const
+bool HRectangle::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HRectangle::shape() const
+QPainterPath HRectangle::shape()
 {
     QPainterPath path;
     bool bImage = isValidImagePath();
+    QPolygonF pyList =getRectLists();
+    QRectF rect = pyList.boundingRect();
     if((nFillWay > 0 && nFillStyle > 0) || bImage)
     {
-        QRectF boundingRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight)).adjusted(-5,-5,5,5);
+        QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
         return path;
     }
-
-    QRectF pathRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight));
-    QPolygonF polygon;
-    polygon<<pathRect.topLeft()<<pathRect.topRight()<<pathRect.bottomRight()<<pathRect.bottomLeft();
-    path.addPolygon(polygon);
+    path.addPolygon(pyList);
     path.closeSubpath();
     QPainterPathStroker ps;
     ps.setWidth(10);
@@ -286,11 +284,6 @@ void HRectangle::paint(QPainter* painter)
     HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
     painter->save();
-    painter->translate(getOX(),getOY());
-    QTransform transform;
-    getTransform(transform,0);
-    painter->setTransform(transform,true);
-    painter->translate(-getOX(),-getOY());
     setPainter(painter,rect);//设置Painter
     QPainterPath path = getPath();
     painter->drawPath(path);
@@ -303,7 +296,6 @@ void HRectangle::paint(QPainter* painter)
             drawSelect(painter);
     }
     painter->restore();
-
 }
 
 void HRectangle::resize(double w,double h)
@@ -329,7 +321,7 @@ void HRectangle::setObjRect(const QRectF& rect)
 
 QRectF HRectangle::getObjRect()
 {
-    return QRectF(topLeft,QSize(rectWidth,rectHeight));
+    return QRectF(topLeft,QSizeF(rectWidth,rectHeight));
 }
 
 void HRectangle::setTopLeft(const QPointF& point)
@@ -360,6 +352,15 @@ void HRectangle::setRectHeight(double height)
 double HRectangle::getRectHeight()
 {
     return rectHeight;
+}
+
+QPolygonF HRectangle::getRectLists()
+{
+    QPolygonF pyList;
+    QRectF rectF(topLeft,QSizeF(rectWidth,rectHeight));
+    pyList<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
+    Maps(pyList,0);
+    return pyList;
 }
 
 void HRectangle::drawSelect(QPainter* painter)

@@ -68,10 +68,11 @@ void HIconTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qreal fRotateAngle = pTextObj->getRotateAngle();
-    QTransform transform;
-    transform.rotate(-fRotateAngle);
-    QPointF pt = transform.map(event->scenePos()) - transform.map(pointStart);
-    transform.rotate(fRotateAngle);
+    //QTransform transform;
+    //transform.rotate(-fRotateAngle);
+    bool bok;
+    QPointF pt = transform().inverted(&bok).map(event->scenePos()) - transform().inverted(&bok).map(pointStart);
+    //transform.rotate(fRotateAngle);
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)

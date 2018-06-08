@@ -559,25 +559,37 @@ bool HBaseObj::getTransform(QTransform& transform,quint8 flag)
 
     if(isTurned(nFlag))
     {
+        transform.translate(getOX(),getOY());
         if(bHorizonTurn)
         {
-            transform = transform.scale(-1,1);
+            transform.scale(-1,1);
             bok = true;
         }
         if(bVerticalTurn)
         {
-            transform = transform.scale(1,-1);
+            transform.scale(1,-1);
             bok = true;
         }
+        transform.translate(-getOX(),-getOY());
     }
 
     if(isRotated())
     {
-        transform = transform.rotate(fRotateAngle);
+        transform.translate(getOX(),getOY());
+        transform.rotate(fRotateAngle);
         bok = true;
+        transform.translate(-getOX(),-getOY());
     }
 
     return bok;
+}
+
+//设置映射
+void HBaseObj::Maps(QPolygonF& pylist,quint8 flag)
+{
+    QTransform transform;
+    getTransform(transform,flag);
+    pylist = pylist*transform;
 }
 
 bool HBaseObj::isZero(double value)
