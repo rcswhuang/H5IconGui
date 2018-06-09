@@ -43,6 +43,9 @@ bool HIconTextItem::contains(const QPointF &point) const
 
 void HIconTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QTransform transform;
+    pTextObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pTextObj->paint(painter);
 }
 
@@ -67,12 +70,11 @@ void HIconTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qreal fRotateAngle = pTextObj->getRotateAngle();
-    //QTransform transform;
-    //transform.rotate(-fRotateAngle);
+    QPointF pt = event->scenePos() - pointStart;
     bool bok;
-    QPointF pt = transform().inverted(&bok).map(event->scenePos()) - transform().inverted(&bok).map(pointStart);
-    //transform.rotate(fRotateAngle);
+    QTransform trans;
+    pRectObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
@@ -80,35 +82,35 @@ void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(pointLocation == 1)
     {
         QRectF rectNew;
-        rectNew.setTopLeft(QPointF(rect().left() + pt.x(),rect().top() + pt.y()));
+        rectNew.setTopLeft(pt1);
         rectNew.setBottomRight(rect().bottomRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 2)
     {
         QRectF rectNew;
-        rectNew.setTopRight(QPointF(rect().right() + pt.x(),rect().top() + pt.y()));
+        rectNew.setTopRight(pt1);
         rectNew.setBottomLeft(rect().bottomLeft());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 3)
     {
         QRectF rectNew;
-        rectNew.setBottomLeft(QPointF(rect().left() + pt.x(),rect().bottom() + pt.y()));
+        rectNew.setBottomLeft(pt1);
         rectNew.setTopRight(rect().topRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 4)
     {
         QRectF rectNew;
-        rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
+        rectNew.setBottomRight(pt1);
         rectNew.setTopLeft(rect().topLeft());
         setRect(rectNew.normalized());
     }
     else
     {
         pTextObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pTextObj->getObjRect();//(pTextObj->getTopLeftPoint(),QSize(pTextObj->getRectWidth(),pTextObj->getRectHeight()));
+        QRectF recttemp = pTextObj->getObjRect();
         setRect(recttemp.normalized());
     }
 }

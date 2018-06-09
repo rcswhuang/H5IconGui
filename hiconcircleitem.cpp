@@ -43,6 +43,9 @@ bool HIconCircleItem::contains(const QPointF &point) const
 
 void HIconCircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QTransform transform;
+    pCircleObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pCircleObj->paint(painter);
 }
 
@@ -65,43 +68,41 @@ void HIconCircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 */
 void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    qreal fRotateAngle = pCircleObj->getRotateAngle();
-    QTransform transform;
-    transform.rotate(-fRotateAngle);
-    QPointF pt = transform.map(event->scenePos()) - transform.map(pointStart);
-    transform.rotate(fRotateAngle);
-
+{ 
+    QPointF pt = event->scenePos() - pointStart;
+    bool bok;
+    QTransform trans;
+    pCircleObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
         bShift = true;
-    double delta = qMax(pt.x(),pt.y());
     if(pointLocation == 1)
     {
         QRectF rectNew;
-        rectNew.setTopLeft(QPointF(rect().left() + delta,rect().top() + delta));
+        rectNew.setTopLeft(pt1);
         rectNew.setBottomRight(rect().bottomRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 2)
     {
         QRectF rectNew;
-        rectNew.setTopRight(QPointF(rect().right() + delta,rect().top() + delta));
+        rectNew.setTopRight(pt1);
         rectNew.setBottomLeft(rect().bottomLeft());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 3)
     {
         QRectF rectNew;
-        rectNew.setBottomLeft(QPointF(rect().left() + delta,rect().bottom() + delta));
+        rectNew.setBottomLeft(pt1);
         rectNew.setTopRight(rect().topRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 4)
     {
         QRectF rectNew;
-        rectNew.setBottomRight(QPointF(rect().right() + delta,rect().bottom() + delta));
+        rectNew.setBottomRight(pt1);
         rectNew.setTopLeft(rect().topLeft());
         setRect(rectNew.normalized());
     }

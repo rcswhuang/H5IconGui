@@ -17,24 +17,11 @@ HIconItemGroup::HIconItemGroup(const QRectF &rectF, HIconGraphicsItem *parent)
 :HIconGraphicsItem(parent),rectF(rectF)
 {
     pGroupObj = NULL;
-    if(m_pGraphicsItemGroup)
-        m_pGraphicsItemGroup = new QGraphicsItemGroup(parent);
 }
 
 HIconItemGroup::~HIconItemGroup()
-{/*
-    if(m_pGraphicsItemGroup)
-    {
-        for(int i = 0; i < pGroupObj->ge.count();i++)
-        {
-            HBaseObj* pObj = (HBaseObj*)pGroupObj->pObjList[i];
-            HIconGraphicsItem* item = pObj->getIconGraphicsItem();
-            if(item)
-                m_pGraphicsItemGroup->removeFromGroup(item);
-        }
-    }*/
-    delete m_pGraphicsItemGroup;
-    m_pGraphicsItemGroup = NULL;
+{
+
 }
 
 QRectF HIconItemGroup::boundingRect() const
@@ -63,18 +50,6 @@ void HIconItemGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 int HIconItemGroup::type() const
 {
     return enumGroup;
-}
-
-void HIconItemGroup::addToGroup(HIconGraphicsItem* item)
-{
-    if(m_pGraphicsItemGroup && item)
-        m_pGraphicsItemGroup->addToGroup(item);
-}
-
-void HIconItemGroup::removeFromGroup(HIconGraphicsItem *item)
-{
-    if(m_pGraphicsItemGroup && item)
-        m_pGraphicsItemGroup->removeFromGroup(item);
 }
 
 void HIconItemGroup::mousePressEvent(QGraphicsSceneMouseEvent *event)

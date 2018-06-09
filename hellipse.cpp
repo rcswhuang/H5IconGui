@@ -30,29 +30,30 @@ DRAWSHAPE HEllipse::getShapeType()
     return enumEllipse;
 }
 
-QRectF HEllipse::boundingRect() const
+QRectF HEllipse::boundingRect()
 {
     return shape().boundingRect();
 }
 
-bool HEllipse::contains(const QPointF &point) const
+bool HEllipse::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HEllipse::shape() const
+QPainterPath HEllipse::shape()
 {
     QPainterPath path;
-    QRectF rect = QRectF(topLeft,QSizeF(rectWidth,rectHeight));
     bool bImage = isValidImagePath();
+    QPolygonF pyList =getRectLists();
+    QRectF rect = pyList.boundingRect();
     if((nFillWay > 0 && nFillStyle > 0) || bImage)
     {
         QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
         return path;
     }
-    path.addRect(rect);
-    path.addEllipse(rect);
+    path.addPolygon(pyList);
+    path.closeSubpath();
     QPainterPathStroker ps;
     ps.setWidth(10);
     return ps.createStroke(path);
@@ -60,28 +61,13 @@ QPainterPath HEllipse::shape() const
 
 void HEllipse::paint(QPainter* painter)
 {
-    HIconEllipseItem* pItem = qgraphicsitem_cast<HIconEllipseItem*>(getIconGraphicsItem());
-
-    qreal fRotateAngle = getRotateAngle();
-    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    QPointF centerPoint = boundingRect().center();
     painter->save();
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
-
+    QRectF rect = getObjRect();
     setPainter(painter,rect);//设置Painter
     QPainterPath path = getPath();
     painter->drawPath(path);
-    painter->restore();
+
+    HIconEllipseItem* pItem = qgraphicsitem_cast<HIconEllipseItem*>(getIconGraphicsItem());
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -89,6 +75,7 @@ void HEllipse::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+    painter->restore();
 }
 
 QPainterPath HEllipse::getPath()//只提供矩形，圆，椭圆，文字三种支持图片

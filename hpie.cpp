@@ -64,30 +64,28 @@ void HPie::copyTo(HBaseObj* obj)
     ob->spanAngle = spanAngle;
 }
 
-QRectF HPie::boundingRect() const
+QRectF HPie::boundingRect()
 {
     return shape().controlPointRect();
 }
 
-bool HPie::contains(const QPointF &point) const
+bool HPie::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HPie::shape() const
-{
+QPainterPath HPie::shape()
+{  
     QPainterPath path;
-    if(nFillWay > 0 && nFillStyle > 0)
+    QPolygonF pyList = getRectLists();
+    QRectF rect = pyList.boundingRect();
+    if((nFillWay > 0 && nFillStyle > 0))
     {
-        QRectF boundingRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight)).adjusted(-5,-5,5,5);
+        QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
         return path;
     }
-
-    QRectF pathRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight));
-    QPolygonF polygon;
-    polygon<<pathRect.topLeft()<<pathRect.topRight()<<pathRect.bottomRight()<<pathRect.bottomLeft();
-    path.addPolygon(polygon);
+    path.addPolygon(pyList);
     path.closeSubpath();
     QPainterPathStroker ps;
     ps.setWidth(10);
@@ -121,30 +119,14 @@ int HPie::getSpanAngle()
 
 void HPie::paint(QPainter* painter)
 {
-    HIconPieItem* pItem = qgraphicsitem_cast<HIconPieItem*>(getIconGraphicsItem());
-
-    qreal fRotateAngle = getRotateAngle();
-    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    QPointF centerPoint = boundingRect().center();
     painter->save();
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
-
-    setPainter(painter,rect);//设置Painter
-
+    QRectF rect = getObjRect();
+    setPainter(painter,rect);
     int startAngle = getStartAngle()*16;
     int spanAngle = getSpanAngle()*16;
     painter->drawPie(rect,startAngle,spanAngle);
-    painter->restore();
+
+    HIconPieItem* pItem = qgraphicsitem_cast<HIconPieItem*>(getIconGraphicsItem());
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -152,4 +134,5 @@ void HPie::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+    painter->restore();
 }

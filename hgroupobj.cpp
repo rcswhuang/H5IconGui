@@ -386,8 +386,6 @@ bool HGroupObj::isEmpty()
 
 void HGroupObj::paint(QPainter* painter)
 {
-    //还需要判断
-    HIconItemGroup* pItem = qgraphicsitem_cast<HIconItemGroup*>(getIconGraphicsItem());
     painter->save(); 
     for(int i = 0; i < pObjList.count();i++)
     {
@@ -398,7 +396,7 @@ void HGroupObj::paint(QPainter* painter)
         }
     }
 
-    //
+    HIconItemGroup* pItem = qgraphicsitem_cast<HIconItemGroup*>(getIconGraphicsItem());
     if(pItem && pItem->isSelected())
     {
 
@@ -424,11 +422,7 @@ void HGroupObj::drawSelect(QPainter* painter)
     //painter->save();
     QPen pen1 = QPen(Qt::green);
     pen1.setWidth(1);
-    //QBrush brush;
-    //brush.setColor(Qt::green);
-   // brush.setStyle(Qt::SolidPattern);
     painter->setPen(pen1);
-   // painter->setBrush(brush);
 
     QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
 

@@ -298,64 +298,45 @@ QString HText::getTextSuffix()
     return this->strSuffix;
 }
 
-QRectF HText::boundingRect() const
+QRectF HText::boundingRect()
 {
     return shape().controlPointRect();
 }
 
-bool HText::contains(const QPointF &point) const
+bool HText::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HText::shape() const
+QPainterPath HText::shape()
 {
     QPainterPath path;
-    QRectF boundingRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight)).adjusted(-5,-5,5,5);
-    path.addRect(boundingRect);
-    return path;
+    QPolygonF pyList =getRectLists();
+    QRectF rect = pyList.boundingRect();
+    if((nFillWay > 0 && nFillStyle > 0))
+    {
+        QRectF boundingRect = rect.adjusted(-5,-5,5,5);
+        path.addRect(boundingRect);
+        return path;
+    }
+    path.addPolygon(pyList);
+    path.closeSubpath();
+    QPainterPathStroker ps;
+    ps.setWidth(10);
+    return ps.createStroke(path);
 }
 
 void HText::paint(QPainter* painter)
 {
-    //if(!painter) return;
-    HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
-
     ushort nLayout = getLayout();
     QString strTextContent = getTextContent();
     QString strSuffix = getTextSuffix();
     QString strPrefix = getTextPrefix();
-    qreal fRotateAngle = getRotateAngle();
-    bool bRound = getRound();
-    int nXAxis = getXAxis();
-    int nYAxis = getYAxis();
-
-    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    QRectF mainRectF = rect;
-    QPointF centerPoint = boundingRect().center();
     painter->save();
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
-
+    QRectF rect = getObjRect();
+    QRectF mainRectF = rect;
     setPainter(painter,rect);
     QPainterPath path = getPath();
-    /*if(!bRound)
-    {
-        path.addRect(mainRectF);
-    }
-    else
-    {
-        path.addRoundedRect(mainRectF,nXAxis,nYAxis);
-    }*/
     painter->drawPath(path);
 
     //设置字体部分
@@ -382,7 +363,8 @@ void HText::paint(QPainter* painter)
         nAlign = Qt::AlignCenter | Qt::TextSingleLine;
     }
     painter->drawText(mainRectF,nAlign,strPrefix+strTextContent+strSuffix);
-    painter->restore();
+
+    HIconTextItem* pItem = qgraphicsitem_cast<HIconTextItem*>(getIconGraphicsItem());
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -390,4 +372,5 @@ void HText::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+     painter->restore();
 }

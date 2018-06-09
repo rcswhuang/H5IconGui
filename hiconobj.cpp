@@ -64,7 +64,6 @@ void HIconObj::initIconTemplate()
             pTemp->copyTo(pText);
         }
     }
-
 }
 
 //二进制读写

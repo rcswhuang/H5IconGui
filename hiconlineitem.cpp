@@ -43,6 +43,9 @@ bool HIconLineItem::contains(const QPointF &point) const
 
 void HIconLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QTransform transform;
+    pLineObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pLineObj->paint(painter); 
 }
 
@@ -59,24 +62,32 @@ int HIconLineItem::type() const
 void HIconLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     curPointF = event->scenePos();
-    pointLocation = pointInRect(curPointF);
+    bool bok;
+    QTransform trans;
+    pLineObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(curPointF);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
 void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - curPointF;
+    bool bok;
+    QTransform trans;
+    pLineObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     curPointF = event->scenePos();
     if(pointLocation == 1)
     {
         QLineF lineF;
-        lineF.setPoints(line().p1()+pt,line().p2());
+        lineF.setPoints(pt1,line().p2());
         setLine(lineF);
     }
     else if(pointLocation == 2)
     {
         QLineF lineF;
-        lineF.setPoints(line().p1(),line().p2()+pt);
+        lineF.setPoints(line().p1(),pt1);
         setLine(lineF);
     }
     else
@@ -84,7 +95,6 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pLineObj->moveBy(pt.x(),pt.y());
         QLineF lineF(pLineObj->getHeadPoint(),pLineObj->getTailPoint());
         setLine(lineF);
-        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
@@ -146,8 +156,8 @@ void HIconLineItem::setLine(const QLineF &line)
 {
     if(lineF == line) return;
     prepareGeometryChange();
+    refreshBaseObj(line);
     lineF = line;
-    refreshBaseObj();
     update();
 }
 
@@ -171,10 +181,12 @@ void HIconLineItem::moveItemBy(qreal dx, qreal dy)
     setLine(newLineF);
 }
 
-void HIconLineItem::refreshBaseObj()
+void HIconLineItem::refreshBaseObj(const QLineF& lineF)
 {
-    pLineObj->setHeadPoint(line().p1());
-    pLineObj->setTailPoint(line().p2());
+    pLineObj->setHeadPoint(lineF.p1());
+    pLineObj->setTailPoint(lineF.p2());
+    pLineObj->setOX((lineF.p1().x() + lineF.p2().x())/2);
+    pLineObj->setOY((lineF.p1().y() + lineF.p2().y())/2);
     pLineObj->setModify(true);
 }
 

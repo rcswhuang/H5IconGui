@@ -42,6 +42,9 @@ bool HIconEllipseItem::contains(const QPointF &point) const
 
 void HIconEllipseItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QTransform transform;
+    pEllipseObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pEllipseObj->paint(painter);
 }
 
@@ -66,43 +69,40 @@ void HIconEllipseItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-
-    qreal fRotateAngle = pEllipseObj->getRotateAngle();
-    QTransform transform;
-    transform.rotate(-fRotateAngle);
-    QPointF pt = transform.map(event->scenePos()) - transform.map(pointStart);
-    transform.rotate(fRotateAngle);
-
+    QPointF pt = event->scenePos() - pointStart;
+    bool bok;
+    QTransform trans;
+    pEllipseObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
         bShift = true;
-
     if(pointLocation == 1)
     {
         QRectF rectNew;
-        rectNew.setTopLeft(QPointF(rect().left() + pt.x(),rect().top() + pt.y()));
+        rectNew.setTopLeft(pt1);
         rectNew.setBottomRight(rect().bottomRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 2)
     {
         QRectF rectNew;
-        rectNew.setTopRight(QPointF(rect().right() + pt.x(),rect().top() + pt.y()));
+        rectNew.setTopRight(pt1);
         rectNew.setBottomLeft(rect().bottomLeft());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 3)
     {
         QRectF rectNew;
-        rectNew.setBottomLeft(QPointF(rect().left() + pt.x(),rect().bottom() + pt.y()));
+        rectNew.setBottomLeft(pt1);
         rectNew.setTopRight(rect().topRight());
         setRect(rectNew.normalized());
     }
     else if(pointLocation == 4)
     {
         QRectF rectNew;
-        rectNew.setBottomRight(QPointF(rect().right() + pt.x(),rect().bottom() + pt.y()));
+        rectNew.setBottomRight(pt1);
         rectNew.setTopLeft(rect().topLeft());
         setRect(rectNew.normalized());
     }
@@ -111,7 +111,6 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pEllipseObj->moveBy(pt.x(),pt.y());
         QRectF recttemp = pEllipseObj->getObjRect();
         setRect(recttemp.normalized());
-        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 

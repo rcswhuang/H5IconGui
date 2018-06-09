@@ -174,17 +174,17 @@ void HLine::resize(double w,double h)
     }
 }
 
-QRectF HLine::boundingRect() const
+QRectF HLine::boundingRect()
 {
    return shape().controlPointRect();
 }
 
-bool HLine::contains(const QPointF &point) const
+bool HLine::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HLine::shape() const
+QPainterPath HLine::shape()
 {
     QPainterPath path;
     QPainterPathStroker ps;
@@ -195,8 +195,7 @@ QPainterPath HLine::shape() const
     if(pen <= 20)
         pen = 20;
     ps.setWidth(pen);
-    path.moveTo(pfHeadPoint);
-    path.lineTo(pfTailPoint);
+    path.addPolygon(getPointLists());
     return ps.createStroke(path);
 }
 
@@ -209,9 +208,6 @@ void HLine::paint(QPainter* painter)
     Qt::PenCapStyle capStyle = getLineCapStyle();
 
     painter->save();
-    //painter->setRenderHint(QPainter::Antialiasing);
-    //painter->setRenderHint(QPainter::TextAntialiasing);
-    //painter->setRenderHint(QPainter::SmoothPixmapTransform);
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
     pen.setWidth(penWidth);
@@ -223,7 +219,7 @@ void HLine::paint(QPainter* painter)
     //画箭头
     if(getArrowWidth() > 0 && getArrowHeight() > 0)
     {
-        double angle = ::acos(line.dx() / line.length());
+        double angle = ::acos(line.dx()/line.length());
         if(line.dy() >= 0)
             angle = (PI*2) - angle;
         int w = getArrowWidth();
@@ -304,7 +300,7 @@ void HLine::paint(QPainter* painter)
     }
 
     painter->drawLine(QLineF(ptS,ptE));
-    painter->restore();
+
 
     if(pItem && pItem->isSelected())
     {
@@ -316,6 +312,7 @@ void HLine::paint(QPainter* painter)
                 drawSelect(painter);
         }
     }
+    painter->restore();
 }
 
 void HLine::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
@@ -324,9 +321,17 @@ void HLine::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
     ptOld = pt2;
 }
 
+QPolygonF HLine::getPointLists()
+{
+    QPolygonF pyList;
+    pyList<<pfHeadPoint<<pfTailPoint;
+    Maps(pyList,0);
+    return pyList;
+}
+
 void HLine::drawSelect(QPainter* painter)
 {
-    painter->save();
+    //painter->save();
     QPen pen1 = QPen(Qt::green);
     pen1.setWidth(1);
     painter->setPen(pen1);
@@ -344,7 +349,7 @@ void HLine::drawSelect(QPainter* painter)
     rectF2.moveCenter(p2);
     painter->drawRect(rectF1);
     painter->drawRect(rectF2);
-    painter->restore();
+    //painter->restore();
 }
 
 
@@ -352,7 +357,7 @@ void HLine::drawMulSelect(QPainter *painter,bool benchmark)
 {
     //多选有两种情况1.不是标杆，2.是标杆
     //是标杆的话 就要加持绘制
-    painter->save();
+    //painter->save();
     QPen pen1;
     pen1.setWidth(2);
     if(benchmark)
@@ -366,5 +371,5 @@ void HLine::drawMulSelect(QPainter *painter,bool benchmark)
     painter->setPen(pen1);
     QLineF lineF(pfHeadPoint,pfTailPoint);
     painter->drawLine(lineF);
-    painter->restore();
+    //painter->restore();
 }

@@ -72,33 +72,29 @@ void HArc::copyTo(HBaseObj* obj)
     ob->bCloseCheck = bCloseCheck;
 }
 
-QRectF HArc::boundingRect() const
+QRectF HArc::boundingRect()
 {
     return shape().controlPointRect();
 }
 
-bool HArc::contains(const QPointF &point) const
+bool HArc::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HArc::shape() const
+QPainterPath HArc::shape()
 {
     QPainterPath path;
-    if(nFillWay > 0 && nFillStyle > 0)
+    QPolygonF pyList = getRectLists();
+    QRectF rect = pyList.boundingRect();
+    if((nFillWay > 0 && nFillStyle > 0))
     {
-        QRectF boundingRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight)).adjusted(-5,-5,5,5);
+        QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
         return path;
     }
-
-    QRectF pathRect = QRectF(topLeft,QSizeF(rectWidth,rectHeight));
-    QPainterPath p;
-    p.arcTo(pathRect,startAngle,spanAngle);
-    if(bCloseCheck)
-        p.closeSubpath();
-    path.addPath(p);
-    path.addRect(pathRect);
+    path.addPolygon(pyList);
+    path.closeSubpath();
     QPainterPathStroker ps;
     ps.setWidth(10);
     return ps.createStroke(path);
@@ -141,24 +137,8 @@ bool HArc::getCloseStatus()
 
 void HArc::paint(QPainter* painter)
 {
-    HIconArcItem* pItem = qgraphicsitem_cast<HIconArcItem*>(getIconGraphicsItem());
-
-    qreal fRotateAngle = getRotateAngle();
-    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    QPointF centerPoint = boundingRect().center();
     painter->save();
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
-
+    QRectF rect = getObjRect();
     setPainter(painter,rect);//设置Painter
     int startAngle = getStartAngle()*16;
     int spanAngle = getSpanAngle()*16;
@@ -167,8 +147,8 @@ void HArc::paint(QPainter* painter)
         painter->drawChord(rect,startAngle,spanAngle);
     else
         painter->drawArc(rect,startAngle,spanAngle);
-    painter->restore();
 
+    HIconArcItem* pItem = qgraphicsitem_cast<HIconArcItem*>(getIconGraphicsItem());
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -176,4 +156,5 @@ void HArc::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+    painter->restore();
 }
