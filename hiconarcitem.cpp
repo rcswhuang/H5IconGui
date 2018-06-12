@@ -61,14 +61,18 @@ int HIconArcItem::type() const
     return enumArc;
 }
 
-/*
+
 void HIconArcItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pArcObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
-*/
+
 void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 { 
     QPointF pt = event->scenePos() - pointStart;

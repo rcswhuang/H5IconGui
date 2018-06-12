@@ -151,11 +151,7 @@ void HIconObj::readXml(QDomElement* dom)
     {
         pIconSymbol->readXml(&symbolDom);
     }*/
-    QSizeF pt = pIconTemplate->getDefaultSize();
-    double w1 = rectWidth/(pt.width()*20);
-    double h1 = rectHeight/(pt.height()*20);
-    resetRectPoint(topLeft,QPointF(-pt.width()*10,-pt.height()*10));
-    resize(w1,h1);
+    updateResize();
     //如果是遥测类型或者控制点类型 还需要保存first text信息
     if(TEMPLATE_TYPE_ANALOGUE == nCatalogType || TEMPLATE_TYPE_CONTROL == nCatalogType)
     {
@@ -302,31 +298,9 @@ void HIconObj::paint(QPainter* painter)
            pObj->paint(painter);
         }
     }
-    QPen pen(Qt::red);
-    painter->setPen(pen);
-    QRectF rect(topLeft.x(),topLeft.y(),rectWidth,rectHeight);
-    //painter->drawRect(rect);
 
     if(pItem && pItem->isSelected())
     {
-        /*QPen pen1 = QPen(Qt::green);
-        pen1.setWidth(1);
-        painter->setPen(pen1);
-        qreal halfpw = 8.00;
-        QRectF rect1,rect2,rect3,rect4;
-        rect1.setSize(QSizeF(halfpw,halfpw));
-        rect1.moveCenter(rect.topLeft());
-        rect2.setSize(QSizeF(halfpw,halfpw));
-        rect2.moveCenter(rect.topRight());
-        rect3.setSize(QSizeF(halfpw,halfpw));
-        rect3.moveCenter(rect.bottomLeft());
-        rect4.setSize(QSizeF(halfpw,halfpw));
-        rect4.moveCenter(rect.bottomRight());
-
-        painter->drawRect(rect1);
-        painter->drawRect(rect2);
-        painter->drawRect(rect3);
-        painter->drawRect(rect4);*/
         if(pItem->bMulSelect)
             drawMulSelect(painter,pItem->bBenchmark);
         else
@@ -347,29 +321,21 @@ void HIconObj::resize(qreal w,qreal h)
         pIconSymbol->resize(w,h);
 }
 
-QRectF HIconObj::boundingRect() const
+QRectF HIconObj::boundingRect()
 {
    return shape().controlPointRect();
 }
 
-bool HIconObj::contains(const QPointF &point) const
+bool HIconObj::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HIconObj::shape() const
+QPainterPath HIconObj::shape()
 {
     QPainterPath path;
-    QRectF boundingRect;
-    boundingRect.setX(topLeft.x()-5);
-    boundingRect.setY(topLeft.y()-5);
-    boundingRect.setWidth(rectWidth +10);
-    boundingRect.setHeight(rectHeight+10);
-    path.addRect(boundingRect);
-
-
-   // QRectF shapeRect = boundingRect.adjusted(10,10,-10,-10);
-  //  path.addRect(shapeRect);
+    QPolygonF polygon = getRectLists();
+    path.addRect(polygon.boundingRect().adjusted(-5,-5,5,5));
     return path;
 }
 

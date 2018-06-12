@@ -138,7 +138,6 @@ QPainterPath HPolyline::shape() const
 
 void HPolyline::paint(QPainter* painter)
 {
-    HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -150,27 +149,13 @@ void HPolyline::paint(QPainter* painter)
     quint8 nTransparency = getTransparency(); //透明度
     quint8 nFillDir = getFillDirection();//填充方向
     QColor fillClr = QColor(getFillColorName());//填充颜色
-    //quint8 nFillPercentage = getFillPercentage(); //填充比例
-    qreal fRotateAngle = getRotateAngle();
 
     if(pylist.count() == 0) return;
     QRectF rect = QPolygonF(pylist).boundingRect();
-    QPointF centerPoint = boundingRect().center();
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setRenderHint(QPainter::TextAntialiasing);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -308,6 +293,15 @@ void HPolyline::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
     ptNew = pt1;
     ptOld = pt2;
+}
+
+QPolygonF HPolyline::getRectLists()
+{
+    QPolygonF pyList;
+    pyList(pylist);
+    //pyList<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
+    Maps(pyList,0);
+    return pyList;
 }
 
 void HPolyline::drawSelect(QPainter* painter)

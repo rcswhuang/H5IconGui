@@ -325,7 +325,8 @@ QPolygonF HLine::getPointLists()
 {
     QPolygonF pyList;
     pyList<<pfHeadPoint<<pfTailPoint;
-    Maps(pyList,0);
+    //line 本身就可以自由旋转所以不需要
+    //Maps(pyList,0);
     return pyList;
 }
 

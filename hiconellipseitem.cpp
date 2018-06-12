@@ -58,14 +58,17 @@ int HIconEllipseItem::type() const
     return enumEllipse;
 }
 
-/*
+
 void HIconEllipseItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pEllipseObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
-*/
 
 void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {

@@ -60,22 +60,23 @@ int HIconPieItem::type() const
     return enumPie;
 }
 
-/*
 void HIconPieItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
-    bSelected = true;
+    bool bok;
+    QTransform trans;
+    pPieObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
-*/
 
 void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - pointStart;
     bool bok;
     QTransform trans;
-    pRectObj->getTransform(trans,0);
+    pPieObj->getTransform(trans,0);
     QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
     bool bShift = false;

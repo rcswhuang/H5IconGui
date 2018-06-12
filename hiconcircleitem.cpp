@@ -59,14 +59,18 @@ int HIconCircleItem::type() const
     return enumCircle;
 }
 
-/*
+
 void HIconCircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pCircleObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
-*/
+
 void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 { 
     QPointF pt = event->scenePos() - pointStart;

@@ -59,21 +59,23 @@ int HIconTextItem::type() const
     return enumText;
 }
 
-/*
 void HIconTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pTextObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
-*/
 
 void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - pointStart;
     bool bok;
     QTransform trans;
-    pRectObj->getTransform(trans,0);
+    pTextObj->getTransform(trans,0);
     QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
     bool bShift = false;

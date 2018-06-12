@@ -42,7 +42,9 @@ bool HIconComplexItem::contains(const QPointF &point) const
 
 void HIconComplexItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //尚未确定
+    QTransform transform;
+    pIconObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pIconObj->paint(painter);
 
 }
@@ -56,26 +58,27 @@ int HIconComplexItem::type() const
 {
     return enumComplex;
 }
-/*
+
 void HIconComplexItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pIconObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
-}*/
+}
 
 void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    //每次移动或者改变大小 都要刷新到里面的所有部分
-    /*qreal fRotateAngle = pIconComplexObj->getRotateAngle();
-    QTransform transform;
-    transform.rotate(-fRotateAngle);
-    QPointF pt = transform.map(event->scenePos()) - transform.map(pointStart);
-    transform.rotate(fRotateAngle);*/
-
     QPointF pt = event->scenePos() - pointStart;
-    qreal deltaX =pt.x();
-    qreal deltaY = pt.y();
+    bool bok;
+    QTransform trans;
+    pIconObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos()) - trans.inverted(&bok).map(pointStart);
+    qreal deltaX = pt1.x();
+    qreal deltaY = pt1.y();
     pointStart = event->scenePos();
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)

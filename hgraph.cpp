@@ -24,7 +24,6 @@ HGraph::~HGraph()
 
 }
 
-
 void HGraph::setGraphName(const QString& name)
 {
     sName = name;

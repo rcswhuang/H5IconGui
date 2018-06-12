@@ -326,6 +326,15 @@ void HPolygon::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
     ptOld = pt2;
 }
 
+QPolygonF HPolygon::getRectLists()
+{
+    QPolygonF pyList;
+    pyList(pylist);
+    //pyList<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
+    Maps(pyList,0);
+    return pyList;
+}
+
 void HPolygon::drawSelect(QPainter* painter)
 {
     painter->save();

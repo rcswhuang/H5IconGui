@@ -62,32 +62,24 @@ int HIconLineItem::type() const
 void HIconLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     curPointF = event->scenePos();
-    bool bok;
-    QTransform trans;
-    pLineObj->getTransform(trans,0);
-    QPointF pt = trans.inverted(&bok).map(curPointF);
-    pointLocation = pointInRect(pt);
+    pointLocation = pointInRect(curPointF);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
 void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - curPointF;
-    bool bok;
-    QTransform trans;
-    pLineObj->getTransform(trans,0);
-    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     curPointF = event->scenePos();
     if(pointLocation == 1)
     {
         QLineF lineF;
-        lineF.setPoints(pt1,line().p2());
+        lineF.setPoints(pt,line().p2());
         setLine(lineF);
     }
     else if(pointLocation == 2)
     {
         QLineF lineF;
-        lineF.setPoints(line().p1(),pt1);
+        lineF.setPoints(line().p1(),pt);
         setLine(lineF);
     }
     else
