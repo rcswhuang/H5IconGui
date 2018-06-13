@@ -138,6 +138,7 @@ QPainterPath HPolyline::shape() const
 
 void HPolyline::paint(QPainter* painter)
 {
+    HIconPolylineItem* pItem = qgraphicsitem_cast<HIconPolylineItem*>(getIconGraphicsItem());
     QColor penClr = QColor(getLineColorName()); //线条颜色
     int penWidth = getLineWidth();//线条宽度
     Qt::PenStyle penStyle = getLineStyle(); //线条形状
@@ -297,8 +298,7 @@ void HPolyline::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 
 QPolygonF HPolyline::getRectLists()
 {
-    QPolygonF pyList;
-    pyList(pylist);
+    QPolygonF pyList(pylist);
     //pyList<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
     Maps(pyList,0);
     return pyList;

@@ -44,6 +44,9 @@ bool HIconPolygonItem::contains(const QPointF &point) const
 
 void HIconPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QTransform transform;
+    pPolygonObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pPolygonObj->paint(painter);
 }
 
@@ -66,18 +69,21 @@ void HIconPolygonItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void HIconPolygonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
-    pointLocation = pointInRect(pointStart);
+    bool bok;
+    QTransform trans;
+    pPolygonObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(pointStart);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
 void HIconPolygonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qreal fRotateAngle = pPolygonObj->getRotateAngle();
-    QTransform transform;
-    transform.rotate(-fRotateAngle);
-    QPointF pointEnd = transform.map(event->scenePos());
-    QPointF pt = pointEnd - transform.map(pointStart);
-    transform.rotate(fRotateAngle);
+    QPointF pt = event->scenePos() - pointStart;
+    bool bok;
+    QTransform trans;
+    pPolygonObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(event->scenePos());
     pointStart = event->scenePos();
 
     if(pointLocation != 0)
@@ -88,11 +94,11 @@ void HIconPolygonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QPolygonF newPolygonF = polygon();
         if(pointLocation==1 || pointLocation==nRect)
         {
-            newPolygonF.replace(0,pointEnd);
-            newPolygonF.replace(nRect-1,pointEnd);
+            newPolygonF.replace(0,pt1);
+            newPolygonF.replace(nRect-1,pt1);
         }
         else
-            newPolygonF.replace(pointLocation-1,pointEnd);
+            newPolygonF.replace(pointLocation-1,pt1);
         setPolygon(newPolygonF);
     }
     else

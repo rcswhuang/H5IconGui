@@ -114,20 +114,20 @@ void HPolygon::moveBy(qreal dx, qreal dy)
     }
 }
 
-QRectF HPolygon::boundingRect() const
+QRectF HPolygon::boundingRect()
 {
    return shape().controlPointRect();
 }
 
-bool HPolygon::contains(const QPointF &point) const
+bool HPolygon::contains(const QPointF &point)
 {
     return shape().contains(point);
 }
 
-QPainterPath HPolygon::shape() const
+QPainterPath HPolygon::shape()
 {
     QPainterPath path;
-    path.addPolygon(pylist);
+    path.addPolygon(getPolyLists());
     QPainterPathStroker ps;
     int pen = 10;
     ps.setWidth(pen);
@@ -153,26 +153,14 @@ void HPolygon::paint(QPainter* painter)
     quint8 nFillDir = getFillDirection();//填充方向
     QColor fillClr = QColor(getFillColorName());//填充颜色
     //quint8 nFillPercentage = getFillPercentage(); //填充比例
-    qreal fRotateAngle = getRotateAngle();
 
     if(pylist.count() == 0) return;
     QRectF rect = QPolygonF(pylist).boundingRect();
-    QPointF centerPoint = boundingRect().center();
+
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setRenderHint(QPainter::TextAntialiasing);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
-    if(pItem)
-    {
-        pItem->setTransformOriginPoint(centerPoint);
-        QTransform transform;
-        transform.rotate(fRotateAngle);
-        pItem->setTransform(transform);
-    }
-    else
-    {
-        painter->rotate(fRotateAngle);
-    }
 
     QPen pen = QPen(penClr);
     pen.setStyle(penStyle);
@@ -298,7 +286,7 @@ void HPolygon::paint(QPainter* painter)
         path.setFillRule(Qt::WindingFill);
         painter->drawPath(path);
     }
-    painter->restore();
+
     if(pItem && pItem->isSelected())
     {
         if(pItem->bMulSelect)
@@ -306,6 +294,8 @@ void HPolygon::paint(QPainter* painter)
         else
             drawSelect(painter);
     }
+
+     painter->restore();
 
 }
 
@@ -326,10 +316,9 @@ void HPolygon::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
     ptOld = pt2;
 }
 
-QPolygonF HPolygon::getRectLists()
+QPolygonF HPolygon::getPolyLists()
 {
-    QPolygonF pyList;
-    pyList(pylist);
+    QPolygonF pyList(pylist);
     //pyList<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
     Maps(pyList,0);
     return pyList;
@@ -337,7 +326,7 @@ QPolygonF HPolygon::getRectLists()
 
 void HPolygon::drawSelect(QPainter* painter)
 {
-    painter->save();
+    //painter->save();
     QPen pen1 = QPen(Qt::green);
     pen1.setWidth(1);
     painter->setPen(pen1);
@@ -355,14 +344,14 @@ void HPolygon::drawSelect(QPainter* painter)
         delete[] pRect;
         pRect = NULL;
     }
-    painter->restore();
+    //painter->restore();
 }
 
 void HPolygon::drawMulSelect(QPainter *painter,bool benchmark)
 {
     //多选有两种情况1.不是标杆，2.是标杆
     //是标杆的话 就要加持绘制
-    painter->save();
+    //painter->save();
     QPen pen1;
     pen1.setWidth(2);
     if(benchmark)
@@ -376,6 +365,6 @@ void HPolygon::drawMulSelect(QPainter *painter,bool benchmark)
     painter->setPen(pen1);
     QPolygonF polygonF(pylist);
     painter->drawPolygon(polygonF);
-    painter->restore();
+    //painter->restore();
 }
 

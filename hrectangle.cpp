@@ -283,6 +283,9 @@ void HRectangle::paint(QPainter* painter)
 {
     HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
     painter->save();
+    QTransform transform;
+    getTransform(transform,0);
+    painter->setTransform(transform,true);
     QRectF rect = getObjRect();
     setPainter(painter,rect);//设置Painter
     QPainterPath path = getPath();

@@ -45,9 +45,9 @@ bool HIconRectItem::contains(const QPointF &point) const
 void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //transform在此考虑到后面group,iconobj的里面设置transform会重复
-    QTransform transform;
-    pRectObj->getTransform(transform,0);
-    painter->setTransform(transform,true);
+   // QTransform transform;
+   // pRectObj->getTransform(transform,0);
+   // painter->setTransform(transform,true);
     pRectObj->paint(painter);
 }
 
