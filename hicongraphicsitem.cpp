@@ -27,7 +27,6 @@ void HIconGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 }
 
 
-
 bool HIconGraphicsItem::contains(const QPointF &point) const
 {
     return false;

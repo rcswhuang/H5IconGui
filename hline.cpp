@@ -321,6 +321,11 @@ void HLine::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
     ptOld = pt2;
 }
 
+QLineF HLine::getObjLine()
+{
+    return QLineF(pfHeadPoint,pfTailPoint);
+}
+
 QPolygonF HLine::getPointLists()
 {
     QPolygonF pyList;

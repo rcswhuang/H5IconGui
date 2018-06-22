@@ -16,8 +16,8 @@ HIconPolygonItem::HIconPolygonItem(HIconGraphicsItem *parent)
 
 }
 
-HIconPolygonItem::HIconPolygonItem(const QPolygonF &polygonF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),pyVector(polygonF)
+HIconPolygonItem::HIconPolygonItem(HBaseObj* obj, HIconGraphicsItem *parent)
+    :HIconGraphicsItem(parent),pPolygonObj((HPolygon*)obj)
 {
     pPolygonObj = NULL;
 }
@@ -194,18 +194,19 @@ void HIconPolygonItem::setItemCursor(int location)
         setCursor(QCursor(Qt::ArrowCursor));
 }
 
-void HIconPolygonItem::setPolygon(const QPolygonF & polygon)
+void HIconPolygonItem::setPolygon(const QPolygonF & polygon1)
 {
-    if(pyVector == polygon) return;
+    if(polygon1 == polygon()) return;
     prepareGeometryChange();
-    pyVector = polygon;
     refreshBaseObj();
     update();
 }
 
 QPolygonF HIconPolygonItem::polygon() const
 {
-    return pyVector;
+    if(pPolygonObj)
+        return pPolygonObj->pylist;
+    return QPolygonF();
 }
 
 void HIconPolygonItem::refreshBaseObj()

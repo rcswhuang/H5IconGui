@@ -9,14 +9,14 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconPieItem::HIconPieItem(HIconRectItem *parent)
-    :HIconRectItem(parent)
+HIconPieItem::HIconPieItem(HIconRectangleItem *parent)
+    :HIconRectangleItem(parent)
 {
 
 }
 
-HIconPieItem::HIconPieItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconRectItem(rectF,parent)
+HIconPieItem::HIconPieItem(HBaseObj* obj, HIconRectangleItem *parent)
+    :pPieObj((HPie*)obj),HIconRectangleItem(parent)
 {
     pPieObj = NULL;
 }

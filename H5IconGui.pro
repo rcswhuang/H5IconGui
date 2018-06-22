@@ -29,7 +29,6 @@ SOURCES += \
     hiconpieitem.cpp \
     hiconpolygonitem.cpp \
     hiconpolylineitem.cpp \
-    hiconrectitem.cpp \
     hiconselectionitem.cpp \
     hicontextitem.cpp \
     hiconsymbol.cpp \
@@ -49,7 +48,8 @@ SOURCES += \
     hpolyline.cpp \
     htext.cpp \
     hgraph.cpp \
-    hiconobj.cpp
+    hiconobj.cpp \
+    hiconrectangleitem.cpp
 
 HEADERS +=\
     ../include/hiconapi.h \
@@ -61,7 +61,6 @@ HEADERS +=\
     ../include/H5IconGui/hiconpieitem.h \
     ../include/H5IconGui/hiconpolygonitem.h \
     ../include/H5IconGui/hiconpolylineitem.h \
-    ../include/H5IconGui/hiconrectitem.h \
     ../include/H5IconGui/hiconselectionitem.h \
     ../include/H5IconGui/hicontextitem.h \
     ../include/H5IconGui/h5iconguiexport.h \
@@ -83,7 +82,8 @@ HEADERS +=\
     ../include/H5IconGui/hline.h \
     ../include/H5IconGui/hpolygon.h \
     ../include/H5IconGui/hpolyline.h \
-    ../include/H5IconGui/hgraph.h
+    ../include/H5IconGui/hgraph.h \
+    ../include/H5IconGui/hiconrectangleitem.h
 
 win32{
     DEFINES += WIN32

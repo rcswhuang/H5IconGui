@@ -8,16 +8,16 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconCircleItem::HIconCircleItem(HIconRectItem *parent)
-    :HIconRectItem(parent)
+HIconCircleItem::HIconCircleItem(HIconRectangleItem *parent)
+    :HIconRectangleItem(parent)
 {
 
 }
 
-HIconCircleItem::HIconCircleItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconRectItem(rectF,parent)
+HIconCircleItem::HIconCircleItem(HBaseObj* obj, HIconRectangleItem *parent)
+    :pCircleObj((HCircle*)obj),HIconRectangleItem(parent)
 {
-    pCircleObj = NULL;
+
 }
 
 HIconCircleItem::~HIconCircleItem()
@@ -58,7 +58,6 @@ int HIconCircleItem::type() const
 {
     return enumCircle;
 }
-
 
 void HIconCircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -166,18 +165,19 @@ void HIconCircleItem::keyPressEvent(QKeyEvent *event)
     setRect(newRect);
 }
 */
-void HIconCircleItem::setRect(const QRectF& rect)
+void HIconCircleItem::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    if(rect1 == rect()) return;
     prepareGeometryChange();
-    rectF = rect;
-    refreshBaseObj(rect);
+    refreshBaseObj(rect1);
     update();
 }
 
 QRectF HIconCircleItem::rect()const
 {
-    return rectF;
+    if(pCircleObj)
+        return pCircleObj->getObjRect();
+    return QRectF();
 }
 
 void HIconCircleItem::setItemObj(HBaseObj *pObj)

@@ -9,16 +9,15 @@
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 #include <QFont>
-HIconTextItem::HIconTextItem(HIconRectItem *parent)
-    :HIconRectItem(parent)
+HIconTextItem::HIconTextItem(HIconRectangleItem *parent)
+    :HIconRectangleItem(parent)
 {
 
 }
 
-HIconTextItem::HIconTextItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconRectItem(rectF,parent)
+HIconTextItem::HIconTextItem(HBaseObj* obj, HIconRectangleItem *parent)
+    :pTextObj((HText*)obj),HIconRectangleItem(parent)
 {
-    pTextObj =  NULL;
 }
 
 HIconTextItem::~HIconTextItem()
@@ -166,18 +165,19 @@ void HIconTextItem::keyPressEvent(QKeyEvent *event)
 }
 */
 
-void HIconTextItem::setRect(const QRectF& rect)
+void HIconTextItem::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    if(rect1 == rect()) return;
     prepareGeometryChange();
-    rectF = rect;
-    refreshBaseObj(rect);
+    refreshBaseObj(rect1);
     update();
 }
 
 QRectF HIconTextItem::rect()const
 {
-    return rectF;
+    if(pTextObj)
+        return pTextObj->getObjRect();
+    return QRectF();
 }
 
 void HIconTextItem::setItemObj(HBaseObj *pObj)

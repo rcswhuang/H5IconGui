@@ -13,10 +13,10 @@ HIconItemGroup::HIconItemGroup(HIconGraphicsItem *parent)
 
 }
 
-HIconItemGroup::HIconItemGroup(const QRectF &rectF, HIconGraphicsItem *parent)
-:HIconGraphicsItem(parent),rectF(rectF)
+HIconItemGroup::HIconItemGroup(HBaseObj* obj, HIconGraphicsItem *parent)
+:HIconGraphicsItem(parent),pGroupObj((HGroupObj*)obj)
 {
-    pGroupObj = NULL;
+
 }
 
 HIconItemGroup::~HIconItemGroup()
@@ -161,18 +161,19 @@ void HIconItemGroup::keyPressEvent(QKeyEvent* event)
     setRect(newRect);
 }
 
-void HIconItemGroup::setRect(const QRectF& rect)
+void HIconItemGroup::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    if(rect1 == rectF) return;
     prepareGeometryChange();
-    rectF = rect;
-    refreshBaseObj(rect);
+    refreshBaseObj(rect1);
     update();
 }
 
 QRectF HIconItemGroup::rect()const
 {
-    return rectF;
+    if(pGroupObj)
+        return pGroupObj->getObjRect();
+    return QRectF();
 }
 
 void HIconItemGroup::setItemObj(HBaseObj* pObj)

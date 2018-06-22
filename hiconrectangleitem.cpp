@@ -1,4 +1,4 @@
-#include "hiconrectitem.h"
+#include "hiconrectangleitem.h"
 #include "hrectangle.h"
 #include <qmath.h>
 //#include <QObject>
@@ -9,20 +9,19 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconRectItem::HIconRectItem(HIconGraphicsItem *parent)
+HIconRectangleItem::HIconRectangleItem(HIconGraphicsItem *parent)
     :HIconGraphicsItem(parent)
 {
 
 }
 
 //ok
-HIconRectItem::HIconRectItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconGraphicsItem(parent),rectF(rectF)
+HIconRectangleItem::HIconRectangleItem(HBaseObj* obj, HIconGraphicsItem *parent)
+    :HIconGraphicsItem(parent),pRectObj((HRectangle*)obj)
 {
-    pRectObj = NULL;
 }
 
-HIconRectItem::~HIconRectItem()
+HIconRectangleItem::~HIconRectangleItem()
 {
     /*
     if(pRectObj)
@@ -32,17 +31,17 @@ HIconRectItem::~HIconRectItem()
     }*/
 }
 
-QRectF HIconRectItem::boundingRect() const
+QRectF HIconRectangleItem::boundingRect() const
 { 
     return pRectObj->boundingRect();
 }
 
-bool HIconRectItem::contains(const QPointF &point) const
+bool HIconRectangleItem::contains(const QPointF &point) const
 {
     return pRectObj->contains(point);
 }
 
-void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void HIconRectangleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //transform在此考虑到后面group,iconobj的里面设置transform会重复
    // QTransform transform;
@@ -51,18 +50,18 @@ void HIconRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     pRectObj->paint(painter);
 }
 
-QPainterPath HIconRectItem::shape() const
+QPainterPath HIconRectangleItem::shape() const
 {
     return pRectObj->shape();
 }
 
-int HIconRectItem::type() const
+int HIconRectangleItem::type() const
 {
     return enumRectangle;
 }
 
 //ok
-void HIconRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void HIconRectangleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pointStart = event->scenePos();
     bool bok;
@@ -74,7 +73,7 @@ void HIconRectItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 
 //ok
-void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - pointStart;
     bool bok;
@@ -118,17 +117,18 @@ void HIconRectItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pRectObj->moveBy(pt.x(),pt.y());
         QRectF recttemp = pRectObj->getObjRect();
         setRect(recttemp.normalized());
+        //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
 
 //ok
-void HIconRectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void HIconRectangleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     HIconGraphicsItem::mouseReleaseEvent(event);
 }
 
 //ok
-void HIconRectItem::keyPressEvent(QKeyEvent *event)
+void HIconRectangleItem::keyPressEvent(QKeyEvent *event)
 {
     int nStep = 5;
     if(event->modifiers() == Qt::ShiftModifier)
@@ -171,27 +171,28 @@ void HIconRectItem::keyPressEvent(QKeyEvent *event)
 }
 
 //no
-void HIconRectItem::setRect(const QRectF& rect)
+void HIconRectangleItem::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    //if(rect1 == rect()) return;
     prepareGeometryChange();
-    refreshBaseObj(rect);
-    rectF = rect;
+    refreshBaseObj(rect1);
     update();
 }
 
-QRectF HIconRectItem::rect() const
+QRectF HIconRectangleItem::rect() const
 {
-    return rectF;
+    if(pRectObj)
+        return pRectObj->getObjRect();
+    return QRectF();
 }
 
-void HIconRectItem::setItemObj(HBaseObj *pObj)
+void HIconRectangleItem::setItemObj(HBaseObj *pObj)
 {
     pRectObj = (HRectangle*)pObj;
     pRectObj->setIconGraphicsItem(this);
 }
 
-HBaseObj* HIconRectItem::getItemObj()
+HBaseObj* HIconRectangleItem::getItemObj()
 {
     if(pRectObj)
         return pRectObj;
@@ -199,7 +200,7 @@ HBaseObj* HIconRectItem::getItemObj()
 }
 
 //ok
-void HIconRectItem::moveItemBy(qreal dx, qreal dy)
+void HIconRectangleItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
     newRectF = rect().translated(dx,dy);
@@ -207,7 +208,7 @@ void HIconRectItem::moveItemBy(qreal dx, qreal dy)
 }
 
 //ok
-void HIconRectItem::resizeItem(const QPolygonF& polygonF)
+void HIconRectangleItem::resizeItem(const QPolygonF& polygonF)
 {
     if(polygonF.size() != 4)
         return;
@@ -216,7 +217,7 @@ void HIconRectItem::resizeItem(const QPolygonF& polygonF)
     setRect(newRectF);
 }
 
-void HIconRectItem::refreshBaseObj(const QRectF& rect)
+void HIconRectangleItem::refreshBaseObj(const QRectF& rect)
 {
     pRectObj->setObjRect(rect);
     QPointF p = rect.center();
@@ -226,7 +227,7 @@ void HIconRectItem::refreshBaseObj(const QRectF& rect)
 }
 
 //ok
-void HIconRectItem::setItemCursor(int location)
+void HIconRectangleItem::setItemCursor(int location)
 {
     if(location == 1 || location == 4)
         setCursor(QCursor(Qt::SizeFDiagCursor));
@@ -237,10 +238,9 @@ void HIconRectItem::setItemCursor(int location)
 }
 
 //ok
-ushort HIconRectItem::pointInRect(QPointF& point)
+ushort HIconRectangleItem::pointInRect(QPointF& point)
 {
     qreal halfpw = 14.00;
-    QTransform trans;
     QRectF rect1,rect2,rect3,rect4;
     rect1.setSize(QSizeF(halfpw,halfpw));
     rect1.moveCenter((rect().topLeft()));

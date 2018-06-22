@@ -1,5 +1,5 @@
 #include "hrectangle.h"
-#include "hiconrectitem.h"
+#include "hiconrectangleitem.h"
 /////////////////////////////////////HRectObj//////////////////////////////////////
 HRectangle::HRectangle()
 {
@@ -281,7 +281,7 @@ void HRectangle::setPainter(QPainter *painter,const QRectF& rect)
 
 void HRectangle::paint(QPainter* painter)
 {
-    HIconRectItem* pItem = qgraphicsitem_cast<HIconRectItem*>(getIconGraphicsItem());
+    HIconRectangleItem* pItem = qgraphicsitem_cast<HIconRectangleItem*>(getIconGraphicsItem());
     painter->save();
     QTransform transform;
     getTransform(transform,0);

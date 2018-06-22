@@ -16,9 +16,8 @@ HIconLineItem::HIconLineItem(HIconGraphicsItem *parent):HIconGraphicsItem(parent
     lineF.setLine(0,0,0,0);
 }
 
-HIconLineItem::HIconLineItem(const QLineF &line, HIconGraphicsItem *parent):HIconGraphicsItem(parent),lineF(line)
+HIconLineItem::HIconLineItem(HBaseObj* obj, HIconGraphicsItem *parent):HIconGraphicsItem(parent),pLineObj((HLine*)obj)
 {
-    pLineObj = NULL;
 }
 
 HIconLineItem::~HIconLineItem()
@@ -141,7 +140,9 @@ void HIconLineItem::keyPressEvent(QKeyEvent *event)
 
 QLineF HIconLineItem::line() const
 {
-    return lineF;
+    if(pLineObj)
+        return pLineObj->getObjLine();
+    return QLineF();
 }
 
 void HIconLineItem::setLine(const QLineF &line)

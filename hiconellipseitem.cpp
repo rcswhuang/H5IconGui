@@ -8,16 +8,15 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconEllipseItem::HIconEllipseItem(HIconRectItem *parent)
-    :HIconRectItem(parent)
+HIconEllipseItem::HIconEllipseItem(HIconRectangleItem *parent)
+    :HIconRectangleItem(parent)
 {
 
 }
 
-HIconEllipseItem::HIconEllipseItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconRectItem(rectF,parent)
+HIconEllipseItem::HIconEllipseItem(HBaseObj* obj, HIconRectangleItem *parent)
+    :pEllipseObj((HEllipse*)obj),HIconRectangleItem(parent)
 {
-    pEllipseObj = NULL;
 }
 
 HIconEllipseItem::~HIconEllipseItem()
@@ -166,18 +165,19 @@ void HIconEllipseItem::keyPressEvent(QKeyEvent *event)
 }
 */
 
-void HIconEllipseItem::setRect(const QRectF& rect)
+void HIconEllipseItem::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    if(rect1 == rect()) return;
     prepareGeometryChange();
-    rectF = rect;
-    refreshBaseObj(rect);
+    refreshBaseObj(rect1);
     update();
 }
 
 QRectF HIconEllipseItem::rect()const
 {
-    return rectF;
+    if(pEllipseObj)
+        return pEllipseObj->getObjRect();
+    return QRectF();
 }
 
 void HIconEllipseItem::setItemObj(HBaseObj *pObj)

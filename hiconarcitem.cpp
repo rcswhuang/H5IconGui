@@ -8,16 +8,15 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
-HIconArcItem::HIconArcItem(HIconRectItem *parent)
-    :HIconRectItem(parent)
+HIconArcItem::HIconArcItem(HIconRectangleItem *parent)
+    :HIconRectangleItem(parent)
 {
 
 }
 
-HIconArcItem::HIconArcItem(const QRectF &rectF, HIconRectItem *parent)
-    :HIconRectItem(rectF,parent)
+HIconArcItem::HIconArcItem(HBaseObj* obj, HIconRectangleItem *parent)
+    :pArcObj((HArc*)obj),HIconRectangleItem(parent)
 {
-    pArcObj = NULL;
 
 }
 
@@ -60,7 +59,6 @@ int HIconArcItem::type() const
 {
     return enumArc;
 }
-
 
 void HIconArcItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -170,18 +168,19 @@ void HIconArcItem::keyPressEvent(QKeyEvent *event)
     setRect(newRect);
 }*/
 
-void HIconArcItem::setRect(const QRectF& rect)
+void HIconArcItem::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    if(rect1 == rect()) return;
     prepareGeometryChange();
-    refreshBaseObj(rect);
-    rectF = rect;
+    refreshBaseObj(rect1);
     update();
 }
 
 QRectF HIconArcItem::rect()const
 {
-    return rectF;
+    if(pArcObj)
+        return pArcObj->getObjRect();
+    return QRectF();
 }
 
 void HIconArcItem::setItemObj(HBaseObj *pObj)

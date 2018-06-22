@@ -12,17 +12,16 @@
 #include <QPainter>
 
 HIconComplexItem::HIconComplexItem(HIconGraphicsItem *parent)
-    :HIconRectItem(parent)
+    :HIconRectangleItem(parent)
 {
 
 }
 
-HIconComplexItem::HIconComplexItem(const QRectF &rectF, HIconGraphicsItem *parent)
-    :HIconRectItem(rectF,parent)
+HIconComplexItem::HIconComplexItem(HBaseObj* obj, HIconGraphicsItem *parent)
+    :pIconObj((HIconObj*)obj),HIconRectangleItem(parent)
 {
     setAcceptDrops(true);
     setFlag(QGraphicsItem::ItemIsSelectable,true);
-    pIconObj = NULL;
 }
 
 HIconComplexItem::~HIconComplexItem()
@@ -174,18 +173,19 @@ void HIconComplexItem::keyPressEvent(QKeyEvent *event)
     setRect(newRect);
 }
 
-void HIconComplexItem::setRect(const QRectF& rect)
+void HIconComplexItem::setRect(const QRectF& rect1)
 {
-    if(rect == rectF) return;
+    if(rect1 == rect()) return;
     prepareGeometryChange();
-    rectF = rect;
-    refreshBaseObj(rect);
+    refreshBaseObj(rect1);
     update();
 }
 
 QRectF HIconComplexItem::rect()const
 {
-    return rectF;
+    if(pIconObj)
+        return pIconObj->getObjRect();
+    return QRectF();
 }
 
 void HIconComplexItem::setItemObj(HBaseObj *pObj)
