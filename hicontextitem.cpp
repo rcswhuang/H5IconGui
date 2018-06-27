@@ -110,8 +110,9 @@ void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pTextObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pTextObj->getObjRect();
+        //pTextObj->moveBy(pt.x(),pt.y());
+        //QRectF recttemp = pTextObj->getObjRect();
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
     }
 }

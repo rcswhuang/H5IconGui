@@ -103,13 +103,14 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
         }
 
-        rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
+        QRectF oldRect = rect();
+        rectNew = oldRect.adjusted(-deltaX,-deltaY,deltaX,deltaY);
         if(rectNew.width() < 1 || rectNew.height() < 1)
             return;
 
-        double w1 = rectNew.width()/rectF.width();
-        double h1 = rectNew.height()/rectF.height();
-        pIconObj->resetRectPoint(rectNew.topLeft(),rectF.topLeft());
+        double w1 = rectNew.width()/oldRect.width();
+        double h1 = rectNew.height()/oldRect.height();
+        pIconObj->resetRectPoint(rectNew.topLeft(),oldRect.topLeft());
         pIconObj->resize(w1,h1);
         setRect(rectNew.normalized());
 
@@ -117,7 +118,8 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         pIconObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp(pIconObj->getObjRect());
+        //QRectF recttemp(pIconObj->getObjRect());
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -201,7 +203,6 @@ HBaseObj* HIconComplexItem::getItemObj()
     return NULL;
 }
 
-
 void HIconComplexItem::moveItemBy(qreal dx, qreal dy)
 {
     QRectF newRectF;
@@ -209,16 +210,22 @@ void HIconComplexItem::moveItemBy(qreal dx, qreal dy)
     pIconObj->moveBy(dx,dy);
     setRect(newRectF);
 }
-/*
+
 void HIconComplexItem::resizeItem(const QPolygonF& polygonF)
 {
     if(polygonF.size() != 4)
         return;
-    //topleft bottomright
-    QRectF newRectF(polygonF.at(0),polygonF.at(3));
-    setRect(newRectF);
+    QRectF rectNew(polygonF.at(0),polygonF.at(3));
+    QRectF oldRect = rect();
+    if(rectNew.width() < 1 || rectNew.height() < 1)
+        return;
+    double w1 = rectNew.width()/oldRect.width();
+    double h1 = rectNew.height()/oldRect.height();
+    pIconObj->resetRectPoint(rectNew.topLeft(),oldRect.topLeft());
+    pIconObj->resize(w1,h1);
+    setRect(rectNew.normalized());
 }
-*/
+
 void HIconComplexItem::refreshBaseObj(const QRectF& rect)
 {
     //注意所有的对象都要刷新一下
@@ -226,7 +233,6 @@ void HIconComplexItem::refreshBaseObj(const QRectF& rect)
     QPointF p = rect.center();
     pIconObj->setOX(p.x());
     pIconObj->setOY(p.y());
-    //pIconComplexObj->resize(rect().width(),rect().height());
     pIconObj->setModify(true);
 
 }

@@ -44,9 +44,9 @@ bool HIconRectangleItem::contains(const QPointF &point) const
 void HIconRectangleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //transform在此考虑到后面group,iconobj的里面设置transform会重复
-   // QTransform transform;
-   // pRectObj->getTransform(transform,0);
-   // painter->setTransform(transform,true);
+    QTransform transform;
+    pRectObj->getTransform(transform,0);
+    painter->setTransform(transform,true);
     pRectObj->paint(painter);
 }
 
@@ -114,8 +114,8 @@ void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pRectObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pRectObj->getObjRect();
+        //pRectObj->moveBy(pt.x(),pt.y());
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -173,7 +173,7 @@ void HIconRectangleItem::keyPressEvent(QKeyEvent *event)
 //no
 void HIconRectangleItem::setRect(const QRectF& rect1)
 {
-    //if(rect1 == rect()) return;
+    if(rect1 == rect()) return;
     prepareGeometryChange();
     refreshBaseObj(rect1);
     update();

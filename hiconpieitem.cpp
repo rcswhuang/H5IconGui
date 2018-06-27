@@ -112,8 +112,9 @@ void HIconPieItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pPieObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pPieObj->getObjRect();
+        //pPieObj->moveBy(pt.x(),pt.y());
+        //QRectF recttemp = pPieObj->getObjRect();
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
     }
 }

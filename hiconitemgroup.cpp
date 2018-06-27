@@ -97,17 +97,19 @@ void HIconItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //pGroupObj->resetRectPoint(-deltaX,-deltaY);//右下角 扩大，左上角，缩小
         }
 
-        rectNew = rectF.adjusted(-deltaX,-deltaY,deltaX,deltaY);
-        double w1 = rectNew.width()/rectF.width();
-        double h1 = rectNew.height()/rectF.height();
-        pGroupObj->resetRectPoint(rectNew.topLeft(),rectF.topLeft());
+        QRectF oldRect = rect();
+        rectNew = oldRect.adjusted(-deltaX,-deltaY,deltaX,deltaY);
+        double w1 = rectNew.width()/oldRect.width();
+        double h1 = rectNew.height()/oldRect.height();
+        pGroupObj->resetRectPoint(rectNew.topLeft(),oldRect.topLeft());
         pGroupObj->resize(w1,h1);
         setRect(rectNew.normalized());
     }
     else
     {
-        pGroupObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp(pGroupObj->getTopLeft().x(),pGroupObj->getTopLeft().y(),pGroupObj->getGroupWidth(),pGroupObj->getGroupHeight());
+        //pGroupObj->moveBy(pt.x(),pt.y());
+        //QRectF recttemp = rect().translated(pt.x(),pt.y());
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
@@ -209,9 +211,17 @@ void HIconItemGroup::resizeItem(const QPolygonF& polygonF)
 {
     if(polygonF.size() != 4)
         return;
-    //topleft bottomright
-    QRectF newRectF(polygonF.at(0),polygonF.at(3));
-    setRect(newRectF);
+    //topleft bottomright 
+    QRectF rectNew(polygonF.at(0),polygonF.at(3));
+    QRectF oldRect = rect();
+    if(rectNew.width() < 1 || rectNew.height() < 1)
+        return;
+    double w1 = rectNew.width()/oldRect.width();
+    double h1 = rectNew.height()/oldRect.height();
+    pGroupObj->resetRectPoint(rectNew.topLeft(),oldRect.topLeft());
+    pGroupObj->resize(w1,h1);
+    setRect(rectNew.normalized());
+
 }
 
 //ok

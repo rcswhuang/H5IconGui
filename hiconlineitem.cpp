@@ -83,8 +83,9 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pLineObj->moveBy(pt.x(),pt.y());
-        QLineF lineF(pLineObj->getHeadPoint(),pLineObj->getTailPoint());
+        //pLineObj->moveBy(pt.x(),pt.y());
+        //QLineF lineF(pLineObj->getHeadPoint(),pLineObj->getTailPoint());
+        QLineF lineF = line().translated(pt.x(),pt.y());
         setLine(lineF);
     }
 }

@@ -255,8 +255,8 @@ DRAWSHAPE HGroupObj::getShapeType()
 
 void HGroupObj::moveBy(qreal dx,qreal dy)
 {
-    topLeft.setX(topLeft.x() + dx);
-    topLeft.setY(topLeft.y() + dy);
+    //topLeft.setX(topLeft.x() + dx);
+    //topLeft.setY(topLeft.y() + dy);
     for(int i = 0; i < pObjList.count();i++)
     {
         HBaseObj* pObj = (HBaseObj*)pObjList[i];

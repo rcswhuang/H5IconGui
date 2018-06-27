@@ -111,8 +111,9 @@ void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pCircleObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pCircleObj->getObjRect();
+        //pCircleObj->moveBy(pt.x(),pt.y());
+        //QRectF recttemp = pCircleObj->getObjRect();
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
     }
 }

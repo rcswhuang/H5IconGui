@@ -267,8 +267,8 @@ DRAWSHAPE HIconObj::getShapeType()
 
 void HIconObj::moveBy(qreal dx,qreal dy)
 {
-    topLeft.setX(topLeft.x() + dx);
-    topLeft.setY(topLeft.y() + dy);
+    //topLeft.setX(topLeft.x() + dx);
+    //topLeft.setY(topLeft.y() + dy);
     if(!getIconSymbol() && !getIconSymbol()->getCurrentPatternPtr())
         return;
     HIconShowPattern* pattern = getIconSymbol()->getCurrentPatternPtr();

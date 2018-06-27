@@ -112,8 +112,9 @@ void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pArcObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pArcObj->getObjRect();
+        //pArcObj->moveBy(pt.x(),pt.y());
+        //QRectF recttemp = pArcObj->getObjRect();
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
     }
 }

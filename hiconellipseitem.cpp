@@ -110,8 +110,9 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pEllipseObj->moveBy(pt.x(),pt.y());
-        QRectF recttemp = pEllipseObj->getObjRect();
+        //pEllipseObj->moveBy(pt.x(),pt.y());
+        //QRectF recttemp = pEllipseObj->getObjRect();
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
     }
 }

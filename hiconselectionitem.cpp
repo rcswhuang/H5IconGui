@@ -110,9 +110,13 @@ void HIconSelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem
 QPainterPath HIconSelectionItem::shape() const
 {
     QPainterPath path;
-    QRectF boundingRect = rect().adjusted(-5,-5,5,5);
-    path.addRect(boundingRect);
-    return path;
+    QPolygonF polygon;
+    polygon<<rectF.topLeft()<<rectF.topRight()<<rectF.bottomRight()<<rectF.bottomLeft();
+    path.addPolygon(polygon);
+    path.closeSubpath();
+    QPainterPathStroker ps;
+    ps.setWidth(5);
+    return ps.createStroke(path);
 }
 
 int HIconSelectionItem::type() const

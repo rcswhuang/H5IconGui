@@ -90,8 +90,9 @@ void HIconPolylineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        pPolylineObj->moveBy(pt.x(),pt.y());
-        QPolygonF polygonF = pPolylineObj->pylist;
+        //pPolylineObj->moveBy(pt.x(),pt.y());
+        //QPolygonF polygonF = pPolylineObj->pylist;
+        QPolygonF polygonF = polygon().translated(pt.x(),pt.y());
         setPolygon(polygonF);
     }
 }
@@ -184,7 +185,7 @@ void HIconPolylineItem::setPolygon(const QPolygonF & polygon1)
 {
     if(polygon1 == polygon()) return;
     prepareGeometryChange();
-    refreshBaseObj();
+    refreshBaseObj(polygon1);
     update();
 }
 
@@ -195,11 +196,10 @@ QPolygonF HIconPolylineItem::polygon() const
     return QPolygonF();
 }
 
-void HIconPolylineItem::refreshBaseObj()
+void HIconPolylineItem::refreshBaseObj(const QPolygonF& polygon1)
 {
     pPolylineObj->pylist.clear();
-    foreach(QPointF pt,pyVector)
-        pPolylineObj->pylist.append(mapToScene(pt));
+    pPolylineObj->pylist = polygon1;
     QPointF p = mapToScene(polygon().boundingRect().center());
     pPolylineObj->setOX(p.x());
     pPolylineObj->setOY(p.y());
@@ -212,8 +212,8 @@ void HIconPolylineItem::setItemObj(HBaseObj* pObj)
 {
     pPolylineObj = (HPolyline*)pObj;
     pPolylineObj->setIconGraphicsItem(this);
-    if(pPolylineObj)
-        setPolygon(pyVector);
+    //if(pPolylineObj)
+    //    setPolygon(pyVector);
 }
 
 HBaseObj* HIconPolylineItem::getItemObj()
@@ -257,5 +257,5 @@ void HIconPolylineItem::setRect(const QRectF& newRect)
 
 QRectF HIconPolylineItem::rect() const
 {
-    return pyVector.boundingRect();
+    return polygon().boundingRect();
 }
