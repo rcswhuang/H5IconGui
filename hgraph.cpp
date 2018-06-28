@@ -337,6 +337,7 @@ void HGraph::writeXml(QDomElement *d)
         QDomElement tempDom = elementDom.ownerDocument().createElement(pObj->TagName());
         elementDom.appendChild(tempDom);
         pObj->writeXml(&tempDom);
+        pObj->setModify(false);
     }
 }
 
@@ -674,5 +675,13 @@ void HGraph::setModify(bool modify)
 
 bool HGraph::getModify()
 {
-    return bModify;
+    bool bChild = false;
+    foreach(HBaseObj* pObj,pObjList)
+    {
+        if(pObj && pObj->getModify())
+        {
+            bChild = true;
+        }
+    }
+    return bModify | bChild;
 }
