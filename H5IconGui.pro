@@ -85,10 +85,17 @@ HEADERS +=\
     ../include/H5IconGui/hgraph.h \
     ../include/H5IconGui/hiconrectangleitem.h
 
-win32{
-    DEFINES += WIN32
+unix{
+    UI_DIR = temp/ui
+    MOC_DIR = temp/moc
+    OBJECTS_DIR	= temp/obj
+    LIBS += \
+
 }
-unix {
-    target.path = /users/huangw/lib
-    INSTALLS += target
+
+win32{
+    UI_DIR = temp/ui
+    MOC_DIR = temp/moc
+    OBJECTS_DIR	= temp/obj
+    LIBS += \
 }
