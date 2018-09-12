@@ -61,7 +61,11 @@ int HIconLineItem::type() const
 void HIconLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     curPointF = event->scenePos();
-    pointLocation = pointInRect(curPointF);
+    bool bok;
+    QTransform trans;
+    pLineObj->getTransform(trans,0);
+    QPointF pt = trans.inverted(&bok).map(curPointF);
+    pointLocation = pointInRect(pt);
     HIconGraphicsItem::mousePressEvent(event);
 }
 
@@ -69,16 +73,20 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pt = event->scenePos() - curPointF;
     curPointF = event->scenePos();
+    bool bok;
+    QTransform trans;
+    pLineObj->getTransform(trans,0);
+    QPointF pt1 = trans.inverted(&bok).map(curPointF);
     if(pointLocation == 1)
     {
         QLineF lineF;
-        lineF.setPoints(pt,line().p2());
+        lineF.setPoints(pt1,line().p2());
         setLine(lineF);
     }
     else if(pointLocation == 2)
     {
         QLineF lineF;
-        lineF.setPoints(line().p1(),pt);
+        lineF.setPoints(line().p1(),pt1);
         setLine(lineF);
     }
     else
@@ -146,12 +154,11 @@ QLineF HIconLineItem::line() const
     return QLineF();
 }
 
-void HIconLineItem::setLine(const QLineF &line)
+void HIconLineItem::setLine(const QLineF &line1)
 {
-    if(lineF == line) return;
+    if(line1 == line()) return;
     prepareGeometryChange();
-    refreshBaseObj(line);
-    lineF = line;
+    refreshBaseObj(line1);
     update();
 }
 
@@ -194,19 +201,18 @@ void HIconLineItem::resizeItem(const QPolygonF& polygonF)
 
 ushort HIconLineItem::pointInRect(QPointF &point)
 {
-    QPointF p1 = line().p1();
-    QPointF p2 = line().p2();
-    QRectF rectF1;
-    rectF1.setSize(QSizeF(14,14));
-    rectF1.moveCenter(p1);
-    QRectF rectF2;
-    rectF2.setSize(QSize(14,14));
-    rectF2.moveCenter(p2);
-    if(rectF1.contains(point))
-        return LOCATIONLEFT;
-    else if(rectF2.contains(point))
-        return LOCATIONRIGHT;
-    return LOCATIONNO;
+    qreal halfpw = 14.00;
+    QRectF rect1,rect2;
+    rect1.setSize(QSizeF(halfpw,halfpw));
+    rect1.moveCenter(line().p1());
+    rect2.setSize(QSizeF(halfpw,halfpw));
+    rect2.moveCenter(line().p2());
+    ushort location = 0;
+    if(rect1.contains(point))
+        location = LOCATIONLEFT;
+    else if(rect2.contains(point))
+        location =  LOCATIONRIGHT;
+    return location;
 }
 
 void HIconLineItem::setItemCursor(int position)

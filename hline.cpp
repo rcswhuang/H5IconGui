@@ -187,6 +187,7 @@ bool HLine::contains(const QPointF &point)
 QPainterPath HLine::shape()
 {
     QPainterPath path;
+    path.addPolygon(getPointLists());
     QPainterPathStroker ps;
     int w = arrowWidth;
     int h = arrowHeight;
@@ -195,7 +196,6 @@ QPainterPath HLine::shape()
     if(pen <= 20)
         pen = 20;
     ps.setWidth(pen);
-    path.addPolygon(getPointLists());
     return ps.createStroke(path);
 }
 
@@ -331,7 +331,7 @@ QPolygonF HLine::getPointLists()
     QPolygonF pyList;
     pyList<<pfHeadPoint<<pfTailPoint;
     //line 本身就可以自由旋转所以不需要
-    //Maps(pyList,0);
+    Maps(pyList,0);
     return pyList;
 }
 
