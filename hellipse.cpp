@@ -49,7 +49,7 @@ QPainterPath HEllipse::shape()
     if((nFillWay > 0 && nFillStyle > 0) || bImage)
     {
         QRectF boundingRect = rect.adjusted(-5,-5,5,5);
-        path.addRect(boundingRect);
+        path.addEllipse(boundingRect);
         return path;
     }
     path.addPolygon(pyList);

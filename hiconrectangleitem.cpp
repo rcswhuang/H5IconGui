@@ -9,6 +9,7 @@
 #include <QKeyEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
+#include <QDebug>
 HIconRectangleItem::HIconRectangleItem(HIconGraphicsItem *parent)
     :HIconGraphicsItem(parent)
 {
@@ -84,6 +85,15 @@ void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
         bShift = true;
+    bool multiSelect = (event->modifiers() & Qt::ControlModifier) != 0;
+    if(multiSelect)
+    {
+        //
+        QRectF recttemp = rect().translated(pt.x(),pt.y());
+        pRectObj->setObjRect(recttemp);
+        HIconGraphicsItem::mouseMoveEvent(event);
+        return;
+    }
     if(pointLocation == 1)
     {
         QRectF rectNew;
@@ -124,7 +134,9 @@ void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //ok
 void HIconRectangleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug()<<" Release before selected:"<<isSelected();
     HIconGraphicsItem::mouseReleaseEvent(event);
+    qDebug()<<"Release after selected:"<<isSelected();
 }
 
 //ok
