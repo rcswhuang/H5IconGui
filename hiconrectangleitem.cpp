@@ -85,15 +85,6 @@ void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     bool bShift = false;
     if(event->modifiers() == Qt::ShiftModifier)
         bShift = true;
-    bool multiSelect = (event->modifiers() & Qt::ControlModifier) != 0;
-    if(multiSelect)
-    {
-        //
-        QRectF recttemp = rect().translated(pt.x(),pt.y());
-        pRectObj->setObjRect(recttemp);
-        HIconGraphicsItem::mouseMoveEvent(event);
-        return;
-    }
     if(pointLocation == 1)
     {
         QRectF rectNew;
