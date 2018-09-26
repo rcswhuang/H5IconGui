@@ -20,6 +20,7 @@ HIconRectangleItem::HIconRectangleItem(HIconGraphicsItem *parent)
 HIconRectangleItem::HIconRectangleItem(HBaseObj* obj, HIconGraphicsItem *parent)
     :HIconGraphicsItem(parent),pRectObj((HRectangle*)obj)
 {
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
 HIconRectangleItem::~HIconRectangleItem()
@@ -118,6 +119,8 @@ void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //pRectObj->moveBy(pt.x(),pt.y());
         QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }
@@ -266,4 +269,16 @@ ushort HIconRectangleItem::pointInRect(QPointF& point)
     else
         location = 0;
     return location;
+}
+
+QVariant HIconRectangleItem::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionChange) {
+             // value is the new position.
+             QPointF newPos = value.toPointF();
+             QPointF pt = newPos - pointStart;
+             QRectF recttemp = rect().translated(pt.x(),pt.y());
+             refreshBaseObj(recttemp.normalized());
+         }
+         return QGraphicsItem::itemChange(change, value);
 }
