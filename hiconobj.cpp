@@ -311,14 +311,18 @@ void HIconObj::paint(QPainter* painter)
 
 void HIconObj::resetRectPoint(const QPointF& pt1,const QPointF& pt2)
 {
-    if(pIconSymbol)
-        pIconSymbol->resetRectPoint(pt1,pt2);
+    ptNew = pt1;
+    ptOld = pt2;
+    resetObjPoint(pt1,pt2);
 }
 
 void HIconObj::resize(qreal w,qreal h)
 {
-    if(pIconSymbol)
-        pIconSymbol->resize(w,h);
+    topLeft.setX(ptNew.x() + (topLeft.x() - ptOld.x())*w);
+    topLeft.setY(ptNew.y() + (topLeft.y() - ptOld.y())*h);
+    rectWidth = rectWidth*w;
+    rectHeight = rectHeight*h;
+    reObjSize(w,h);
 }
 
 QRectF HIconObj::boundingRect()
@@ -472,6 +476,20 @@ void HIconObj::updateResize()
     QSizeF pt = pIconTemplate->getDefaultSize();
     double w1 = rectWidth/(pt.width()*20);
     double h1 = rectHeight/(pt.height()*20);
-    resetRectPoint(topLeft,QPointF(-pt.width()*10,-pt.height()*10));
-    resize(w1,h1);
+    resetObjPoint(topLeft,QPointF(-pt.width()*10,-pt.height()*10));
+    reObjSize(w1,h1);
+
+}
+
+void HIconObj::reObjSize(qreal w,qreal h)
+{
+    if(pIconSymbol)
+        pIconSymbol->resize(w,h);
+}
+
+
+void HIconObj::resetObjPoint(const QPointF& pt1,const QPointF& pt2)
+{
+    if(pIconSymbol)
+        pIconSymbol->resetRectPoint(pt1,pt2);
 }

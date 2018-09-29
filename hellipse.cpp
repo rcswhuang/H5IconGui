@@ -46,17 +46,21 @@ QPainterPath HEllipse::shape()
     bool bImage = isValidImagePath();
     QPolygonF pyList =getRectLists();
     QRectF rect = pyList.boundingRect();
-    if((nFillWay > 0 && nFillStyle > 0) || bImage)
+    /*if((nFillWay > 0 && nFillStyle > 0) || bImage)
     {
         QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addEllipse(boundingRect);
         return path;
     }
-    path.addPolygon(pyList);
+    path.addEllipse(pyList);
     path.closeSubpath();
     QPainterPathStroker ps;
     ps.setWidth(10);
-    return ps.createStroke(path);
+    return ps.createStroke(path);*/
+
+    QRectF boundingRect = rect.adjusted(-5,-5,5,5);
+    path.addEllipse(boundingRect);
+    return path;
 }
 
 void HEllipse::paint(QPainter* painter)

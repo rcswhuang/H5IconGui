@@ -110,8 +110,8 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         double w1 = rectNew.width()/oldRect.width();
         double h1 = rectNew.height()/oldRect.height();
-        pIconObj->resetRectPoint(rectNew.topLeft(),oldRect.topLeft());
-        pIconObj->resize(w1,h1);
+        pIconObj->resetObjPoint(rectNew.topLeft(),oldRect.topLeft());
+        pIconObj->reObjSize(w1,h1);
         setRect(rectNew.normalized());
 
     }
@@ -221,8 +221,8 @@ void HIconComplexItem::resizeItem(const QPolygonF& polygonF)
         return;
     double w1 = rectNew.width()/oldRect.width();
     double h1 = rectNew.height()/oldRect.height();
-    pIconObj->resetRectPoint(rectNew.topLeft(),oldRect.topLeft());
-    pIconObj->resize(w1,h1);
+    pIconObj->resetObjPoint(rectNew.topLeft(),oldRect.topLeft());
+    pIconObj->reObjSize(w1,h1);
     setRect(rectNew.normalized());
 }
 

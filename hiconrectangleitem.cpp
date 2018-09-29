@@ -128,9 +128,7 @@ void HIconRectangleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //ok
 void HIconRectangleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug()<<" Release before selected:"<<isSelected();
     HIconGraphicsItem::mouseReleaseEvent(event);
-    qDebug()<<"Release after selected:"<<isSelected();
 }
 
 //ok
