@@ -115,6 +115,8 @@ void HIconCircleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QRectF recttemp = pCircleObj->getObjRect();
         QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
     }
 }
 

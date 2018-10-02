@@ -94,6 +94,8 @@ void HIconPolylineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QPolygonF polygonF = pPolylineObj->pylist;
         QPolygonF polygonF = polygon().translated(pt.x(),pt.y());
         setPolygon(polygonF);
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
     }
 }
 

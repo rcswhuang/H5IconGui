@@ -313,7 +313,7 @@ QPainterPath HText::shape()
     QPainterPath path;
     QPolygonF pyList =getRectLists();
     QRectF rect = pyList.boundingRect();
-    if((nFillWay > 0 && nFillStyle > 0))
+    /*if((nFillWay > 0 && nFillStyle > 0))
     {
         QRectF boundingRect = rect.adjusted(-5,-5,5,5);
         path.addRect(boundingRect);
@@ -322,8 +322,11 @@ QPainterPath HText::shape()
     path.addPolygon(pyList);
     path.closeSubpath();
     QPainterPathStroker ps;
-    ps.setWidth(10);
-    return ps.createStroke(path);
+    ps.setWidth(10);*/
+    QRectF boundingRect = rect.adjusted(-5,-5,5,5);
+    path.addRect(boundingRect);
+    return path;
+    //return ps.createStroke(path);
 }
 
 void HText::paint(QPainter* painter)

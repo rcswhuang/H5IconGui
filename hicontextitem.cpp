@@ -114,6 +114,8 @@ void HIconTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QRectF recttemp = pTextObj->getObjRect();
         QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
     }
 }
 

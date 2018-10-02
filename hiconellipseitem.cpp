@@ -21,12 +21,6 @@ HIconEllipseItem::HIconEllipseItem(HBaseObj* obj, HIconRectangleItem *parent)
 
 HIconEllipseItem::~HIconEllipseItem()
 {
-    /*
-    if(pEllipseObj)
-    {
-        delete pEllipseObj;
-        pEllipseObj = NULL;
-    }*/
 }
 
 QRectF HIconEllipseItem::boundingRect() const
@@ -114,6 +108,8 @@ void HIconEllipseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QRectF recttemp = pEllipseObj->getObjRect();
         QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
     }
 }
 

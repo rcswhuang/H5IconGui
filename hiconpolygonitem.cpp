@@ -107,6 +107,8 @@ void HIconPolygonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QPolygonF polygonF = pPolygonObj->pylist;
         QPolygonF polygonF = polygon().translated(pt.x(),pt.y());
         setPolygon(polygonF);
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }

@@ -121,6 +121,8 @@ void HIconComplexItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QRectF recttemp(pIconObj->getObjRect());
         QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
         //HIconGraphicsItem::mouseMoveEvent(event);
     }
 }

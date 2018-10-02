@@ -95,6 +95,8 @@ void HIconLineItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QLineF lineF(pLineObj->getHeadPoint(),pLineObj->getTailPoint());
         QLineF lineF = line().translated(pt.x(),pt.y());
         setLine(lineF);
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
     }
 }
 

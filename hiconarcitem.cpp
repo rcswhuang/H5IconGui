@@ -116,6 +116,8 @@ void HIconArcItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //QRectF recttemp = pArcObj->getObjRect();
         QRectF recttemp = rect().translated(pt.x(),pt.y());
         setRect(recttemp.normalized());
+        if (flags() & ItemIsSelectable)
+            setSelected(true);
     }
 }
 

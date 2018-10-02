@@ -269,14 +269,3 @@ ushort HIconRectangleItem::pointInRect(QPointF& point)
     return location;
 }
 
-QVariant HIconRectangleItem::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    if (change == ItemPositionChange) {
-             // value is the new position.
-             QPointF newPos = value.toPointF();
-             QPointF pt = newPos - pointStart;
-             QRectF recttemp = rect().translated(pt.x(),pt.y());
-             refreshBaseObj(recttemp.normalized());
-         }
-         return QGraphicsItem::itemChange(change, value);
-}
